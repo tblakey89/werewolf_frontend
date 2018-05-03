@@ -50,7 +50,7 @@ class ChatList extends Component {
             <ListItemText primary="Giang Blakey" secondary="Jan 7, 2014" />
           </ListItem>
         </Link>
-        <Link to={`/chat`}>
+        <Link to="/chat">
           <ListItem button>
             <Avatar>
               <AccountCircle style={{ fontSize: 36 }} />

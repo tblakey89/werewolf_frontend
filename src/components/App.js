@@ -12,9 +12,8 @@ import SessionDialog from './SessionDialog';
 import './App.css';
 
 // Tasks
-// Split into smaller components, like new chat/game button could be one
-// Tidy up/refactor
-// tests?
+// Session container for session api calls/state/props
+// look at albums project from book for inspiration
 
 class App extends Component {
   render() {
