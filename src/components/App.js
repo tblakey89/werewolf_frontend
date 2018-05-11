@@ -32,7 +32,8 @@ class App extends Component {
         <Route path='/settings' render={props => (
           <div><Header/><Settings/><Footer/></div>
         )}/>
-        <Route path='/chat' render={props => (<div><Header/><Chat/><Footer/></div>
+        <Route path='/chat' render={props => (
+          <div><Header/><Chat/><Footer/></div>
         )}/>
         <Route path='/game' render={props => (
           <div><Header/><Game/><Footer/></div>
