@@ -20,7 +20,9 @@ class SessionDialog extends Component {
         aria-labelledby="responsive-dialog-title"
       >
         <Route path='/signin' component={SignIn}/>
-        <Route path='/register' component={Register}/>
+        <Route path='/register' render={props => (
+          <Register onNotificationOpen={this.props.onNotificationOpen} />
+        )}/>
         <Route path='/forgotten_password' component={ForgottenPassword}/>
         <Route path='/new_password' component={NewPassword}/>
       </Dialog>

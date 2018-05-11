@@ -11,9 +11,6 @@ import TextField from 'material-ui/TextField';
 import User from '../api/user';
 import UserValidation from '../validation/userValidation';
 
-// do we need a container component for connecting to server?
-// test test test
-// some kind of notification if create successful
 // what if 500 error?
 
 class Register extends Component {
@@ -72,6 +69,7 @@ class Register extends Component {
 
   successfulCreateCallback = (response) => {
     this.setState({authenticated: true});
+    this.props.onNotificationOpen('Created account')
   };
 
   errorOnCreateCallback = (error) => {

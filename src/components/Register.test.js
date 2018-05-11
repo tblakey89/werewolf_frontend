@@ -11,9 +11,11 @@ describe('Register', () => {
   let emailInput;
   let passwordInput
   let form;
+  let mockNotify;
 
   beforeEach(() => {
-    wrapper = shallow(<Register />);
+    mockNotify = jest.fn();
+    wrapper = shallow(<Register onNotificationOpen={mockNotify} />);
     userInput = wrapper.find('#username').first();
     emailInput = wrapper.find('#email').first();
     passwordInput = wrapper.find('#password').first();
@@ -83,9 +85,10 @@ describe('Register', () => {
           wrapper.update();
         });
 
-        it('should redirect', () => {
+        it('should redirect and notify user', () => {
           const redirect = wrapper.find('Redirect');
           expect(redirect.length).toEqual(1);
+          expect(mockNotify.mock.calls.length).toBe(1);
         });
       });
 
