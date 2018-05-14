@@ -92,7 +92,7 @@ describe('Register', () => {
         });
       });
 
-      describe('API returns error', () => {
+      describe('API returns 4** error', () => {
         beforeEach(() => {
           const errorCallback = invocationArgs[2];
           errorCallback({
@@ -115,6 +115,18 @@ describe('Register', () => {
           it('no longer shows error', () => {
             expect(wrapper.instance().showFieldError('email')).toBe(false);
           });
+        });
+      });
+
+      describe('API returns 5** error', () => {
+        beforeEach(() => {
+          const errorCallback = invocationArgs[2];
+          errorCallback(new Error('HTTP Error 500'));
+          wrapper.update();
+        });
+
+        it('should notify user', () => {
+          expect(mockNotify.mock.calls.length).toBe(1);
         });
       });
     });

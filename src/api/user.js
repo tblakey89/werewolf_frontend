@@ -12,12 +12,15 @@ function create(userAttrs, successCallback, errorCallback) {
     .then(parseJson)
     .then(successCallback)
     .catch((error) => {
-      parseJson(error.response).then(errorCallback);
+      if (error.response.status >= 500) {
+        errorCallback(error);
+      } else {
+        parseJson(error.response).then(errorCallback);
+      }
     });
 }
 
 function checkStatus(response) {
-  // we odn;t have status here
   if (response.status >= 200 && response.status < 300) {
     return response;
   } else {

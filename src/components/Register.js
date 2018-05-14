@@ -73,13 +73,17 @@ class Register extends Component {
   };
 
   errorOnCreateCallback = (error) => {
-    const errors = error.errors;
-    const reducer = (accumulator, key) => {
-      accumulator[key] = errors[key][0];
-      return accumulator;
-    };
-    const serverFieldErrors = Object.keys(errors).reduce(reducer, {});
-    this.setState({ fieldErrors: serverFieldErrors, errored: true });
+    if (error instanceof Error) {
+      this.props.onNotificationOpen('Server error.')
+    } else {
+      const errors = error.errors;
+      const reducer = (accumulator, key) => {
+        accumulator[key] = errors[key][0];
+        return accumulator;
+      };
+      const serverFieldErrors = Object.keys(errors).reduce(reducer, {});
+      this.setState({ fieldErrors: serverFieldErrors, errored: true });
+    }
   };
 
   render() {
@@ -102,7 +106,7 @@ class Register extends Component {
               type="text"
               onChange={this.handleChange('username')}
               fullWidth
-              style={{'margin-top': '20px'}}
+              style={{'marginTop': '20px'}}
               error={!!this.showFieldError('username')}
               helperText={this.showFieldError('username')}
             />
@@ -111,6 +115,7 @@ class Register extends Component {
               label="Email Address"
               type="email"
               onChange={this.handleChange('email')}
+              style={{'marginTop': '20px'}}
               fullWidth
               error={!!this.showFieldError('email')}
               helperText={this.showFieldError('email')}
@@ -120,6 +125,7 @@ class Register extends Component {
               label="Password"
               type="password"
               onChange={this.handleChange('password')}
+              style={{'marginTop': '20px'}}
               fullWidth
               error={!!this.showFieldError('password')}
               helperText={this.showFieldError('password')}

@@ -75,9 +75,6 @@ class App extends Component {
           open={this.state.notificationOpen}
           autoHideDuration={4000}
           onClose={this.handleNotificationClose}
-          ContentProps={{
-            'aria-describedby': 'message-id',
-          }}
           message={<span id="message-id">{this.state.notificationMessage}</span>}
           action={[
             <IconButton
