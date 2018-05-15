@@ -27,13 +27,6 @@ class NewPassword extends Component {
             type="password"
             fullWidth
           />
-          <TextField
-            autoFocus
-            id="passwordConfirm"
-            label="Confirm Password"
-            type="password"
-            fullWidth
-          />
         </DialogContent>
         <DialogActions>
           <Button
@@ -46,8 +39,7 @@ class NewPassword extends Component {
           <Button
             onClick={this.handleClose}
             color="primary"
-            component={Link}
-            to={`/signin`}>
+            type="submit">
             Create
           </Button>
         </DialogActions>

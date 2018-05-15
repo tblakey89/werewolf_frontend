@@ -23,7 +23,9 @@ class SessionDialog extends Component {
         <Route path='/register' render={props => (
           <Register onNotificationOpen={this.props.onNotificationOpen} />
         )}/>
-        <Route path='/forgotten_password' component={ForgottenPassword}/>
+        <Route path='/forgotten_password' render={props => (
+          <ForgottenPassword onNotificationOpen={this.props.onNotificationOpen} />
+        )}/>
         <Route path='/new_password' component={NewPassword}/>
       </Dialog>
     );

@@ -11,8 +11,6 @@ import TextField from 'material-ui/TextField';
 import User from '../api/user';
 import UserValidation from '../validation/userValidation';
 
-// what if 500 error?
-
 class Register extends Component {
   state = {
     fields: {
