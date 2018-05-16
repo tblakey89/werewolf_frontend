@@ -43,6 +43,6 @@ form p {
   margin-left: 20px;
 }
 
-error {
+.error {
   color: #f44336;
 }

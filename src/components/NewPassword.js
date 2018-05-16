@@ -12,8 +12,6 @@ import TextField from 'material-ui/TextField';
 import User from '../api/user';
 import UserValidation from '../validation/userValidation';
 
-// tests, test redirect after 400 error
-
 class NewPassword extends Component {
   constructor(props) {
     super(props);

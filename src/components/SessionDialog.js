@@ -19,7 +19,9 @@ class SessionDialog extends Component {
         open={true}
         aria-labelledby="responsive-dialog-title"
       >
-        <Route path='/signin' component={SignIn}/>
+        <Route path='/signin' render={(props) => (
+          <SignIn onNotificationOpen={this.props.onNotificationOpen} />
+        )}/>
         <Route path='/register' render={props => (
           <Register onNotificationOpen={this.props.onNotificationOpen} />
         )}/>
