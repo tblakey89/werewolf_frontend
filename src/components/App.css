@@ -42,3 +42,7 @@ form {
 form p {
   margin-left: 20px;
 }
+
+error {
+  color: #f44336;
+}

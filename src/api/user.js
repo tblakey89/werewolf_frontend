@@ -24,6 +24,18 @@ function forgotPassword(userAttrs, successCallback, errorCallback) {
   return fetchPromise(url, request, successCallback, errorCallback);
 }
 
+function newPassword(token, password, successCallback, errorCallback) {
+  const url = domain + '/api/forgotten_password/' + token;
+  const request = {
+    method: 'put',
+    headers: {
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({password: {password: password}})
+  };
+  return fetchPromise(url, request, successCallback, errorCallback);
+}
+
 function fetchPromise(url, request, successCallback, errorCallback) {
   return fetch(url, request)
     .then(checkStatus)
@@ -56,5 +68,5 @@ function errorHandler(error, errorCallback) {
   }
 }
 
-const User = { create, forgotPassword };
+const User = { create, forgotPassword, newPassword };
 export default User;
