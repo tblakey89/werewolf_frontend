@@ -11,9 +11,6 @@ import TextField from 'material-ui/TextField';
 import Session from '../api/session';
 import SessionValidation from '../validation/sessionValidation';
 
-// how do we save token on successful login?
-// how do we stop unauthenticated users from viewing /games?
-
 class SignIn extends Component {
   state = {
     fields: {
@@ -103,7 +100,7 @@ class SignIn extends Component {
               type="email"
               fullWidth
               onChange={this.handleChange('email')}
-              style={{'margin-top': '20px'}}
+              style={{marginTop: '20px'}}
               error={!!this.showFieldError('email')}
               helperText={this.showFieldError('email')}
             />
@@ -116,7 +113,7 @@ class SignIn extends Component {
               error={!!this.showFieldError('password')}
               helperText={this.showFieldError('password')}
             />
-            <div style={{'margin-top': '20px'}}>
+            <div style={{marginTop: '20px'}}>
               <Button
                 size="small"
                 onClick={this.handleClose}

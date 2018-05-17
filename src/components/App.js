@@ -13,6 +13,7 @@ import Game from './Game';
 import Contacts from './Contacts';
 import Settings from './Settings';
 import SessionDialog from './SessionDialog';
+import AuthenticatedRoute from './AuthenticatedRoute';
 import './App.css';
 
 const styles = theme => ({
@@ -49,22 +50,22 @@ class App extends Component {
         <Route exact path='(|/signin|/register|/forgotten_password|/new_password)' render={props => (
           <SessionDialog onNotificationOpen={this.handleNotificationOpen}/>
         )}/>
-        <Route path='/games' render={props => (
+        <AuthenticatedRoute path='/games' render={props => (
           <div><Header/><Games/><Footer/></div>
         )}/>
-        <Route path='/chats' render={props => (
+        <AuthenticatedRoute path='/chats' render={props => (
           <div><Header/><ChatList/><Footer/></div>
         )}/>
-        <Route path='/contacts' render={props => (
+        <AuthenticatedRoute path='/contacts' render={props => (
           <div><Header/><Contacts/><Footer/></div>
         )}/>
-        <Route path='/settings' render={props => (
+        <AuthenticatedRoute path='/settings' render={props => (
           <div><Header/><Settings/><Footer/></div>
         )}/>
-        <Route path='/chat' render={props => (
+        <AuthenticatedRoute path='/chat' render={props => (
           <div><Header/><Chat/><Footer/></div>
         )}/>
-        <Route path='/game' render={props => (
+        <AuthenticatedRoute path='/game' render={props => (
           <div><Header/><Game/><Footer/></div>
         )}/>
         <Snackbar

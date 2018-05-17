@@ -6,6 +6,15 @@ function fetchPromise(url, request, successCallback, errorCallback) {
     .catch((error) => { errorHandler(error, errorCallback) });
 }
 
+function fetchPromiseAndLogin(url, request, successCallback, errorCallback) {
+  return fetch(url, request)
+    .then(checkStatus)
+    .then(parseJson)
+    .then(setToken)
+    .then(successCallback)
+    .catch((error) => { errorHandler(error, errorCallback) });
+}
+
 function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
     return response;
@@ -22,6 +31,11 @@ function parseJson(response) {
   return response.json();
 }
 
+function setToken(response) {
+  localStorage.setItem('jwt', response.token);
+  return response;
+}
+
 function errorHandler(error, errorCallback) {
   if (error.response && error.response.status >= 500) {
     errorCallback(error);
@@ -30,5 +44,5 @@ function errorHandler(error, errorCallback) {
   }
 }
 
-const Api = { fetchPromise };
+const Api = { fetchPromise, fetchPromiseAndLogin };
 export default Api;

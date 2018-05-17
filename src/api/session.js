@@ -10,7 +10,7 @@ function create(sessionAttrs, successCallback, errorCallback) {
     },
     body: JSON.stringify({session: sessionAttrs})
   };
-  return Api.fetchPromise(url, request, successCallback, errorCallback);
+  return Api.fetchPromiseAndLogin(url, request, successCallback, errorCallback);
 }
 
 const Session = { create };
