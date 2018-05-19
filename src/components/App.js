@@ -4,16 +4,8 @@ import { withStyles } from 'material-ui/styles';
 import Snackbar from 'material-ui/Snackbar';
 import IconButton from 'material-ui/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-import Header from './Header';
-import Footer from './Footer';
-import Games from './Games';
-import ChatList from './ChatList';
-import Chat from './Chat';
-import Game from './Game';
-import Contacts from './Contacts';
-import Settings from './Settings';
+import ChatContainer from './ChatContainer';
 import SessionDialog from './SessionDialog';
-import AuthenticatedRoute from './AuthenticatedRoute';
 import './App.css';
 
 const styles = theme => ({
@@ -26,7 +18,7 @@ const styles = theme => ({
 class App extends Component {
   state = {
     notificationOpen: false,
-    notificationMessage: ''
+    notificationMessage: '',
   };
 
   handleNotificationOpen = (notification) => {
@@ -50,23 +42,8 @@ class App extends Component {
         <Route exact path='(|/signin|/register|/forgotten_password|/new_password)' render={props => (
           <SessionDialog onNotificationOpen={this.handleNotificationOpen}/>
         )}/>
-        <AuthenticatedRoute path='/games' render={props => (
-          <div><Header/><Games/><Footer/></div>
-        )}/>
-        <AuthenticatedRoute path='/chats' render={props => (
-          <div><Header/><ChatList/><Footer/></div>
-        )}/>
-        <AuthenticatedRoute path='/contacts' render={props => (
-          <div><Header/><Contacts/><Footer/></div>
-        )}/>
-        <AuthenticatedRoute path='/settings' render={props => (
-          <div><Header/><Settings/><Footer/></div>
-        )}/>
-        <AuthenticatedRoute path='/chat' render={props => (
-          <div><Header/><Chat/><Footer/></div>
-        )}/>
-        <AuthenticatedRoute path='/game' render={props => (
-          <div><Header/><Game/><Footer/></div>
+        <Route path='(|/games|/chats|/contacts|/settings|/chat|/game)' render={props => (
+          <ChatContainer />
         )}/>
         <Snackbar
           anchorOrigin={{
