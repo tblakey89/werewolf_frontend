@@ -11,7 +11,6 @@ import AuthenticatedRoute from './AuthenticatedRoute';
 
 class ChatContainer extends Component {
   render() {
-    const { classes } = this.props;
     return (
       <div>
         <Header/>

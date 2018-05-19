@@ -1,21 +1,21 @@
-function fetchPromise(url, request, successCallback, errorCallback) {
+const fetchPromise = (url, request, successCallback, errorCallback) => {
   return fetch(url, request)
     .then(checkStatus)
     .then(parseJson)
     .then(successCallback)
     .catch((error) => { errorHandler(error, errorCallback) });
-}
+};
 
-function fetchPromiseAndLogin(url, request, successCallback, errorCallback) {
+const fetchPromiseAndLogin = (url, request, successCallback, errorCallback) => {
   return fetch(url, request)
     .then(checkStatus)
     .then(parseJson)
     .then(setToken)
     .then(successCallback)
     .catch((error) => { errorHandler(error, errorCallback) });
-}
+};
 
-function checkStatus(response) {
+const checkStatus = (response) => {
   if (response.status >= 200 && response.status < 300) {
     return response;
   } else {
@@ -25,24 +25,24 @@ function checkStatus(response) {
     console.log(error);
     throw error;
   }
-}
+};
 
-function parseJson(response) {
+const parseJson = (response) => {
   return response.json();
-}
+};
 
-function setToken(response) {
+const setToken = (response) => {
   localStorage.setItem('jwt', response.token);
   return response;
-}
+};
 
-function errorHandler(error, errorCallback) {
+const errorHandler = (error, errorCallback) => {
   if (error.response && error.response.status >= 500) {
     errorCallback(error);
   } else {
     parseJson(error.response).then(errorCallback);
   }
-}
+};
 
 const Api = { fetchPromise, fetchPromiseAndLogin };
 export default Api;

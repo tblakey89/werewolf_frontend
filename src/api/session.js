@@ -1,7 +1,7 @@
 import { domain } from './domain'
 import Api from './api';
 
-function create(sessionAttrs, successCallback, errorCallback) {
+const create = (sessionAttrs, successCallback, errorCallback) => {
   const url = domain + '/api/sessions';
   const request =  {
     method: 'post',
