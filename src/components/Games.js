@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
-import List, { ListItem, ListItemText, ListItemSecondaryAction } from 'material-ui/List';
-import Button from 'material-ui/Button';
-import Avatar from 'material-ui/Avatar';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import Button from '@material-ui/core/Button';
+import Avatar from '@material-ui/core/Avatar';
 import SunIcon from '@material-ui/icons/Brightness5';
 import MoonIcon from '@material-ui/icons/Brightness3';
 import HourglassIcon from '@material-ui/icons/HourglassEmpty';

@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import BottomNavigation, { BottomNavigationAction } from 'material-ui/BottomNavigation';
-import { FormControl } from 'material-ui/Form';
-import TextField from 'material-ui/TextField';
+import BottomNavigation, { BottomNavigationAction } from '@material-ui/core/BottomNavigation';
+import FormControl from '@material-ui/core/FormControl';
+import TextField from '@material-ui/core/TextField';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import SendIcon from '@material-ui/icons/Send';
-import Grid from 'material-ui/Grid';
+import Grid from '@material-ui/core/Grid';
 
 const styles = theme => ({
   textFieldRoot: {

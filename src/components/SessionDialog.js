@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
-import Dialog, {
-  withMobileDialog,
-} from 'material-ui/Dialog';
+import Dialog from '@material-ui/core/Dialog';
+import withMobileDialog from '@material-ui/core/withMobileDialog';
 import SignIn from './SignIn';
 import Register from './Register';
 import ForgottenPassword from './ForgottenPassword';

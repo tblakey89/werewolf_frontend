@@ -1,37 +1,52 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import List, { ListItem, ListItemText } from 'material-ui/List';
-import Avatar from 'material-ui/Avatar';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Avatar from '@material-ui/core/Avatar';
 import AccountCircle from '@material-ui/icons/AccountCircle';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import User from '../api/user';
+
+// need to test errorCallback, what happens if error?
 
 class Contacts extends Component {
+  state = {
+    contacts: [],
+    _loading: false
+  };
+
+  componentDidMount() {
+    this.setState({_loading: true})
+    User.index((response) => {
+      this.setState({contacts: response.users, _loading: false});
+    }, (response) => {
+
+    });
+  }
+
+  renderContacts = () => {
+    if (this.state._loading) {
+      return <CircularProgress />;
+    }
+    return (
+      this.state.contacts.map((user) => (
+        <Link to={`/chat`} key={user.id}>
+          <ListItem button>
+            <Avatar>
+              <AccountCircle style={{ fontSize: 36 }} />
+            </Avatar>
+            <ListItemText primary={user.username} secondary="Jan 9, 2014" />
+          </ListItem>
+        </Link>
+      ))
+    );
+  };
+
   render() {
     return (
       <List component="nav">
-        <Link to={`/chat`}>
-          <ListItem button>
-            <Avatar>
-              <AccountCircle style={{ fontSize: 36 }} />
-            </Avatar>
-            <ListItemText primary="Thomas Blakey" secondary="Jan 9, 2014" />
-          </ListItem>
-        </Link>
-        <Link to={`/chat`}>
-          <ListItem button>
-            <Avatar>
-              <AccountCircle style={{ fontSize: 36 }} />
-            </Avatar>
-            <ListItemText primary="Giang Blakey" secondary="Jan 7, 2014" />
-          </ListItem>
-        </Link>
-        <Link to={`/chat`}>
-          <ListItem button>
-            <Avatar>
-              <AccountCircle style={{ fontSize: 36 }} />
-            </Avatar>
-            <ListItemText primary="Teddy Blakey" secondary="July 20, 2014" />
-          </ListItem>
-        </Link>
+        { this.renderContacts() }
       </List>
     );
   }

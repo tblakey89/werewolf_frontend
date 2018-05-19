@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import BottomNavigation, { BottomNavigationAction } from 'material-ui/BottomNavigation';
-import Icon from 'material-ui/Icon';
+import BottomNavigation from '@material-ui/core/BottomNavigation';
+import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
+import Icon from '@material-ui/core/Icon';
 import MessageIcon from '@material-ui/icons/Message';
 import ContactsIcon from '@material-ui/icons/Contacts';
 import GamesIcon from '@material-ui/icons/Games';
