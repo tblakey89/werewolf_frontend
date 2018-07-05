@@ -37,6 +37,7 @@ const setToken = (response) => {
 };
 
 const errorHandler = (error, errorCallback) => {
+  debugger;
   if (error.response && error.response.status >= 500) {
     errorCallback(error);
   } else {

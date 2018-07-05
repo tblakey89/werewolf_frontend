@@ -6,36 +6,43 @@ import Avatar from '@material-ui/core/Avatar';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 
 class Chat extends Component {
+  componentDidMount() {
+    this.setMessagesAsRead();
+  }
+
+  componentDidUpdate(prevProps) {
+    this.setMessagesAsRead();
+  }
+
+  setMessagesAsRead = () => {
+    if (!this.props.conversation) return;
+    if (this.props.conversation.unreadMessageCount !== 0) {
+      this.props.setAsRead(this.props.conversation);
+    }
+  }
+
+  renderConversations = () => {
+    const { conversation } = this.props;
+    if (!conversation) return [];
+    return conversation.messages.slice().sort((message_a, message_b) => (
+      message_a.created_at - message_b.created_at
+    )).map((message) => (
+      <ListItem key={message.id}>
+        <Avatar>
+          <AccountCircle style={{ fontSize: 36 }} />
+        </Avatar>
+        <ListItemText
+          primary={message.sender.username}
+          secondary={message.body}
+        />
+      </ListItem>
+    ))
+  };
+
   render() {
     return (
       <List>
-        <ListItem>
-          <Avatar>
-            <AccountCircle style={{ fontSize: 36 }} />
-          </Avatar>
-          <ListItemText
-            primary="Thomas Blakey"
-            secondary="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed risus turpis, sodales sit amet turpis quis, consequat ultricies est. Maecenas bibendum ligula non mattis ultricies. Morbi rutrum nisi erat, eu cursus lectus molestie id. Etiam id tincidunt elit."
-          />
-        </ListItem>
-        <ListItem>
-          <ListItemText
-            primary="Giang Blakey"
-            secondary="Cras nisi dolor, euismod eu dapibus eu, mollis vel lacus. Vestibulum quis massa quis risus consequat euismod at non ipsum. Vestibulum quis porta tellus. Ut vestibulum egestas lacus, ut tincidunt nisi ultrices eget. Suspendisse auctor venenatis arcu et condimentum. Aliquam sed blandit ex. Proin quis neque in odio convallis ullamcorper. Nam posuere tincidunt purus."
-          />
-          <Avatar>
-            <AccountCircle style={{ fontSize: 36 }} />
-          </Avatar>
-        </ListItem>
-        <ListItem>
-          <Avatar>
-            <AccountCircle style={{ fontSize: 36 }} />
-          </Avatar>
-          <ListItemText
-            primary="Teddy Blakey"
-            secondary="Curabitur vel sodales nisi. Maecenas egestas commodo diam."
-          />
-        </ListItem>
+        {this.renderConversations()}
       </List>
     );
   }

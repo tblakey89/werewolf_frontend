@@ -5,10 +5,12 @@ import Games from './Games';
 
 describe('AuthenticatedRoute', () => {
   let wrapper;
+  let gamesProp;
 
   beforeEach(() => {
     localStorage.clear();
-    wrapper = shallow(<AuthenticatedRoute path="/test" component={Games} />);
+    gamesProp = [1];
+    wrapper = shallow(<AuthenticatedRoute path="/test" games={gamesProp} component={Games} />);
   });
 
   afterEach(() => {
@@ -18,6 +20,7 @@ describe('AuthenticatedRoute', () => {
   describe('when no JWT token', () => {
     it('should redirect user', () => {
       expect(wrapper.props().render().props.to.pathname).toEqual('/signin');
+      expect(wrapper.props().render().props.games).toEqual(undefined);
     });
   });
 
@@ -26,8 +29,8 @@ describe('AuthenticatedRoute', () => {
       localStorage.setItem('jwt', 'token');
     });
 
-    it('should redirect user', () => {
-      expect(wrapper.props().render().props).toEqual({});
+    it('should display Game component', () => {
+      expect(wrapper.props().render().props.games).toEqual(gamesProp);
     });
   });
 });

@@ -42,8 +42,8 @@ class App extends Component {
         <Route exact path='(|/signin|/register|/forgotten_password|/new_password)' render={props => (
           <SessionDialog onNotificationOpen={this.handleNotificationOpen}/>
         )}/>
-        <Route exact path='(/games|/chats|/contacts|/settings|/chat|/game)' render={props => (
-          <ChatContainer />
+        <Route path='(/games|/chats|/contacts|/settings|/chat|/game)' render={props => (
+          <ChatContainer onNotificationOpen={this.handleNotificationOpen}/>
         )}/>
         <Snackbar
           anchorOrigin={{

@@ -12,15 +12,15 @@ class AuthenticatedRoute extends Component {
   }
 
   render() {
-    const {render, component, ...rest} = this.props;
+    const {render, component, ...componentProps} = this.props;
     return (
-      <Route {...rest} render={(props) => (
-        this.isLoggedIn() ? (
-          render ? render(props) : React.createElement(component, props)
+      <Route {...componentProps} render={(props) => {
+        return this.isLoggedIn() ? (
+          render ? render(props) : React.createElement(component, componentProps)
         ):(
           <Redirect to={{pathname: '/signin',}} />
         )
-      )} />
+      }} />
     );
   }
 }

@@ -25,6 +25,18 @@ const index = (successCallback, errorCallback) => {
   return Api.fetchPromise(url, request, successCallback, errorCallback);
 };
 
+const me = (successCallback, errorCallback) => {
+  const url = `${domain}/api/me`;
+  const request =  {
+    method: 'get',
+    headers: {
+      'content-type': 'application/json',
+      'Authorization': `Bearer: ${localStorage.getItem('jwt')}`
+    }
+  };
+  return Api.fetchPromise(url, request, successCallback, errorCallback);
+};
+
 const forgotPassword = (userAttrs, successCallback, errorCallback) => {
   const url = `${domain}/api/forgotten_password`;
   const request = {
@@ -49,5 +61,5 @@ const newPassword = (token, password, successCallback, errorCallback) => {
   return Api.fetchPromise(url, request, successCallback, errorCallback);
 };
 
-const User = { create, index, forgotPassword, newPassword };
+const User = { create, index, me, forgotPassword, newPassword };
 export default User;
