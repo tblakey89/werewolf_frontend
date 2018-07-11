@@ -8,7 +8,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import TextField from '@material-ui/core/TextField';
-import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -16,7 +15,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
-import User from '../api/user';
+import ContactSelect from './ContactSelect';
 import Conversation from '../api/conversation';
 import ConversationValidation from '../validation/conversationValidation';
 
@@ -33,7 +32,6 @@ const styles = theme => ({
 
 class NewChatDialog extends Component {
   state = {
-    contacts: {},
     conversation: {},
     fields: {
       user_ids: [],
@@ -43,25 +41,12 @@ class NewChatDialog extends Component {
     errored: true,
     submitted: false,
     readyForRedirect: false,
-    _loading: false,
+    _loading: true,
   };
 
-  componentDidMount() {
-    this.setState({_loading: true})
-    User.index((response) => {
-      this.setState({contacts: this.generateContactsObject(response.users), _loading: false});
-    }, (response) => {
-
-    });
+  handleSetLoaded = () => {
+    this.setState({_loading: false})
   }
-
-  generateContactsObject = (users) => {
-    const reducer = (object, user) => {
-      object[user.id] = user
-      return object;
-    };
-    return users.reduce(reducer, {});
-  };
 
   handleMenuChange = event => {
     const fields = {...this.state.fields};
@@ -100,8 +85,8 @@ class NewChatDialog extends Component {
     };
   };
 
-  showFieldError = () => {
-    return this.state.submitted && this.state.fieldErrors.user_ids;
+  showFieldError = (field) => {
+    return this.state.submitted && this.state.fieldErrors[field];
   };
 
   successfulCreateCallback = (response) => {
@@ -112,12 +97,6 @@ class NewChatDialog extends Component {
   errorOnCreateCallback = () => {
 
   };
-
-  renderMenuItems = () => (
-    Object.values(this.state.contacts).map((contact) => (
-      <MenuItem key={contact.id} value={contact.id}>{contact.username}</MenuItem>
-    ))
-  );
 
   render() {
     const { classes, fullScreen } = this.props;
@@ -140,26 +119,12 @@ class NewChatDialog extends Component {
               Please select the participants of this conversation.
             </DialogContentText>
             <form className={classes.container}>
-              <FormControl
-                className={classes.formControl}
-                fullWidth={true}
-                error={!!this.showFieldError()}
-              >
-                <InputLabel htmlFor="vote">Participants</InputLabel>
-                <Select
-                  multiple
-                  value={this.state.fields.participants}
-                  onChange={this.handleMenuChange}
-                  renderValue={selected => selected.map(user_id => this.state.contacts[user_id].username).join(', ')}
-                  input={<Input id="contact" />}
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  { this.renderMenuItems() }
-                </Select>
-                <FormHelperText>{this.showFieldError()}</FormHelperText>
-              </FormControl>
+              <ContactSelect
+                onChange={this.handleMenuChange}
+                participants={this.state.fields.participants}
+                showFieldError={this.showFieldError}
+                setLoaded={this.handleSetLoaded}
+              />
             </form>
           </DialogContent>
           <DialogActions>
