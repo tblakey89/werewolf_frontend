@@ -15,6 +15,7 @@ import Conversation from '../api/conversation';
 import socketConnect from '../sockets/socketConnect';
 import UserChannel from '../sockets/userChannel';
 import ConversationChannel from '../sockets/conversationChannel';
+import GameChannel from '../sockets/gameChannel';
 import history from '../history';
 
 // if the chat page for that username has less than 100 messages
@@ -34,10 +35,15 @@ class ChatContainer extends Component {
     user: {},
     userChannel: null,
     conversations: [],
+    games: [],
+    invitations: [],
     unreadMessageCount: 0,
   };
 
   componentDidMount() {
+    // this react container is getting out of hand,
+    // consider having a pre-formatter for data received from the server via sockets/http
+    // that should reduce the lines of code here
     this.setState({_loading: true})
     User.me((response) => {
       const socket = socketConnect();
@@ -46,6 +52,10 @@ class ChatContainer extends Component {
       const conversations = user.conversations.map((conversation) =>
         this.buildConversationWithChannel(conversation, socket)
       );
+      const games = user.games.map((game) =>
+        this.buildGameWithChannel(game, user, socket)
+      );
+      const invitations = games.filter((game) => game.pending)
       user.conversations = undefined;
 
       this.setState({
@@ -53,6 +63,8 @@ class ChatContainer extends Component {
         user,
         userChannel,
         conversations,
+        games,
+        invitations,
         _loading: false
       });
     }, (response) => {
@@ -119,6 +131,30 @@ class ChatContainer extends Component {
     );
   }
 
+  buildGameWithChannel = (game, user, socket) => (
+    {
+      ...game,
+      pending: game.users_games.some((users_game) => (
+        users_game.user_id === user.id && users_game.state === "pending"
+      )),
+      channel: this.joinGameChannel(socket, game),
+      // unreadMessageCount: 0,
+      // lastMessageAt: this.conversationLastMessageAt(conversation),
+    }
+  );
+
+  joinGameChannel = (socket, game) => (
+    GameChannel.join(socket, game.id, this.updateGameCallback)
+  )
+
+  updateGameCallback = (updatedGame) => {
+    const games = [...this.state.games];
+    const gameIndex = games.findIndex((game) => game.id === updatedGame.id)
+    games[gameIndex] = this.buildGameWithChannel(updatedGame, this.state.user, this.state.socket);
+    const invitations = games.filter((game) => game.pending)
+    this.setState({games, invitations});
+  }
+
   setAsRead = (readConversation) => {
     const { conversations } = this.state;
     const conversation = conversations.find((conversation) => conversation.id === readConversation.id)
@@ -136,8 +172,18 @@ class ChatContainer extends Component {
     }
     return (
       <div>
-        <Header/>
-        <AuthenticatedRoute path='/games' component={Games}/>
+        <Header
+          invitations={this.state.invitations}
+          user={this.state.user}
+          onNotificationOpen={this.props.onNotificationOpen}
+        />
+        <AuthenticatedRoute
+          path='/games'
+          component={Games}
+          games={this.state.games}
+          user={this.state.user}
+          onNotificationOpen={this.props.onNotificationOpen}
+        />
         <AuthenticatedRoute
           path='/chat/:id'
           render={({ match }) => {

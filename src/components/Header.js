@@ -1,12 +1,20 @@
 import React, { Component } from 'react';
 import { Route, Link } from 'react-router-dom';
+import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
+import Badge from '@material-ui/core/Badge';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MailIcon from '@material-ui/icons/MailOutline';
 import BackIcon from '@material-ui/icons/KeyboardArrowLeft';
 import InvitationDialog from './InvitationDialog';
+
+const styles = theme => ({
+  badge: {
+    fontSize: 36
+  }
+});
 
 class Header extends Component {
   state = {
@@ -19,6 +27,21 @@ class Header extends Component {
 
   handleClose = () => {
     this.setState({ open: false });
+  };
+
+  renderIconWithBadge = (badgeNumber, component, props) => {
+    if (badgeNumber === 0) {
+      return (React.createElement(component, {className: this.props.classes.badge}));
+    } else {
+      return (
+        <Badge
+          badgeContent={badgeNumber >= 100 ? '99+' : badgeNumber}
+          color="secondary"
+        >
+          {React.createElement(component, {className: this.props.classes.badge})}
+        </Badge>
+      )
+    }
   };
 
   render() {
@@ -62,7 +85,7 @@ class Header extends Component {
                 color="inherit"
                 onClick={this.handleClickOpen}
               >
-                <MailIcon style={{ fontSize: 36 }} />
+                {this.renderIconWithBadge(this.props.invitations.length, MailIcon)}
               </IconButton>
             </div>
           </Toolbar>
@@ -70,10 +93,13 @@ class Header extends Component {
         <InvitationDialog
           open={this.state.open}
           onClose={this.handleClose}
+          invitations={this.props.invitations}
+          user={this.props.user}
+          onNotificationOpen={this.props.onNotificationOpen}
         />
       </div>
     );
   }
 }
 
-export default Header;
+export default withStyles(styles)(Header);

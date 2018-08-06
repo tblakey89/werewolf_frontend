@@ -15,6 +15,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
+import Invitation from '../api/invitation';
 
 const styles = theme => ({
   button: {
@@ -23,6 +24,46 @@ const styles = theme => ({
 });
 
 class InvitationDialog extends Component {
+  handleClick = (invitation, newInvitationState) => () => {
+    const usersGame = invitation.users_games.find((users_game) => users_game.user_id === this.props.user.id)
+    Invitation.update(usersGame.id, newInvitationState, () => {
+      this.props.onNotificationOpen(`${newInvitationState} invite`)
+    }, () => {
+
+    });
+  }
+
+  renderInvitations = () => (
+    this.props.invitations.map((invitation, index) => (
+      <div key={invitation.id}>
+        <ListItem>
+          <ListItemText onClick={this.props.onClose}>
+            <Link to={`/game`}>{invitation.name}</Link>
+          </ListItemText>
+          <Button
+            mini
+            variant="fab"
+            color="primary"
+            className={this.props.classes.button}
+            onClick={this.handleClick(invitation, 'accepted')}
+          >
+            <TickIcon />
+          </Button>
+          <Button
+            mini
+            variant="fab"
+            color="secondary"
+            className={this.props.classes.button}
+            onClick={this.handleClick(invitation, 'rejected')}
+          >
+            <CrossIcon />
+          </Button>
+        </ListItem>
+        {index !== this.props.invitations.length - 1 && <Divider />}
+      </div>
+    ))
+  );
+
   render() {
     const { fullScreen, classes } = this.props;
 
@@ -37,32 +78,17 @@ class InvitationDialog extends Component {
           {"Invitations"}
         </DialogTitle>
         <List>
+          {this.renderInvitations()}
+          {this.props.invitations.length === 0 && (
             <ListItem>
-              <ListItemText onClick={this.props.onClose}>
-                <Link to={`/game`}>New Game</Link>
+              <ListItemText>
+                No pending invitations
               </ListItemText>
-              <Button mini variant="fab" color="primary" className={classes.button}>
-                <TickIcon />
-              </Button>
-              <Button mini variant="fab" color="secondary" className={classes.button}>
-                <CrossIcon />
-              </Button>
             </ListItem>
-            <Divider />
-            <ListItem>
-              <ListItemText onClick={this.props.onClose}>
-                <Link to={`/game`}>New Werewolf game</Link>
-              </ListItemText>
-              <Button mini variant="fab" color="primary" className={classes.button}>
-                <TickIcon />
-              </Button>
-              <Button mini variant="fab" color="secondary" className={classes.button}>
-                <CrossIcon />
-              </Button>
-            </ListItem>
-          </List>
+          )}
+        </List>
         <DialogActions>
-          <Button onClick={this.props.onClose} color="primary">
+          <Button onClick={this.props.onClose} color="primary" id="close">
             Close
           </Button>
         </DialogActions>

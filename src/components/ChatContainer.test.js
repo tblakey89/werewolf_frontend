@@ -3,11 +3,13 @@ import { shallow } from 'enzyme';
 import User from '../api/user';
 import userChannel from '../sockets/userChannel';
 import conversationChannel from '../sockets/conversationChannel';
+import gameChannel from '../sockets/gameChannel';
 import ChatContainer from './ChatContainer';
 
 jest.mock('../api/user');
 jest.mock('../sockets/userChannel');
 jest.mock('../sockets/conversationChannel');
+jest.mock('../sockets/gameChannel');
 
 describe('ChatContainer', () => {
   let wrapper;
@@ -22,6 +24,7 @@ describe('ChatContainer', () => {
     User.me.mockClear();
     userChannel.join.mockClear();
     conversationChannel.join.mockClear();
+    gameChannel.join.mockClear();
   });
 
   describe('Loads up user\'s account when mounted', () => {
@@ -33,9 +36,11 @@ describe('ChatContainer', () => {
     describe('user state is set on success', () => {
       let userChannelInvocationArgs;
       let conversationChannelInvocationArgs;
+      let gameChannelInvocationArgs;
       let user;
       let conversationOne;
       let conversationTwo;
+      let game;
 
       beforeEach(() => {
         conversationOne = {
@@ -46,10 +51,23 @@ describe('ChatContainer', () => {
           id: 12,
           messages: []
         };
+        game = {
+          id: 1,
+          name: 'test game',
+          users_games: [
+            {
+              user_id: 10,
+              state: 'pending'
+            }
+          ]
+        };
         user = {
           conversations: [
             conversationOne,
             conversationTwo
+          ],
+          games: [
+            game
           ],
           id: 10,
         };
@@ -61,6 +79,7 @@ describe('ChatContainer', () => {
         wrapper.update();
         userChannelInvocationArgs = userChannel.join.mock.calls[0];
         conversationChannelInvocationArgs = conversationChannel.join.mock.calls[0];
+        gameChannelInvocationArgs = gameChannel.join.mock.calls[0];
       });
 
       it('shows no spinner and updates state as necessary', () => {
@@ -69,8 +88,12 @@ describe('ChatContainer', () => {
         expect(userChannelInvocationArgs[1]).toEqual(user.id);
         expect(conversationChannel.join.mock.calls.length).toEqual(2);
         expect(conversationChannelInvocationArgs[1]).toEqual(conversationOne.id);
+        expect(gameChannel.join.mock.calls.length).toEqual(1);
+        expect(gameChannelInvocationArgs[1]).toEqual(game.id);
         expect(wrapper.state().user.id).toEqual(user.id);
         expect(wrapper.state().conversations[0].id).toEqual(conversationOne.id);
+        expect(wrapper.state().games[0].pending).toEqual(true);
+        expect(wrapper.state().invitations.length).toEqual(1);
       });
 
       describe('when a new conversation is created', () => {
@@ -158,6 +181,28 @@ describe('ChatContainer', () => {
             expect(wrapper.state().conversations[0].unreadMessageCount).toEqual(0);
           });
         });
+      });
+
+      describe('when game is updated', () => {
+        beforeEach(() => {
+          const updateGameCallback = gameChannelInvocationArgs[2];
+          updateGameCallback({
+            id: 1,
+            name: 'test game',
+            users_games: [
+              {
+                user_id: 10,
+                state: 'accepted'
+              }
+            ]
+          });
+          wrapper.update();
+        });
+
+        it('replaces the old state of the game with new state and notifies user', () => {
+          expect(wrapper.state().games[0].pending).toEqual(false);
+          expect(wrapper.state().invitations.length).toEqual(0);
+        })
       });
     });
   });

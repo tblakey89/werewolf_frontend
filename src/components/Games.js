@@ -15,6 +15,7 @@ import CrossIcon from '@material-ui/icons/Close';
 import MailIcon from '@material-ui/icons/MailOutline';
 import AddIcon from '@material-ui/icons/Add';
 import NewGameDialog from './NewGameDialog';
+import Invitation from '../api/invitation';
 
 const styles = theme => ({
   button: {
@@ -32,6 +33,15 @@ class Games extends Component {
     open: false
   };
 
+  handleInvitationClick = (game, newInvitationState) => () => {
+    const usersGame = game.users_games.find((users_game) => users_game.user_id === this.props.user.id)
+    Invitation.update(usersGame.id, newInvitationState, () => {
+      this.props.onNotificationOpen(`${newInvitationState} invite`)
+    }, () => {
+
+    });
+  }
+
   handleClickOpen = () => {
     this.setState({ open: true });
   };
@@ -40,50 +50,73 @@ class Games extends Component {
     this.setState({ open: false });
   };
 
+  renderInvite = (game) => (
+    <ListItem button>
+      <Link to={`/game`}><MailIcon style={{ fontSize: 36 }} /></Link>
+      <ListItemText secondary="Accept invite to join">
+        <Link to={`/game`}>Invitation: {game.name}</Link>
+      </ListItemText>
+      <ListItemSecondaryAction>
+        <Button
+          mini
+          variant="fab"
+          color="primary"
+          className={this.props.classes.button}
+          onClick={this.handleInvitationClick(game, 'accepted')}
+        >
+          <TickIcon />
+        </Button>
+        <Button
+          mini
+          variant="fab"
+          color="secondary"
+          className={this.props.classes.button}
+          onClick={this.handleInvitationClick(game, 'rejected')}
+        >
+          <CrossIcon />
+        </Button>
+      </ListItemSecondaryAction>
+    </ListItem>
+  );
+
+  renderIcon = (game) => {
+    if (game.state === 'day') {
+      return (<SunIcon style={{ fontSize: 36 }} />);
+    } else if (game.state === 'night') {
+      return (<MoonIcon style={{ fontSize: 36 }} />);
+    }
+    return (<HourglassIcon style={{ fontSize: 36 }} />);
+  }
+
+  renderGame = (game) => (
+    <ListItem button>
+      {this.renderIcon(game)}
+      <ListItemText primary={game.name} secondary={game.status} />
+    </ListItem>
+  );
+
+  renderGames = () => (
+    this.props.games.map((game) => (
+      <Link to={`/game/${game.id}`} key={game.id}>
+        {game.pending ? this.renderInvite(game) : this.renderGame(game)}
+      </Link>
+    ))
+  );
+
   render() {
     const { classes } = this.props;
 
     return (
       <div>
         <List component="nav">
-          <ListItem button>
-            <Link to={`/game`}><MailIcon style={{ fontSize: 36 }} /></Link>
-            <ListItemText secondary="Accept invite to join">
-              <Link to={`/game`}>Invitation: New Game</Link>
-            </ListItemText>
-            <ListItemSecondaryAction>
-              <Button mini variant="fab" color="primary" className={classes.button}>
-                <TickIcon />
-              </Button>
-              <Button mini variant="fab" color="secondary" className={classes.button}>
-                <CrossIcon />
-              </Button>
-            </ListItemSecondaryAction>
-          </ListItem>
-          <Link to={`/game`}>
-            <ListItem button>
-              <HourglassIcon style={{ fontSize: 36 }} />
-              <ListItemText primary="New Game" secondary="Waiting for players..." />
+          {this.renderGames()}
+          {this.props.games.length === 0 && (
+            <ListItem>
+              <ListItemText
+                primary="Click '+' to add a game."
+              />
             </ListItem>
-          </Link>
-          <Link to={`/game`}>
-            <ListItem button>
-              <SunIcon style={{ fontSize: 36 }} />
-              <ListItemText primary="Thomas Blakey's Game" secondary="Day 3" />
-            </ListItem>
-          </Link>
-          <Link to={`/game`}>
-            <ListItem button>
-              <MoonIcon style={{ fontSize: 36 }} />
-              <ListItemText primary="Werewolf game" secondary="Night 5" />
-            </ListItem>
-          </Link>
-          <Link to={`/game`}>
-            <ListItem button>
-              <SunIcon style={{ fontSize: 36 }} />
-              <ListItemText primary="Teddy Bear Game" secondary="Day 1" />
-            </ListItem>
-          </Link>
+          )}
           <Button variant="fab" className={classes.fab} onClick={this.handleClickOpen}>
             <AddIcon />
           </Button>
@@ -91,6 +124,7 @@ class Games extends Component {
         <NewGameDialog
           open={this.state.open}
           onClose={this.handleClose}
+          onNotificationOpen={this.props.onNotificationOpen}
         />
       </div>
     );
