@@ -18,9 +18,7 @@ import CrossIcon from '@material-ui/icons/Close';
 import MailIcon from '@material-ui/icons/MailOutline';
 import RoleDialog from './RoleDialog';
 import InfoDialog from './InfoDialog';
-
-// maybe users want to chat whilst waiting for it to start
-// display block to get p tag on seperate lines
+import Invitation from '../api/invitation';
 
 const styles = theme => ({
   button: {
@@ -35,6 +33,30 @@ class Game extends Component {
     gameReady: false
   };
 
+  componentDidMount() {
+    this.setMessagesAsRead();
+  }
+
+  componentDidUpdate(prevProps) {
+    this.setMessagesAsRead();
+  }
+
+  setMessagesAsRead = () => {
+    if (!this.props.game) return;
+    if (this.props.game.unreadMessageCount !== 0) {
+      this.props.setAsRead(this.props.game);
+    }
+  }
+
+  handleInviteClick = (newInvitationState) => () => {
+    const usersGame = this.props.game.users_games.find((users_game) => users_game.user_id === this.props.user.id)
+    Invitation.update(usersGame.id, newInvitationState, () => {
+      this.props.onNotificationOpen(`${newInvitationState} invite`)
+    }, () => {
+
+    });
+  }
+
   handleRoleClickOpen = () => {
     this.setState({ roleOpen: true });
   };
@@ -47,80 +69,105 @@ class Game extends Component {
     this.setState({ roleOpen: false, infoOpen: false });
   };
 
+  playerCount = () => (
+    this.props.game.users_games.filter((usersGame) => (
+      usersGame.state === 'accepted' || usersGame.state === 'host'
+    )).length
+  );
+
+  invitationPending = () => {
+    const usersGame = this.props.game.users_games.find((users_game) => users_game.user_id === this.props.user.id)
+    return usersGame.state === 'pending';
+  }
+
+  renderInvite = () => (
+    this.props.game.pending === true && (
+      <List id="invitations">
+        <ListItem>
+          <ListItemText>
+            Accept invite:
+          </ListItemText>
+          <ListItemSecondaryAction>
+            <Button
+              id="accept"
+              mini
+              variant="fab"
+              color="primary"
+              className={this.props.classes.button}
+              onClick={this.handleInviteClick('accepted')}
+            >
+              <TickIcon />
+            </Button>
+            <Button
+              id="reject"
+              mini
+              variant="fab"
+              color="secondary"
+              className={this.props.classes.button}
+              onClick={this.handleInviteClick('rejected')}
+            >
+              <CrossIcon />
+            </Button>
+          </ListItemSecondaryAction>
+        </ListItem>
+      </List>
+    )
+  );
+
+  renderMessages = () => (
+    this.props.game.messages.slice().sort((message_a, message_b) => (
+      message_a.created_at - message_b.created_at
+    )).map((message) => (
+      <ListItem key={message.id}>
+        <Avatar>
+          <AccountCircle style={{ fontSize: 36 }} />
+        </Avatar>
+        <ListItemText
+          primary={message.sender.username}
+          secondary={message.body}
+        />
+      </ListItem>
+    ))
+  );
+
   render() {
     const { classes } = this.props;
 
     return (
       <div>
-        <AppBar position="static" color="default">
-          <Toolbar>
-            <Typography variant="title" color="inherit" style={{flex: 1}}>
-              Thomas Blakey's Game<br/>
-              <span style={{'font-size': 12}}>4 players. 8 minimum. 18 maximum</span>
-            </Typography>
-            <div>
-              <IconButton
-                aria-haspopup="true"
-                color="inherit"
-                onClick={this.handleRoleClickOpen}
-              >
-                <AccountCircle  style={{ fontSize: 36 }} />
-              </IconButton>
-              <IconButton
-                aria-haspopup="true"
-                color="inherit"
-                onClick={this.handleInfoClickOpen}
-              >
-                <InfoIcon style={{ fontSize: 36 }} />
-              </IconButton>
-            </div>
-          </Toolbar>
-        </AppBar>
-        {!this.state.gameReady &&
-          <List>
-            <ListItem>
-              <ListItemText>
-                Accept invite:
-              </ListItemText>
-              <ListItemSecondaryAction>
-                <Button mini variant="fab" color="primary" className={classes.button}>
-                  <TickIcon />
-                </Button>
-                <Button mini variant="fab" color="secondary" className={classes.button}>
-                  <CrossIcon />
-                </Button>
-              </ListItemSecondaryAction>
-            </ListItem>
-          </List> }
-          <List>
-          <ListItem>
-            <Avatar>
-              <AccountCircle style={{ fontSize: 36 }} />
-            </Avatar>
-            <ListItemText
-              primary="Thomas Blakey"
-              secondary="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed risus turpis, sodales sit amet turpis quis, consequat ultricies est. Maecenas bibendum ligula non mattis ultricies. Morbi rutrum nisi erat, eu cursus lectus molestie id. Etiam id tincidunt elit."
-            />
-          </ListItem>
-          <ListItem>
-            <ListItemText
-              primary="Giang Blakey"
-              secondary="Cras nisi dolor, euismod eu dapibus eu, mollis vel lacus. Vestibulum quis massa quis risus consequat euismod at non ipsum. Vestibulum quis porta tellus. Ut vestibulum egestas lacus, ut tincidunt nisi ultrices eget. Suspendisse auctor venenatis arcu et condimentum. Aliquam sed blandit ex. Proin quis neque in odio convallis ullamcorper. Nam posuere tincidunt purus."
-            />
-            <Avatar>
-              <AccountCircle style={{ fontSize: 36 }} />
-            </Avatar>
-          </ListItem>
-          <ListItem>
-            <Avatar>
-              <AccountCircle style={{ fontSize: 36 }} />
-            </Avatar>
-            <ListItemText
-              primary="Teddy Blakey"
-              secondary="Curabitur vel sodales nisi. Maecenas egestas commodo diam."
-            />
-          </ListItem>
-        </List>
+        {this.props.game && (
+          <div>
+            <AppBar position="static" color="default">
+              <Toolbar>
+                <Typography variant="title" color="inherit" style={{flex: 1}}>
+                  {this.props.game.name}
+                  <br/>
+                  <span style={{'font-size': 12}}>{this.playerCount()} players. 8 minimum. 18 maximum</span>
+                </Typography>
+                <div>
+                  <IconButton
+                    aria-haspopup="true"
+                    color="inherit"
+                    onClick={this.handleRoleClickOpen}
+                  >
+                    <AccountCircle  style={{ fontSize: 36 }} />
+                  </IconButton>
+                  <IconButton
+                    aria-haspopup="true"
+                    color="inherit"
+                    onClick={this.handleInfoClickOpen}
+                  >
+                    <InfoIcon style={{ fontSize: 36 }} />
+                  </IconButton>
+                </div>
+              </Toolbar>
+            </AppBar>
+            {this.renderInvite()}
+            <List>
+              {this.renderMessages()}
+            </List>
+          </div>
+        )}
         <RoleDialog
           open={this.state.roleOpen}
           onClose={this.handleClose}

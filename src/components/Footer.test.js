@@ -10,7 +10,11 @@ describe('Footer', () => {
       {id: 1},
       {id: 2},
     ]
-    wrapper = shallow(<Footer conversations={conversations}/>);
+    const games = [
+      {id: 1},
+      {id: 2},
+    ]
+    wrapper = shallow(<Footer conversations={conversations} games={games}/>);
   });
 
   describe('chat/:id renders correct conversation', () => {

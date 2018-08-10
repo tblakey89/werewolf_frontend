@@ -17,9 +17,21 @@ class Footer extends Component {
             return (<ChatInput conversation={conversation} />);
           }}
         />
-        <Route path='/game' component={ChatInput} />
+        <Route
+          path='/game/:id'
+          render={({ match }) => {
+            const game = this.props.games.find((game) =>
+              game.id === parseInt(match.params.id, 10)
+            );
+
+            return (<ChatInput conversation={game} />);
+          }}
+        />
         <Route>
-          <FooterButtons unreadMessageCount={this.props.unreadMessageCount}/>
+          <FooterButtons
+            unreadMessageCount={this.props.unreadMessageCount}
+            unreadGameMessageCount={this.props.unreadGameMessageCount}
+          />
         </Route>
       </Switch>
     );

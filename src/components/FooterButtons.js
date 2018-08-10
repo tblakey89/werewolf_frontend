@@ -40,7 +40,7 @@ class FooterButtons extends Component {
           label="Games"
           component={Link}
           to={`/games`}
-          icon={this.renderIconWithBadge(GamesIcon, 10)}
+          icon={this.renderIconWithBadge(GamesIcon, this.props.unreadGameMessageCount)}
         />
         <BottomNavigationAction
           label="Messages"

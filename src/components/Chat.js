@@ -21,7 +21,7 @@ class Chat extends Component {
     }
   }
 
-  renderConversations = () => {
+  renderMessages = () => {
     const { conversation } = this.props;
     if (!conversation) return [];
     return conversation.messages.slice().sort((message_a, message_b) => (
@@ -42,7 +42,7 @@ class Chat extends Component {
   render() {
     return (
       <List>
-        {this.renderConversations()}
+        {this.renderMessages()}
       </List>
     );
   }

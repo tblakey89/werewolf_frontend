@@ -68,7 +68,7 @@ describe('InvitationDialog', () => {
 
     describe('user clicks on tick icon to accept invite', () => {
       let button;
-      let invitationUpdateInvocationArgs
+      let invitationUpdateInvocationArgs;
 
       beforeEach(() => {
         button = wrapper.find('WithStyles(Button)').first();

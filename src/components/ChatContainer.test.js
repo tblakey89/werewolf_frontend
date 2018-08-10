@@ -59,7 +59,8 @@ describe('ChatContainer', () => {
               user_id: 10,
               state: 'pending'
             }
-          ]
+          ],
+          messages: []
         };
         user = {
           conversations: [
@@ -174,7 +175,7 @@ describe('ChatContainer', () => {
         describe('when setAsRead is called', () => {
           beforeEach(() => {
             const instance = wrapper.instance();
-            instance.setAsRead(conversationOne);
+            instance.setConversationAsRead(conversationOne);
           });
 
           it('sets unread message count to 0', () => {
@@ -194,7 +195,8 @@ describe('ChatContainer', () => {
                 user_id: 10,
                 state: 'accepted'
               }
-            ]
+            ],
+            messages: []
           });
           wrapper.update();
         });
@@ -202,7 +204,63 @@ describe('ChatContainer', () => {
         it('replaces the old state of the game with new state and notifies user', () => {
           expect(wrapper.state().games[0].pending).toEqual(false);
           expect(wrapper.state().invitations.length).toEqual(0);
-        })
+        });
+      });
+
+      describe('when a new game message is received from own account', () => {
+        const createdAt = new Date(2018, 7, 1);
+
+        beforeEach(() => {
+          const newGameMessageCallback = gameChannelInvocationArgs[3];
+          newGameMessageCallback({
+            body: 'test',
+            game_id: game.id,
+            created_at: createdAt,
+            sender: user
+          });
+          wrapper.update();
+        });
+
+        it('adds another message to the first game', () => {
+          expect(wrapper.state().games[0].messages.length).toEqual(1);
+          expect(wrapper.state().games[0].lastMessageAt).toEqual(createdAt);
+          expect(wrapper.state().games[0].unreadMessageCount).toEqual(1);
+          expect(mockNotify.mock.calls.length).toBe(0);
+        });
+
+        describe('when a new game message is received from other account', () => {
+          beforeEach(() => {
+            const newGameMessageCallback = gameChannelInvocationArgs[3];;
+            newGameMessageCallback({
+              body: 'test',
+              game_id: game.id,
+              created_at: new Date(2018, 8, 1),
+              sender: {
+                id: 2,
+                username: 'tester'
+              }
+            });
+            wrapper.update();
+          });
+
+          it('adds another message to the first game', () => {
+            expect(wrapper.state().games[0].messages.length).toEqual(2);
+            expect(wrapper.state().games[0].lastMessageAt).not.toEqual(createdAt);
+            expect(wrapper.state().games[0].unreadMessageCount).toEqual(2);
+            expect(mockNotify.mock.calls.length).toBe(1);
+          });
+        });
+
+        describe('when setAsRead is called', () => {
+          beforeEach(() => {
+            const instance = wrapper.instance();
+            instance.setGameAsRead(game);
+          });
+
+          it('sets unread message count to 0', () => {
+            expect(wrapper.state().games[0].unreadMessageCount).toEqual(0);
+          });
+        });
       });
     });
   });

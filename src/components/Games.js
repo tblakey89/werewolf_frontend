@@ -26,6 +26,9 @@ const styles = theme => ({
     bottom: theme.spacing.unit * 2,
     right: theme.spacing.unit * 2,
   },
+  bold: {
+    'font-weight': 'bold',
+  },
 });
 
 class Games extends Component {
@@ -52,9 +55,9 @@ class Games extends Component {
 
   renderInvite = (game) => (
     <ListItem button>
-      <Link to={`/game`}><MailIcon style={{ fontSize: 36 }} /></Link>
+      <Link to={`/game/${game.id}`}><MailIcon style={{ fontSize: 36 }} /></Link>
       <ListItemText secondary="Accept invite to join">
-        <Link to={`/game`}>Invitation: {game.name}</Link>
+        <Link to={`/game/${game.id}`}>Invitation: {game.name}</Link>
       </ListItemText>
       <ListItemSecondaryAction>
         <Button
@@ -91,7 +94,18 @@ class Games extends Component {
   renderGame = (game) => (
     <ListItem button>
       {this.renderIcon(game)}
-      <ListItemText primary={game.name} secondary={game.status} />
+      <ListItemText
+        primary={
+          <span className={game.unreadMessageCount > 0 ? this.props.classes.bold : ''}>
+            {game.name}
+          </span>
+        }
+        secondary={
+          <span className={game.unreadMessageCount > 0 ? this.props.classes.bold : ''}>
+            {game.status}
+          </span>
+        }
+      />
     </ListItem>
   );
 

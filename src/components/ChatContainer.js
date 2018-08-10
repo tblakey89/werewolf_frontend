@@ -81,11 +81,11 @@ class ChatContainer extends Component {
       ...conversation,
       channel: this.joinConversationChannel(socket, conversation),
       unreadMessageCount: 0,
-      lastMessageAt: this.conversationLastMessageAt(conversation),
+      lastMessageAt: this.lastMessageAt(conversation),
     }
   );
 
-  conversationLastMessageAt = (conversation) => {
+  lastMessageAt = (conversation) => {
     const { messages } = conversation;
     if (messages.length === 0) return undefined;
     return messages.slice(-1)[0].created_at;
@@ -138,13 +138,13 @@ class ChatContainer extends Component {
         users_game.user_id === user.id && users_game.state === "pending"
       )),
       channel: this.joinGameChannel(socket, game),
-      // unreadMessageCount: 0,
-      // lastMessageAt: this.conversationLastMessageAt(conversation),
+      unreadMessageCount: 0,
+      lastMessageAt: this.lastMessageAt(game),
     }
   );
 
   joinGameChannel = (socket, game) => (
-    GameChannel.join(socket, game.id, this.updateGameCallback)
+    GameChannel.join(socket, game.id, this.updateGameCallback, this.newGameMessageCallback)
   )
 
   updateGameCallback = (updatedGame) => {
@@ -155,7 +155,22 @@ class ChatContainer extends Component {
     this.setState({games, invitations});
   }
 
-  setAsRead = (readConversation) => {
+  newGameMessageCallback = (newMessage) => {
+    const games = [...this.state.games];
+    const game = games.find((game) =>
+      game.id === newMessage.game_id
+    );
+
+    game.unreadMessageCount++;
+    game.lastMessageAt = newMessage.created_at;
+    game.messages.push(newMessage);
+
+    this.notifyNewMessage(newMessage);
+
+    this.setState({ games });
+  };
+
+  setConversationAsRead = (readConversation) => {
     const { conversations } = this.state;
     const conversation = conversations.find((conversation) => conversation.id === readConversation.id)
 
@@ -163,6 +178,17 @@ class ChatContainer extends Component {
 
     this.setState({
       conversations
+    });
+  };
+
+  setGameAsRead = (readGame) => {
+    const { games } = this.state;
+    const game = games.find((game) => game.id === readGame.id)
+
+    game.unreadMessageCount = 0;
+
+    this.setState({
+      games
     });
   };
 
@@ -185,6 +211,22 @@ class ChatContainer extends Component {
           onNotificationOpen={this.props.onNotificationOpen}
         />
         <AuthenticatedRoute
+          path='/game/:id'
+          render={({ match }) => {
+            const game = this.state.games.find((game) =>
+              game.id === parseInt(match.params.id, 10)
+            );
+            return (
+              <Game
+                game={game}
+                setAsRead={this.setGameAsRead}
+                user={this.state.user}
+                onNotificationOpen={this.props.onNotificationOpen}
+              />
+            );
+          }}
+        />
+        <AuthenticatedRoute
           path='/chat/:id'
           render={({ match }) => {
             const conversation = this.state.conversations.find((conversation) =>
@@ -193,7 +235,7 @@ class ChatContainer extends Component {
             return (
               <Chat
                 conversation={conversation}
-                setAsRead={this.setAsRead}
+                setAsRead={this.setConversationAsRead}
               />
             );
           }}
@@ -208,11 +250,14 @@ class ChatContainer extends Component {
         />
         <AuthenticatedRoute path='/contacts' component={Contacts}/>
         <AuthenticatedRoute path='/settings' component={Settings}/>
-        <AuthenticatedRoute path='/game' component={Game}/>
         <Footer
           conversations={this.state.conversations}
+          games={this.state.games}
           unreadMessageCount={this.state.conversations.reduce((sum, conversation) => (
             sum + conversation.unreadMessageCount
+          ), 0)}
+          unreadGameMessageCount={this.state.games.reduce((sum, game) => (
+            sum + game.unreadMessageCount
           ), 0)}
         />
       </div>
