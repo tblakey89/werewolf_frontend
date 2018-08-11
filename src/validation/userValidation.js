@@ -11,6 +11,15 @@ const checkErrors = (name) => {
   }
 };
 
+const checkUpdateErrors = (name) => {
+  switch (name) {
+    case 'password':
+      return passwordUpdateValidation;
+    default:
+      return () => {return false};
+  }
+};
+
 const usernameValidation = (username) => {
   if (username) {
     if (username.length < 4) return "Username too short. Minimum 4 characters.";
@@ -41,5 +50,13 @@ const passwordValidation = (password) => {
   }
 }
 
-const UserValidation = { checkErrors };
+const passwordUpdateValidation = (password) => {
+  if (password) {
+    if (password.length < 8) return "Password too short. Minimum 8 characters.";
+    if (password.length > 100) return "Password too long. Maximum 100 characters";
+    return false;
+  }
+}
+
+const UserValidation = { checkErrors, checkUpdateErrors };
 export default UserValidation;

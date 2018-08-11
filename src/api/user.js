@@ -25,6 +25,19 @@ const index = (successCallback, errorCallback) => {
   return Api.fetchPromise(url, request, successCallback, errorCallback);
 };
 
+const update = (id, userAttrs, successCallback, errorCallback) => {
+  const url = `${domain}/api/users/${id}`;
+  const request =  {
+    method: 'put',
+    headers: {
+      'content-type': 'application/json',
+      'Authorization': `Bearer: ${localStorage.getItem('jwt')}`
+    },
+    body: JSON.stringify({user: userAttrs})
+  };
+  return Api.fetchPromise(url, request, successCallback, errorCallback);
+};
+
 const me = (successCallback, errorCallback) => {
   const url = `${domain}/api/me`;
   const request =  {
@@ -61,5 +74,5 @@ const newPassword = (token, password, successCallback, errorCallback) => {
   return Api.fetchPromise(url, request, successCallback, errorCallback);
 };
 
-const User = { create, index, me, forgotPassword, newPassword };
+const User = { create, index, update, me, forgotPassword, newPassword };
 export default User;

@@ -249,7 +249,12 @@ class ChatContainer extends Component {
           onNotificationOpen={this.props.onNotificationOpen}
         />
         <AuthenticatedRoute path='/contacts' component={Contacts}/>
-        <AuthenticatedRoute path='/settings' component={Settings}/>
+        <AuthenticatedRoute
+          path='/settings'
+          user={this.state.user}
+          onNotificationOpen={this.props.onNotificationOpen}
+          component={Settings}
+        />
         <Footer
           conversations={this.state.conversations}
           games={this.state.games}
