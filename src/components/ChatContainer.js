@@ -18,16 +18,6 @@ import ConversationChannel from '../sockets/conversationChannel';
 import GameChannel from '../sockets/gameChannel';
 import history from '../history';
 
-// if the chat page for that username has less than 100 messages
-// then get 100 messages from the server, where message.date > last_message.date limit 100
-// we need a way to mark the very first message in a conversation, don't get more if first
-// message
-
-// Do not need to pass functions from here to chat, as websockets send message back here
-
-// should probably use join like in book or handle_info for sending previous conversations
-// callback for receiving invitation
-
 class ChatContainer extends Component {
   state = {
     _loading: false,
@@ -73,7 +63,7 @@ class ChatContainer extends Component {
   }
 
   joinUserChannel = (socket, user) => (
-    UserChannel.join(socket, user.id, this.newConversationCallback)
+    UserChannel.join(socket, user.id, this.newConversationCallback, this.newGameCallback)
   );
 
   buildConversationWithChannel = (conversation, socket) => (
@@ -190,6 +180,13 @@ class ChatContainer extends Component {
     this.setState({
       games
     });
+  };
+
+  newGameCallback = (newGame) => {
+    const game = this.buildGameWithChannel(newGame, this.state.user, this.state.socket);
+    const { games } = this.state;
+    this.props.onNotificationOpen(`You have been invited to ${game.name}`);
+    this.setState({games: [...games, game]});
   };
 
   render() {

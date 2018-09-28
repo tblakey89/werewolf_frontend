@@ -128,6 +128,28 @@ describe('ChatContainer', () => {
         });
       });
 
+      describe('when a new game is created', () => {
+        beforeEach(() => {
+          const newGameCallback = userChannelInvocationArgs[3];
+          newGameCallback({
+            id: 2,
+            name: 'test game 2',
+            users_games: [
+              {
+                user_id: 10,
+                state: 'pending'
+              }
+            ],
+            messages: []
+          });
+          wrapper.update();
+        });
+
+        it('adds another game to the state', () => {
+          expect(wrapper.state().games.length).toEqual(2);
+        });
+      });
+
       describe('when a new message is received from own account', () => {
         const createdAt = new Date(2018, 7, 1);
 
