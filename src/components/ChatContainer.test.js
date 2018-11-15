@@ -208,7 +208,7 @@ describe('ChatContainer', () => {
 
       describe('when game is updated', () => {
         beforeEach(() => {
-          const updateGameCallback = gameChannelInvocationArgs[2];
+          const updateGameCallback = userChannelInvocationArgs[4];
           updateGameCallback({
             id: 1,
             name: 'test game',
@@ -233,7 +233,7 @@ describe('ChatContainer', () => {
         const createdAt = new Date(2018, 7, 1);
 
         beforeEach(() => {
-          const newGameMessageCallback = gameChannelInvocationArgs[3];
+          const newGameMessageCallback = gameChannelInvocationArgs[2];
           newGameMessageCallback({
             body: 'test',
             game_id: game.id,
@@ -252,7 +252,7 @@ describe('ChatContainer', () => {
 
         describe('when a new game message is received from other account', () => {
           beforeEach(() => {
-            const newGameMessageCallback = gameChannelInvocationArgs[3];;
+            const newGameMessageCallback = gameChannelInvocationArgs[2];
             newGameMessageCallback({
               body: 'test',
               game_id: game.id,

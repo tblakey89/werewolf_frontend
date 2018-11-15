@@ -63,7 +63,14 @@ class ChatContainer extends Component {
   }
 
   joinUserChannel = (socket, user) => (
-    UserChannel.join(socket, user.id, this.newConversationCallback, this.newGameCallback)
+    UserChannel.join(
+      socket,
+      user.id,
+      this.newConversationCallback,
+      this.newGameCallback,
+      this.updateGameCallback,
+      this.updateGameStateCallback
+    )
   );
 
   buildConversationWithChannel = (conversation, socket) => (
@@ -134,7 +141,7 @@ class ChatContainer extends Component {
   );
 
   joinGameChannel = (socket, game) => (
-    GameChannel.join(socket, game.id, this.updateGameCallback, this.newGameMessageCallback)
+    GameChannel.join(socket, game.id, this.newGameMessageCallback)
   )
 
   updateGameCallback = (updatedGame) => {
@@ -143,7 +150,14 @@ class ChatContainer extends Component {
     games[gameIndex] = this.buildGameWithChannel(updatedGame, this.state.user, this.state.socket);
     const invitations = games.filter((game) => game.pending)
     this.setState({games, invitations});
-  }
+  };
+
+  updateGameStateCallback = (updatedState) => {
+    const games = [...this.state.games];
+    const gameIndex = games.findIndex((game) => game.id === updatedState.id)
+    games[gameIndex] = {...games[gameIndex], state: updatedState};
+    this.setState({games});
+  };
 
   newGameMessageCallback = (newMessage) => {
     const games = [...this.state.games];

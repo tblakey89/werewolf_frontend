@@ -15,6 +15,35 @@ import withMobileDialog from '@material-ui/core/withMobileDialog';
 // shows joined/pending/denied status of players if yet to begin
 
 class InfoDialog extends Component {
+  state = {
+    users: {}
+  };
+
+  playerDisplay = (player) => {
+    const usersGame = this.props.users[player.id];
+    if (this.props.gameState === 'initialized') {
+      return usersGame.state;
+    } else {
+      return `${player.alive ? 'Alive' : 'Dead'}, Role: ${player.role}`
+    }
+  };
+
+  renderUsers = () => (
+    Object.values(this.props.players).map((player, index) => (
+      <div key={player.id}>
+        {this.props.users[player.id] &&
+          <ListItem button>
+            <ListItemText
+              primary={this.props.users[player.id].user.username}
+              secondary={this.playerDisplay(player)}
+            />
+          </ListItem>
+        }
+        {index !== this.props.players.length - 1 && <Divider />}
+      </div>
+    ))
+  )
+
   render() {
     const { fullScreen } = this.props;
 
@@ -30,20 +59,10 @@ class InfoDialog extends Component {
           {"Game Info"}
         </DialogTitle>
         <List>
-            <ListItem button>
-              <ListItemText primary="Thomas Blakey" secondary="Dead Role: Werewolf" />
-            </ListItem>
-            <Divider />
-            <ListItem button>
-              <ListItemText primary="Giang Blakey" secondary="Alive" />
-            </ListItem>
-            <Divider />
-            <ListItem button>
-              <ListItemText primary="Teddy Blakey" secondary="Alive" />
-            </ListItem>
-          </List>
+          {this.renderUsers()}
+        </List>
         <DialogActions>
-          <Button onClick={this.props.onClose} color="primary">
+          <Button onClick={this.props.onClose} color="primary" id="close">
             Close
           </Button>
         </DialogActions>

@@ -104,7 +104,7 @@ class NewGameDialog extends Component {
   };
 
   successfulCreateCallback = (response) => {
-    this.setState({readyForRedirect: true, game: response.game});
+    this.setState({readyForRedirect: true, game: response});
     this.props.onNotificationOpen('Started new game.')
   };
 

@@ -34,6 +34,7 @@ class Game extends Component {
   };
 
   componentDidMount() {
+    this.setUsers(this.props);
     this.setMessagesAsRead();
   }
 
@@ -41,11 +42,24 @@ class Game extends Component {
     this.setMessagesAsRead();
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setUsers(nextProps);
+  }
+
   setMessagesAsRead = () => {
     if (!this.props.game) return;
     if (this.props.game.unreadMessageCount !== 0) {
       this.props.setAsRead(this.props.game);
     }
+  }
+
+  setUsers = (props) => {
+    if (!this.props.game) return;
+    const users = this.props.game.users_games.reduce((userObject, usersGame) => {
+      userObject[usersGame.user_id] = {...usersGame};
+      return userObject;
+    }, {});
+    this.setState({users});
   }
 
   handleInviteClick = (newInvitationState) => () => {
@@ -79,6 +93,13 @@ class Game extends Component {
     const usersGame = this.props.game.users_games.find((users_game) => users_game.user_id === this.props.user.id)
     return usersGame.state === 'pending';
   }
+
+  displayRoleIcon = () => {
+    if (['day_phase', 'night_phase', 'ready', 'game_over'].includes(this.props.game.state.state)) {
+      return true;
+    }
+    return false;
+  };
 
   renderInvite = () => (
     this.props.game.pending === true && (
@@ -145,13 +166,15 @@ class Game extends Component {
                   <span style={{'font-size': 12}}>{this.playerCount()} players. 8 minimum. 18 maximum</span>
                 </Typography>
                 <div>
-                  <IconButton
-                    aria-haspopup="true"
-                    color="inherit"
-                    onClick={this.handleRoleClickOpen}
-                  >
-                    <AccountCircle  style={{ fontSize: 36 }} />
-                  </IconButton>
+                  {this.displayRoleIcon() &&
+                    <IconButton
+                      aria-haspopup="true"
+                      color="inherit"
+                      onClick={this.handleRoleClickOpen}
+                    >
+                      <AccountCircle  style={{ fontSize: 36 }} />
+                    </IconButton>
+                  }
                   <IconButton
                     aria-haspopup="true"
                     color="inherit"
@@ -166,16 +189,24 @@ class Game extends Component {
             <List>
               {this.renderMessages()}
             </List>
+            <RoleDialog
+              open={this.state.roleOpen}
+              onClose={this.handleClose}
+              gameState={this.props.game.state.state}
+              players={this.props.game.state.players}
+              user={this.props.user}
+              users={this.state.users}
+            />
+            <InfoDialog
+              open={this.state.infoOpen}
+              onClose={this.handleClose}
+              gameState={this.props.game.state.state}
+              players={this.props.game.state.players}
+              user={this.props.user}
+              users={this.state.users}
+            />
           </div>
         )}
-        <RoleDialog
-          open={this.state.roleOpen}
-          onClose={this.handleClose}
-        />
-        <InfoDialog
-          open={this.state.infoOpen}
-          onClose={this.handleClose}
-        />
       </div>
     );
   }

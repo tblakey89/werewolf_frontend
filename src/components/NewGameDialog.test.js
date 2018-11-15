@@ -109,9 +109,7 @@ describe('NewGameDialog', () => {
                 id: 10,
                 name: gameName,
               };
-              successCallback({
-                game: game,
-              });
+              successCallback({...game});
               wrapper.update();
             });
 

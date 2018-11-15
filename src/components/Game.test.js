@@ -48,6 +48,7 @@ describe('Game', () => {
         }
       ],
       unreadMessageCount: 0,
+      state: {},
     };
     mockSetAsRead = jest.fn();
     wrapper = shallow(shallow(<Game setAsRead={mockSetAsRead} game={game} user={user} onNotificationOpen={mockNotify} />).get(0));
