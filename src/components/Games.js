@@ -53,6 +53,12 @@ class Games extends Component {
     this.setState({ open: false });
   };
 
+  gameStatus = (game) => {
+    // This should show different things, like state of game
+    // filter out rejected, and pending invites, etc
+    return `${game.users_games.length} players`;
+  };
+
   renderInvite = (game) => (
     <ListItem button>
       <Link to={`/game/${game.id}`}><MailIcon style={{ fontSize: 36 }} /></Link>
@@ -102,7 +108,7 @@ class Games extends Component {
         }
         secondary={
           <span className={game.unreadMessageCount > 0 ? this.props.classes.bold : ''}>
-            {game.status}
+            {this.gameStatus(game)}
           </span>
         }
       />

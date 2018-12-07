@@ -20,6 +20,8 @@ import RoleDialog from './RoleDialog';
 import InfoDialog from './InfoDialog';
 import Invitation from '../api/invitation';
 
+// should split out all the extra code, like invite, launch button, etc
+
 const styles = theme => ({
   button: {
     margin: theme.spacing.unit,
@@ -83,6 +85,10 @@ class Game extends Component {
     this.setState({ roleOpen: false, infoOpen: false });
   };
 
+  handleLaunchGame = () => {
+    const response = this.props.game.channel.push('launch_game');
+  };
+
   playerCount = () => (
     this.props.game.users_games.filter((usersGame) => (
       usersGame.state === 'accepted' || usersGame.state === 'host'
@@ -100,6 +106,29 @@ class Game extends Component {
     }
     return false;
   };
+
+  showLaunchButton = () => {
+    if (this.props.game.state.state !== 'ready') return false;
+    const currentPlayer = this.props.game.state.players[this.props.user.id]
+    if (currentPlayer && currentPlayer.host) return true;
+    return false;
+  };
+
+  renderLaunchButton = () => (
+    this.showLaunchButton() && (
+      <AppBar position="static" color="default">
+        <Button
+          variant="raised"
+          color="primary"
+          className={this.props.classes.button}
+          onClick={this.handleLaunchGame}
+          id="launchButton"
+        >
+          Launch
+        </Button>
+      </AppBar>
+    )
+  );
 
   renderInvite = () => (
     this.props.game.pending === true && (
@@ -185,6 +214,7 @@ class Game extends Component {
                 </div>
               </Toolbar>
             </AppBar>
+            {this.renderLaunchButton()}
             {this.renderInvite()}
             <List>
               {this.renderMessages()}

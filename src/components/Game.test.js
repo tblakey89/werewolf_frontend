@@ -11,14 +11,19 @@ describe('Game', () => {
   let mockNotify;
   let user;
   let game;
+  let channelPush;
 
   beforeEach(() => {
+    channelPush = jest.fn();
     user = {
       id: 1,
     };
     game = {
       id: 10,
       pending: false,
+      channel: {
+        push: channelPush,
+      },
       messages: [
         {
           id: 1,
@@ -48,7 +53,23 @@ describe('Game', () => {
         }
       ],
       unreadMessageCount: 0,
-      state: {},
+      state: {
+        state: 'initialized',
+        players: {
+          1: {
+            alive: true,
+            id: 1,
+            role: 'villager',
+            host: true,
+          },
+          2: {
+            alive: true,
+            id: 2,
+            role: 'none',
+            host: false,
+          }
+        }
+      },
     };
     mockSetAsRead = jest.fn();
     wrapper = shallow(shallow(<Game setAsRead={mockSetAsRead} game={game} user={user} onNotificationOpen={mockNotify} />).get(0));
@@ -57,6 +78,7 @@ describe('Game', () => {
   afterEach(() => {
     mockNotify = jest.fn();
     Invitation.update.mockClear();
+    channelPush.mockClear();
   });
 
   describe('loads up component', () => {
@@ -69,6 +91,45 @@ describe('Game', () => {
 
     it('does not call setAsUnread function', () => {
       expect(mockSetAsRead.mock.calls.length).toBe(0);
+    });
+  });
+
+  describe('launch button', () => {
+    describe('when game state is not ready and user is host', () => {
+      it('launch button is not displayed', () => {
+        expect(wrapper.find('#launchButton').length).toEqual(0);
+      });
+    });
+
+    describe('when game state is ready', () => {
+      beforeEach(() => {
+        const stateCopy = { ...game.state, state: 'ready' };
+        const gameCopy = { ...game, state: stateCopy };
+        wrapper.setProps({ game: gameCopy });
+      });
+
+      describe('when user is host of game', () => {
+        it('launch button is displayed', () => {
+          expect(wrapper.find('#launchButton').length).toEqual(1);
+        });
+
+        it('pushes to the server when clicked', () => {
+          const launchButton = wrapper.find('#launchButton')
+          launchButton.simulate('click');
+          expect(channelPush.mock.calls.length).toEqual(1);
+        });
+      });
+
+      describe('when user is not host of game', () => {
+        beforeEach(() => {
+          const otherUser = {id: 2};
+          wrapper.setProps({ user: otherUser });
+        });
+
+        it('launch button is not displayed', () => {
+          expect(wrapper.find('#launchButton').length).toEqual(0);
+        });
+      });
     });
   });
 
