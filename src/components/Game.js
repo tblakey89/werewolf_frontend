@@ -20,6 +20,16 @@ import RoleDialog from './RoleDialog';
 import InfoDialog from './InfoDialog';
 import Invitation from '../api/invitation';
 
+// do messages from server on end of phase events, and start and end game
+// game should work fully at this point
+// add ability to accept invite via link
+// add ability to have friends, send friend requests?
+
+// when stuck with concurrency, comment out the tasks
+
+// careful about timer, we need to restart timer on game restart,
+// make new timer on game restart
+
 // should split out all the extra code, like invite, launch button, etc
 
 const styles = theme => ({
@@ -110,8 +120,7 @@ class Game extends Component {
   showLaunchButton = () => {
     if (this.props.game.state.state !== 'ready') return false;
     const currentPlayer = this.props.game.state.players[this.props.user.id]
-    if (currentPlayer && currentPlayer.host) return true;
-    return false;
+    return currentPlayer && currentPlayer.host;
   };
 
   renderLaunchButton = () => (
@@ -222,8 +231,7 @@ class Game extends Component {
             <RoleDialog
               open={this.state.roleOpen}
               onClose={this.handleClose}
-              gameState={this.props.game.state.state}
-              players={this.props.game.state.players}
+              game={this.props.game}
               user={this.props.user}
               users={this.state.users}
             />

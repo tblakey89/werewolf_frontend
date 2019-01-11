@@ -12,7 +12,9 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
+import VoteValidation from '../validation/voteValidation';
 
 // Need to do code for voting for a user
 // Need to test submitting vote
@@ -30,7 +32,13 @@ const styles = theme => ({
 
 class RoleDialog extends Component {
   state = {
-    vote: ''
+    fields: {
+      vote: undefined,
+    },
+    fieldErrors: {},
+    errored: true,
+    serverErrored: false,
+    submitted: false,
   };
 
   componentDidMount() {
@@ -42,30 +50,75 @@ class RoleDialog extends Component {
   }
 
   setPlayer = (props) => {
-    this.setState({player: props.players[props.user.id]});
+    this.setState({player: props.game.state.players[props.user.id]});
   };
 
   handleChange = name => event => {
-    this.setState({ [name]: event.target.value });
+    const fields = {...this.state.fields};
+    const fieldErrors = {...this.state.fieldErrors};
+
+    fields[name] = event.target.value;
+    fieldErrors[name] = VoteValidation.checkErrors('vote', event.target.value);
+    const errored = this.isErrored(fieldErrors);
+
+    this.setState({ fields, fieldErrors, errored });
+  };
+
+  handleVote = (event) => {
+    const fieldErrors = this.getFieldErrors();
+    const submitted = true;
+    const errored = !!fieldErrors.vote;
+    this.setState({ fieldErrors, errored, submitted }, () => {
+      if (!errored) {
+        this.props.game.channel.push('action', {action_type: 'vote', target: this.state.fields.vote})
+          .receive("ok", (msg) => console.log("action successful", msg) )
+          .receive("error", (reasons) => console.log("action failed", reasons) );
+        this.props.onClose();
+      }
+    });
+  };
+
+  isErrored = (fieldErrors) => {
+    return Object.keys(fieldErrors).some((key) => {
+      return fieldErrors[key];
+    });
+  };
+
+  getFieldErrors = () => {
+    return {
+      vote: VoteValidation.checkErrors('vote', this.state.fields.vote)
+    };
+  };
+
+  showFieldError = (name) => {
+    return this.state.submitted && this.state.fieldErrors[name];
   };
 
   eligibleToVote = () => {
-    if (!this.props.players[this.props.user.id].alive) return false;
-    if (this.props.gameState === 'night_phase' && this.props.players[this.props.user.id].role === 'werewolf') {
+    if (!this.props.game.state.players[this.props.user.id].alive) return false;
+    if (this.alreadyVoted()) return false;
+    if (this.props.game.state.state === 'night_phase' && this.props.game.state.players[this.props.user.id].role === 'werewolf') {
       return true;
     }
-    if (this.props.gameState === 'day_phase') return true;
+    if (this.props.game.state.state === 'day_phase') return true;
     return false;
   };
+
+  alreadyVoted = () => {
+    const phaseNumber = this.props.game.state.phases;
+    const phase = this.props.game.state.players[this.props.user.id].actions[phaseNumber];
+    if (!phase) return false;
+    return !!phase['vote'];
+  }
 
   eligibleVoteCandidates = () => {
     const reducer = (accumulator, player) => {
       if (player.id === this.props.user.id) return accumulator;
-      if (this.props.gameState === 'night_phase' && player.role === 'werewolf') return accumulator;
+      if (this.props.game.state.state === 'night_phase' && player.role === 'werewolf') return accumulator;
       accumulator.push(player);
       return accumulator;
     };
-    return Object.values(this.props.players).reduce(reducer, []);
+    return Object.values(this.props.game.state.players).reduce(reducer, []);
   }
 
   roleText = () => {
@@ -75,18 +128,30 @@ class RoleDialog extends Component {
       case 'villager':
         return 'You are a villager, you need to ensure no werewolves remain to win the game.';
       case 'werewolf':
-        return 'You are a werewolf, you need to outnumber the willagers to win the game.';
+        return 'You are a werewolf, you need to outnumber the villagers to win the game.';
     }
+  }
+
+  actionText = () => {
+    if (!this.alreadyVoted()) return;
+    const phaseNumber = this.props.game.state.phases;
+    const action = this.props.game.state.players[this.props.user.id].actions[phaseNumber]['vote'];
+    const target = this.props.users[action.target].user.username;
+    return `You voted for ${target}`;
   }
 
   renderVotingForm = () => {
     if (!this.eligibleToVote()) return;
     return (
-      <form className={this.props.classes.container}>
-        <FormControl className={this.props.classes.formControl} fullWidth={true}>
+      <form className={this.props.classes.container} onSubmit={this.onFormSubmit}>
+        <FormControl
+          className={this.props.classes.formControl}
+          fullWidth={true}
+          error={!!this.showFieldError('vote')}
+        >
           <InputLabel>Vote</InputLabel>
           <Select
-            value={this.state.vote}
+            value={this.state.fields.vote}
             onChange={this.handleChange('vote')}
             input={<Input id="vote" />}
           >
@@ -97,6 +162,7 @@ class RoleDialog extends Component {
               <MenuItem value={player.id} key={player.id}>{this.props.users[player.id].user.username}</MenuItem>
             ))}
           </Select>
+          <FormHelperText>{this.showFieldError('vote')}</FormHelperText>
         </FormControl>
       </form>
     );
@@ -120,7 +186,8 @@ class RoleDialog extends Component {
             </DialogTitle>
             <DialogContent>
               <DialogContentText>
-                {this.roleText()}
+                <p>{this.roleText()}</p>
+                <p>{this.actionText()}</p>
               </DialogContentText>
               {this.renderVotingForm()}
             </DialogContent>
@@ -129,7 +196,7 @@ class RoleDialog extends Component {
                 Cancel
               </Button>
               {this.eligibleToVote() &&
-                <Button onClick={this.props.onClose} color="primary">
+                <Button onClick={this.handleVote} color="primary">
                   Vote
                 </Button>
               }
