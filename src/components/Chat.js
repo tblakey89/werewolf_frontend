@@ -22,6 +22,7 @@ class Chat extends Component {
   }
 
   renderMessages = () => {
+    // assuming no bot message will be sent here
     const { conversation } = this.props;
     if (!conversation) return [];
     return conversation.messages.slice().sort((message_a, message_b) => (

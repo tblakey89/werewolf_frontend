@@ -20,15 +20,30 @@ import RoleDialog from './RoleDialog';
 import InfoDialog from './InfoDialog';
 import Invitation from '../api/invitation';
 
-// do messages from server on end of phase events, and start and end game
-// game should work fully at this point
+// refactor to move all user, game, conversation objects out of the chat container
+
+// game should work fully at this point (don't forget to change icons based on game state)
+// -> hunt for bugs, then fix them
+// -> does not remove self when creating new game
+// -> Cannot add more people to game after creation (add edit icon next to other icons)
+// -> host is sent invite after game creation
+// -> bot message did not bold and show as a new message
+// -> does not show invited users on game infodialog
+// -> when user joins game, show game name
+// -> hide min max players after game launch, instead show current phase
+// -> other werewolf shows up in list of options for werewolf in night phase
+// -> highlight role dialog with badge when pending action, or launch of game
+// -> need to update icon based on phase of the game
+// -> CSS issues, like bar always fixed to bottom
+// -> phase number in announcement needs to be integer
+// -> dead players show as option on dropdowns
+// -> users role not revealed after night phase
+// add abiity to add avatar image
+// deploy game somewhere
 // add ability to accept invite via link
 // add ability to have friends, send friend requests?
 
 // when stuck with concurrency, comment out the tasks
-
-// careful about timer, we need to restart timer on game restart,
-// make new timer on game restart
 
 // should split out all the extra code, like invite, launch button, etc
 
@@ -182,7 +197,7 @@ class Game extends Component {
           <AccountCircle style={{ fontSize: 36 }} />
         </Avatar>
         <ListItemText
-          primary={message.sender.username}
+          primary={message.bot ? "bot" : message.sender.username}
           secondary={message.body}
         />
       </ListItem>

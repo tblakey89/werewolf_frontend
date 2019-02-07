@@ -31,7 +31,7 @@ class InfoDialog extends Component {
   renderUsers = () => (
     Object.values(this.props.players).map((player, index) => (
       <div key={player.id}>
-        {this.props.users[player.id] &&
+        {this.props.users && this.props.users[player.id] &&
           <ListItem button>
             <ListItemText
               primary={this.props.users[player.id].user.username}

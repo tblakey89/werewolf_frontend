@@ -122,10 +122,14 @@ class ChatContainer extends Component {
   };
 
   notifyNewMessage = (message) => {
-    if (message.sender.id === this.state.user.id) return;
-    this.props.onNotificationOpen(
-      `${message.sender.username}: ${message.body}`
-    );
+    if (message.bot) {
+      this.props.onNotificationOpen(`${message.body}`);
+    } else {
+      if (message.sender.id === this.state.user.id) return;
+      this.props.onNotificationOpen(
+        `${message.sender.username}: ${message.body}`
+      );
+    }
   }
 
   buildGameWithChannel = (game, user, socket) => (

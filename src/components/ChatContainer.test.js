@@ -273,6 +273,27 @@ describe('ChatContainer', () => {
           });
         });
 
+        describe('when a new game message is received from bot', () => {
+          let botMessage = 'test';
+          beforeEach(() => {
+            const newGameMessageCallback = gameChannelInvocationArgs[2];
+            newGameMessageCallback({
+              body: botMessage,
+              game_id: game.id,
+              created_at: new Date(2018, 8, 1),
+              bot: true
+            });
+            wrapper.update();
+          });
+
+          it('adds another message to the first game', () => {
+            expect(wrapper.state().games[0].messages.length).toEqual(2);
+            expect(wrapper.state().games[0].lastMessageAt).not.toEqual(createdAt);
+            expect(wrapper.state().games[0].unreadMessageCount).toEqual(2);
+            expect(mockNotify.mock.calls.length).toBe(1);
+          });
+        });
+
         describe('when setAsRead is called', () => {
           beforeEach(() => {
             const instance = wrapper.instance();
