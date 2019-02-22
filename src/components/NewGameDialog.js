@@ -151,6 +151,8 @@ class NewGameDialog extends Component {
                 participants={this.state.fields.participants}
                 showFieldError={this.showFieldError}
                 setLoaded={this.handleSetLoaded}
+                userId={this.props.userId}
+                currentParticipantIds={[]}
               />
             </form>
           </DialogContent>
@@ -171,7 +173,8 @@ class NewGameDialog extends Component {
 NewGameDialog.propTypes = {
   fullScreen: PropTypes.bool.isRequired,
   open: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired
+  onClose: PropTypes.func.isRequired,
+  userId: PropTypes.number.isRequired,
 };
 
 export default withMobileDialog()(withStyles(styles)(NewGameDialog));

@@ -55,7 +55,7 @@ class ChatInput extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <BottomNavigation style={{'background-color': '#3f51b5'}}>
+      <BottomNavigation style={{'background-color': '#3f51b5', position: "fixed", bottom:"0", width:"100%"}}>
         <Grid container spacing={24} alignItems={'center'}>
           <Grid item xs={10}>
             <form onSubmit={this.handleFormSubmit}>

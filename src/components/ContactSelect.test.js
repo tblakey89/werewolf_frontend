@@ -44,10 +44,11 @@ describe('ContactSelect', () => {
     describe('loads users on callback', () => {
       let userInvocationArgs;
       let user;
+      let successCallback;
 
       beforeEach(() => {
         userInvocationArgs = User.index.mock.calls[0];
-        const successCallback = userInvocationArgs[0];
+        successCallback = userInvocationArgs[0];
         user = {
           id: 1,
           username: 'test',
@@ -61,6 +62,36 @@ describe('ContactSelect', () => {
         expect(Object.keys(contacts).length).toEqual(1);
         expect(contacts[user.id]).toEqual(user);
         expect(mockSetLoaded.mock.calls.length).toEqual(1);
+      });
+
+      describe('when user is already a participant', () => {
+        let userTwo;
+
+        beforeEach(() => {
+          const participantsIds = [user.id];
+          wrapper = shallow(shallow(
+            <ContactSelect
+              participants={participants}
+              onChange={mockOnChange}
+              showFieldError={mockShowFieldError}
+              setLoaded={mockSetLoaded}
+              currentParticipantIds={participantsIds}
+            />
+          ).get(0));
+          userTwo = {
+            id: 2,
+            username: 'test2',
+          };
+          userInvocationArgs = User.index.mock.calls[1];
+          successCallback = userInvocationArgs[0];
+          successCallback({ users: [user, userTwo] });
+          wrapper.update();
+        });
+
+        it('does fills the contacts object with 1', () => {
+          const contacts = wrapper.state().contacts;
+          expect(Object.keys(contacts).length).toEqual(1);
+        });
       });
 
       describe('when showFieldError returns error', () => {

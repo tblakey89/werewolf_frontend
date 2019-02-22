@@ -113,6 +113,7 @@ class RoleDialog extends Component {
 
   eligibleVoteCandidates = () => {
     const reducer = (accumulator, player) => {
+      if (!player.alive) return accumulator;
       if (player.id === this.props.user.id) return accumulator;
       if (this.props.game.state.state === 'night_phase' && player.role === 'werewolf') return accumulator;
       accumulator.push(player);

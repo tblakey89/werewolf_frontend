@@ -60,7 +60,7 @@ class Header extends Component {
 
     return (
       <div style={{flexGrow: 1}}>
-        <AppBar position="static">
+        <AppBar position="fixed">
           <Toolbar>
             <Route path='/chat'  render={() => (
               <Link to={`/chats`} className={'iconLink'}>

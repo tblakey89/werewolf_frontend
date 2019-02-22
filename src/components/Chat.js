@@ -12,6 +12,7 @@ class Chat extends Component {
 
   componentDidUpdate(prevProps) {
     this.setMessagesAsRead();
+    window.scrollTo(0,document.body.scrollHeight);
   }
 
   setMessagesAsRead = () => {

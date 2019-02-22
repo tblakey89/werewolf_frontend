@@ -129,24 +129,50 @@ describe('ChatContainer', () => {
       });
 
       describe('when a new game is created', () => {
-        beforeEach(() => {
-          const newGameCallback = userChannelInvocationArgs[3];
-          newGameCallback({
-            id: 2,
-            name: 'test game 2',
-            users_games: [
-              {
-                user_id: 10,
-                state: 'pending'
-              }
-            ],
-            messages: []
+        describe('when hosted by other user', () => {
+          beforeEach(() => {
+            const newGameCallback = userChannelInvocationArgs[3];
+            newGameCallback({
+              id: 2,
+              name: 'test game 2',
+              users_games: [
+                {
+                  user_id: 10,
+                  state: 'pending'
+                }
+              ],
+              messages: []
+            });
+            wrapper.update();
           });
-          wrapper.update();
+
+          it('adds another game to the state', () => {
+            expect(wrapper.state().games.length).toEqual(2);
+            expect(mockNotify.mock.calls.length).toBe(1);
+          });
         });
 
-        it('adds another game to the state', () => {
-          expect(wrapper.state().games.length).toEqual(2);
+        describe('when hosted by user', () => {
+          beforeEach(() => {
+            const newGameCallback = userChannelInvocationArgs[3];
+            newGameCallback({
+              id: 2,
+              name: 'test game 2',
+              users_games: [
+                {
+                  user_id: 10,
+                  state: 'host'
+                }
+              ],
+              messages: []
+            });
+            wrapper.update();
+          });
+
+          it('adds another game to the state', () => {
+            expect(wrapper.state().games.length).toEqual(2);
+            expect(mockNotify.mock.calls.length).toBe(0);
+          });
         });
       });
 
@@ -207,25 +233,50 @@ describe('ChatContainer', () => {
       });
 
       describe('when game is updated', () => {
-        beforeEach(() => {
-          const updateGameCallback = userChannelInvocationArgs[4];
-          updateGameCallback({
-            id: 1,
-            name: 'test game',
-            users_games: [
-              {
-                user_id: 10,
-                state: 'accepted'
-              }
-            ],
-            messages: []
+        describe('when user is already in game', () => {
+          beforeEach(() => {
+            const updateGameCallback = userChannelInvocationArgs[4];
+            updateGameCallback({
+              id: 1,
+              name: 'test game',
+              users_games: [
+                {
+                  user_id: 10,
+                  state: 'accepted'
+                }
+              ],
+              messages: []
+            });
+            wrapper.update();
           });
-          wrapper.update();
+
+          it('replaces the old state of the game with new state and notifies user', () => {
+            expect(wrapper.state().games[0].pending).toEqual(false);
+            expect(wrapper.state().invitations.length).toEqual(0);
+          });
         });
 
-        it('replaces the old state of the game with new state and notifies user', () => {
-          expect(wrapper.state().games[0].pending).toEqual(false);
-          expect(wrapper.state().invitations.length).toEqual(0);
+        describe('when user is not already in game', () => {
+          beforeEach(() => {
+            const updateGameCallback = userChannelInvocationArgs[4];
+            updateGameCallback({
+              id: 2,
+              name: 'test game 2',
+              users_games: [
+                {
+                  user_id: 10,
+                  state: 'pending'
+                }
+              ],
+              messages: []
+            });
+            wrapper.update();
+          });
+
+          it('adds the new game, and adds invite', () => {
+            expect(wrapper.state().invitations.length).toEqual(2);
+            expect(mockNotify.mock.calls.length).toBe(1);
+          });
         });
       });
 

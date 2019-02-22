@@ -22,10 +22,15 @@ class ContactSelect extends Component {
   };
 
   componentDidMount() {
+    this.loadUsers();
+  }
+
+  loadUsers = () => {
     User.index((response) => {
-      this.setState({contacts: this.generateContactsObject(response.users)}, () => {
-        this.props.setLoaded();
-      });
+      this.setState(
+        {contacts: this.generateContactsObject(response.users)},
+        this.props.setLoaded
+      );
     }, (response) => {
 
     });
@@ -33,7 +38,10 @@ class ContactSelect extends Component {
 
   generateContactsObject = (users) => {
     const reducer = (object, user) => {
-      object[user.id] = user
+      if (user.id === this.props.userId) return object;
+      // watch out if current currentParticipantIds is large, or users is large
+      if (this.props.currentParticipantIds.includes(user.id)) return object;
+      object[user.id] = user;
       return object;
     };
     return users.reduce(reducer, {});
@@ -59,7 +67,14 @@ class ContactSelect extends Component {
           multiple
           value={this.props.participants}
           onChange={this.props.onChange}
-          renderValue={selected => selected.map(user_id => this.state.contacts[user_id].username).join(', ')}
+          renderValue={
+            selected => (
+              selected
+                .filter(user_id => user_id !== '')
+                .map(user_id => this.state.contacts[user_id].username)
+                .join(', ')
+            )
+          }
           input={<Input id="contact" />}
         >
           <MenuItem value="">
@@ -75,9 +90,15 @@ class ContactSelect extends Component {
 
 ContactSelect.propTypes = {
   onChange: PropTypes.func.isRequired,
-  showFieldError: PropTypes.func.isRequired,
+  showFieldError: PropTypes.func,
   setLoaded: PropTypes.func.isRequired,
   participants: PropTypes.array.isRequired,
+  currentParticipantIds: PropTypes.array,
+};
+
+ContactSelect.defaultProps = {
+  currentParticipantIds: [],
+  showFieldError: () => {},
 };
 
 export default withStyles(styles)(ContactSelect);

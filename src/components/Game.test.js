@@ -94,6 +94,62 @@ describe('Game', () => {
     });
   });
 
+  describe('shows game status', () => {
+    describe('when game state is initialized', () => {
+      it('shows player count', () => {
+        expect(wrapper.find('span').text()).toEqual('1 players. 8 minimum. 18 maximum');
+      });
+    });
+
+    describe('when game state is ready', () => {
+      beforeEach(() => {
+        const stateCopy = { ...game.state, state: 'ready' };
+        const gameCopy = { ...game, state: stateCopy };
+        wrapper.setProps({ game: gameCopy });
+      });
+
+      it('shows player count', () => {
+        expect(wrapper.find('span').text()).toEqual('1 players. 8 minimum. 18 maximum');
+      });
+    });
+
+    describe('when game state is day_phase', () => {
+      beforeEach(() => {
+        const stateCopy = { ...game.state, state: 'day_phase', phases: 1 };
+        const gameCopy = { ...game, state: stateCopy };
+        wrapper.setProps({ game: gameCopy });
+      });
+
+      it('shows day phase and number', () => {
+        expect(wrapper.find('span').text()).toEqual('Day Phase 1');
+      });
+    });
+
+    describe('when game state is night_phase', () => {
+      beforeEach(() => {
+        const stateCopy = { ...game.state, state: 'night_phase', phases: 2 };
+        const gameCopy = { ...game, state: stateCopy };
+        wrapper.setProps({ game: gameCopy });
+      });
+
+      it('shows night phase and number', () => {
+        expect(wrapper.find('span').text()).toEqual('Night Phase 1');
+      });
+    });
+
+    describe('when game state is game_over', () => {
+      beforeEach(() => {
+        const stateCopy = { ...game.state, state: 'game_over' };
+        const gameCopy = { ...game, state: stateCopy };
+        wrapper.setProps({ game: gameCopy });
+      });
+
+      it('shows game over', () => {
+        expect(wrapper.find('span').text()).toEqual('Game Over');
+      });
+    });
+  });
+
   describe('launch button', () => {
     describe('when game state is not ready and user is host', () => {
       it('launch button is not displayed', () => {

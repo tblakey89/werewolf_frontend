@@ -16,32 +16,25 @@ import IconButton from '@material-ui/core/IconButton';
 import TickIcon from '@material-ui/icons/Done';
 import CrossIcon from '@material-ui/icons/Close';
 import MailIcon from '@material-ui/icons/MailOutline';
+import SettingsIcon from '@material-ui/icons/Settings';
 import RoleDialog from './RoleDialog';
 import InfoDialog from './InfoDialog';
+import EditGameDialog from './EditGameDialog';
 import Invitation from '../api/invitation';
 
 // refactor to move all user, game, conversation objects out of the chat container
 
+// game should have things like function to check if user is host
+
 // game should work fully at this point (don't forget to change icons based on game state)
-// -> hunt for bugs, then fix them
-// -> does not remove self when creating new game
-// -> Cannot add more people to game after creation (add edit icon next to other icons)
-// -> host is sent invite after game creation
-// -> bot message did not bold and show as a new message
-// -> does not show invited users on game infodialog
-// -> when user joins game, show game name
-// -> hide min max players after game launch, instead show current phase
-// -> other werewolf shows up in list of options for werewolf in night phase
 // -> highlight role dialog with badge when pending action, or launch of game
-// -> need to update icon based on phase of the game
-// -> CSS issues, like bar always fixed to bottom
-// -> phase number in announcement needs to be integer
-// -> dead players show as option on dropdowns
-// -> users role not revealed after night phase
+// -> css on mobile view is a bit off
 // add abiity to add avatar image
 // deploy game somewhere
 // add ability to accept invite via link
-// add ability to have friends, send friend requests?
+// add ability to have friends, send friend requests
+
+// how to best inform werewolfs of other werewolfs?
 
 // when stuck with concurrency, comment out the tasks
 
@@ -57,12 +50,14 @@ class Game extends Component {
   state = {
     roleOpen: false,
     infoOpen: false,
+    editGameOpen: false,
     gameReady: false
   };
 
   componentDidMount() {
     this.setUsers(this.props);
     this.setMessagesAsRead();
+    window.scrollTo(0,document.body.scrollHeight);
   }
 
   componentDidUpdate(prevProps) {
@@ -106,8 +101,12 @@ class Game extends Component {
     this.setState({ infoOpen: true });
   };
 
+  handleSettingsOpen = () => {
+    this.setState({ editGameOpen: true });
+  };
+
   handleClose = () => {
-    this.setState({ roleOpen: false, infoOpen: false });
+    this.setState({ roleOpen: false, infoOpen: false, editGameOpen: false });
   };
 
   handleLaunchGame = () => {
@@ -121,12 +120,20 @@ class Game extends Component {
   );
 
   invitationPending = () => {
-    const usersGame = this.props.game.users_games.find((users_game) => users_game.user_id === this.props.user.id)
+    const usersGame = this.props.game.users_games.find((users_game) => users_game.user_id === this.props.user.id);
     return usersGame.state === 'pending';
   }
 
   displayRoleIcon = () => {
     if (['day_phase', 'night_phase', 'ready', 'game_over'].includes(this.props.game.state.state)) {
+      return true;
+    }
+    return false;
+  };
+
+  displaySettingsIcon = () => {
+    const usersGame = this.props.game.users_games.find((users_game) => users_game.user_id === this.props.user.id)
+    if (usersGame.state === 'host' && this.props.game.state.state === 'initialized') {
       return true;
     }
     return false;
@@ -138,9 +145,13 @@ class Game extends Component {
     return currentPlayer && currentPlayer.host;
   };
 
+  currentParticipantIds = () => (
+    this.props.game.users_games.map((users_game) => users_game.user_id)
+  );
+
   renderLaunchButton = () => (
     this.showLaunchButton() && (
-      <AppBar position="static" color="default">
+      <AppBar position="fixed" color="default">
         <Button
           variant="raised"
           color="primary"
@@ -204,6 +215,20 @@ class Game extends Component {
     ))
   );
 
+  renderGameStatus = () => {
+    const gameState = this.props.game.state.state;
+    if (gameState === 'ready' || gameState === 'initialized') {
+      return (<span style={{'font-size': 12}}>{this.playerCount()} players. 8 minimum. 18 maximum</span>);
+    } else {
+      const phaseNumber = Math.ceil(this.props.game.state.phases / 2);
+      switch(gameState) {
+        case 'day_phase': return (<span style={{'font-size': 12}}>Day Phase {phaseNumber}</span>);
+        case 'night_phase': return (<span style={{'font-size': 12}}>Night Phase {phaseNumber}</span>);
+        case 'game_over': return (<span style={{'font-size': 12}}>Game Over</span>);
+      }
+    }
+  }
+
   render() {
     const { classes } = this.props;
 
@@ -211,12 +236,12 @@ class Game extends Component {
       <div>
         {this.props.game && (
           <div>
-            <AppBar position="static" color="default">
+            <AppBar position="fixed" color="default" style={{top: '64px'}}>
               <Toolbar>
                 <Typography variant="title" color="inherit" style={{flex: 1}}>
                   {this.props.game.name}
                   <br/>
-                  <span style={{'font-size': 12}}>{this.playerCount()} players. 8 minimum. 18 maximum</span>
+                  {this.renderGameStatus()}
                 </Typography>
                 <div>
                   {this.displayRoleIcon() &&
@@ -235,14 +260,25 @@ class Game extends Component {
                   >
                     <InfoIcon style={{ fontSize: 36 }} />
                   </IconButton>
+                  {this.displaySettingsIcon() &&
+                    <IconButton
+                      aria-haspopup="true"
+                      color="inherit"
+                      onClick={this.handleSettingsOpen}
+                    >
+                      <SettingsIcon style={{ fontSize: 36 }} />
+                    </IconButton>
+                  }
                 </div>
               </Toolbar>
             </AppBar>
-            {this.renderLaunchButton()}
-            {this.renderInvite()}
-            <List>
-              {this.renderMessages()}
-            </List>
+            <div style={{'margin-top': '128px'}}>
+              {this.renderLaunchButton()}
+              {this.renderInvite()}
+              <List>
+                {this.renderMessages()}
+              </List>
+            </div>
             <RoleDialog
               open={this.state.roleOpen}
               onClose={this.handleClose}
@@ -257,6 +293,13 @@ class Game extends Component {
               players={this.props.game.state.players}
               user={this.props.user}
               users={this.state.users}
+            />
+            <EditGameDialog
+              open={this.state.editGameOpen}
+              onClose={this.handleClose}
+              onNotificationOpen={this.props.onNotificationOpen}
+              currentParticipantIds={this.currentParticipantIds()}
+              gameId={this.props.game.id}
             />
           </div>
         )}

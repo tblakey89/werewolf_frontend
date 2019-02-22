@@ -13,7 +13,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 const styles = theme => ({
   margin: {
     margin: theme.spacing.unit * 2,
-  },
+  }
 });
 
 class FooterButtons extends Component {
@@ -35,7 +35,7 @@ class FooterButtons extends Component {
 
   render() {
     return (
-      <BottomNavigation>
+      <BottomNavigation style={{position: "fixed", bottom:"0", width:"100%"}}>
         <BottomNavigationAction
           label="Games"
           component={Link}

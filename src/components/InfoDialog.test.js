@@ -76,7 +76,7 @@ describe('InfoDialog', () => {
 
     describe('when game has started, displays roles, and alive boolean', () => {
       beforeEach(() => {
-        state = 'ready';
+        state = 'day_phase';
         wrapper = shallow(shallow(shallow(shallow(shallow(shallow(<InfoDialog onClose={mockClose} open={true} gameState={state} players={players} user={user} users={users}/>).get(0)).get(0)).get(0)).get(0)).get(0));
       });
 
@@ -89,7 +89,7 @@ describe('InfoDialog', () => {
 
     describe('when game has started, displays roles, and user dead', () => {
       beforeEach(() => {
-        let updatedState = 'ready';
+        let updatedState = 'day_phase';
         let deadPlayers = [
           {
             alive: false,

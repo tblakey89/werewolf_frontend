@@ -22,8 +22,8 @@ const styles = theme => ({
     margin: theme.spacing.unit,
   },
   fab: {
-    position: 'absolute',
-    bottom: theme.spacing.unit * 2,
+    position: 'fixed',
+    bottom: '72px',
     right: theme.spacing.unit * 2,
   },
   bold: {
@@ -89,10 +89,12 @@ class Games extends Component {
   );
 
   renderIcon = (game) => {
-    if (game.state === 'day') {
+    if (game.state.state === 'day_phase') {
       return (<SunIcon style={{ fontSize: 36 }} />);
-    } else if (game.state === 'night') {
+    } else if (game.state.state === 'night_phase') {
       return (<MoonIcon style={{ fontSize: 36 }} />);
+    } else if (game.state.state === 'game_over') {
+      return (<TickIcon style={{ fontSize: 36 }} />);
     }
     return (<HourglassIcon style={{ fontSize: 36 }} />);
   }
@@ -145,6 +147,7 @@ class Games extends Component {
           open={this.state.open}
           onClose={this.handleClose}
           onNotificationOpen={this.props.onNotificationOpen}
+          userId={this.props.user.id}
         />
       </div>
     );

@@ -15,8 +15,8 @@ import NewChatDialog from './NewChatDialog';
 
 const styles = theme => ({
   fab: {
-    position: 'absolute',
-    bottom: theme.spacing.unit * 2,
+    position: 'fixed',
+    bottom: '72px',
     right: theme.spacing.unit * 2,
   },
   bold: {

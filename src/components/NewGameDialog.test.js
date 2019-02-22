@@ -17,7 +17,7 @@ describe('NewGameDialog', () => {
   beforeEach(() => {
     mockNotify = jest.fn();
     mockClose = jest.fn();
-    wrapper = shallow(shallow(shallow(shallow(shallow(shallow(<NewGameDialog onClose={mockClose} onNotificationOpen={mockNotify} open={true} />).get(0)).get(0)).get(0)).get(0)).get(0));
+    wrapper = shallow(shallow(shallow(shallow(shallow(shallow(<NewGameDialog onClose={mockClose} onNotificationOpen={mockNotify} open={true} userId={1} />).get(0)).get(0)).get(0)).get(0)).get(0));
     button = wrapper.find('#submit');
   });
 

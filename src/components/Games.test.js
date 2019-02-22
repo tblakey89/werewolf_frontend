@@ -23,7 +23,10 @@ describe('Games', () => {
           user_id: user.id,
           state: 'accepted',
         }
-      ]
+      ],
+      state: {
+        state: 'initialized',
+      }
     },
     {
       id: 2,
@@ -40,7 +43,10 @@ describe('Games', () => {
           user_id: user.id,
           state: 'pending',
         }
-      ]
+      ],
+      state: {
+        state: 'initialized',
+      }
     }
   ];
 

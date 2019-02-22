@@ -12,14 +12,13 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 
-// shows joined/pending/denied status of players if yet to begin
-
 class InfoDialog extends Component {
   state = {
     users: {}
   };
 
   playerDisplay = (player) => {
+    debugger;
     const usersGame = this.props.users[player.id];
     if (this.props.gameState === 'initialized') {
       return usersGame.state;
@@ -28,21 +27,42 @@ class InfoDialog extends Component {
     }
   };
 
-  renderUsers = () => (
+  renderUsers = () => {
+    if (this.props.gameState === 'initialized' || this.props.gameState === 'ready') {
+      return this.renderInvitations();
+    }
+    return this.renderPlayers();
+  };
+
+  renderPlayers = () => (
     Object.values(this.props.players).map((player, index) => (
       <div key={player.id}>
         {this.props.users && this.props.users[player.id] &&
           <ListItem button>
             <ListItemText
               primary={this.props.users[player.id].user.username}
-              secondary={this.playerDisplay(player)}
+              secondary={`${player.alive ? 'Alive' : 'Dead'}, Role: ${player.role}`}
             />
           </ListItem>
         }
         {index !== this.props.players.length - 1 && <Divider />}
       </div>
     ))
-  )
+  );
+
+  renderInvitations = () => (
+    Object.values(this.props.users).map((user, index) => (
+      <div key={user.id}>
+        <ListItem button>
+          <ListItemText
+            primary={user.user.username}
+            secondary={user.state}
+          />
+        </ListItem>
+        {index !== this.props.users.length - 1 && <Divider />}
+      </div>
+    ))
+  );
 
   render() {
     const { fullScreen } = this.props;

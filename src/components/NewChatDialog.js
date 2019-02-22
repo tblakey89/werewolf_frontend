@@ -91,7 +91,7 @@ class NewChatDialog extends Component {
 
   successfulCreateCallback = (response) => {
     this.setState({readyForRedirect: true, conversation: response.conversation});
-    this.props.onNotificationOpen('Started new conversation.')
+    this.props.onNotificationOpen('Started new conversation.');
   };
 
   errorOnCreateCallback = () => {

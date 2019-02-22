@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -7,13 +8,15 @@ import Avatar from '@material-ui/core/Avatar';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import User from '../api/user';
+import Conversation from '../api/conversation';
 
 // need to test errorCallback, what happens if error?
 
 class Contacts extends Component {
   state = {
     contacts: [],
-    _loading: false
+    _loading: false,
+    readyForRedirect: false,
   };
 
   componentDidMount() {
@@ -25,30 +28,52 @@ class Contacts extends Component {
     });
   }
 
+  createConversation = (user_id) => () => {
+    Conversation.create(
+      { user_ids: [user_id] },
+      this.successfulCreateCallback,
+      this.errorOnCreateCallback
+    );
+  }
+
+  successfulCreateCallback = (response) => {
+    this.setState({readyForRedirect: true, conversation: response.conversation});
+  };
+
+  errorOnCreateCallback = () => {
+    // notify
+  }
+
   renderContacts = () => {
     if (this.state._loading) {
       return <CircularProgress />;
     }
     return (
       this.state.contacts.map((user) => (
-        <Link to={`/chat`} key={user.id}>
-          <ListItem button>
-            <Avatar>
-              <AccountCircle style={{ fontSize: 36 }} />
-            </Avatar>
-            <ListItemText primary={user.username} secondary="Jan 9, 2014" />
-          </ListItem>
-        </Link>
+        <ListItem
+          button
+          onClick={this.createConversation(user.id)}
+          key={user.id}
+        >
+          <Avatar>
+            <AccountCircle style={{ fontSize: 36 }} />
+          </Avatar>
+          <ListItemText primary={user.username} secondary="" />
+        </ListItem>
       ))
     );
   };
 
   render() {
-    return (
-      <List component="nav">
-        { this.renderContacts() }
-      </List>
-    );
+    if (this.state.readyForRedirect) {
+      return (<Redirect to={`/chat/${this.state.conversation.id}`}/>)
+    } else {
+      return (
+        <List component="nav">
+          { this.renderContacts() }
+        </List>
+      );
+    }
   }
 }
 

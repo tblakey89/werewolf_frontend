@@ -93,6 +93,7 @@ class ChatContainer extends Component {
   )
 
   newConversationCallback = (newConversation) => {
+    if (this.state.conversations.find(((conversation) => conversation.id === newConversation.id))) return;
     const conversation =
       this.buildConversationWithChannel(newConversation, this.state.socket);
     const { conversations } = this.state;
@@ -150,15 +151,21 @@ class ChatContainer extends Component {
 
   updateGameCallback = (updatedGame) => {
     const games = [...this.state.games];
-    const gameIndex = games.findIndex((game) => game.id === updatedGame.id)
-    games[gameIndex] = this.buildGameWithChannel(updatedGame, this.state.user, this.state.socket);
-    const invitations = games.filter((game) => game.pending)
+    const gameIndex = games.findIndex((game) => game.id === updatedGame.id);
+    const game = this.buildGameWithChannel(updatedGame, this.state.user, this.state.socket);
+    if (gameIndex === -1) {
+      games.push(game);
+      this.props.onNotificationOpen(`You have been invited to ${game.name}`);
+    } else {
+      games[gameIndex] = game;
+    }
+    const invitations = games.filter((game) => game.pending);
     this.setState({games, invitations});
   };
 
   updateGameStateCallback = (updatedState) => {
     const games = [...this.state.games];
-    const gameIndex = games.findIndex((game) => game.id === updatedState.id)
+    const gameIndex = games.findIndex((game) => game.id === updatedState.id);
     games[gameIndex] = {...games[gameIndex], state: updatedState};
     this.setState({games});
   };
@@ -203,7 +210,9 @@ class ChatContainer extends Component {
   newGameCallback = (newGame) => {
     const game = this.buildGameWithChannel(newGame, this.state.user, this.state.socket);
     const { games } = this.state;
-    this.props.onNotificationOpen(`You have been invited to ${game.name}`);
+    if (game.users_games.find((users_game) => users_game.user_id === this.state.user.id).state !== 'host') {
+      this.props.onNotificationOpen(`You have been invited to ${game.name}`);
+    }
     this.setState({games: [...games, game]});
   };
 
@@ -218,58 +227,60 @@ class ChatContainer extends Component {
           user={this.state.user}
           onNotificationOpen={this.props.onNotificationOpen}
         />
-        <AuthenticatedRoute
-          path='/games'
-          component={Games}
-          games={this.state.games}
-          user={this.state.user}
-          onNotificationOpen={this.props.onNotificationOpen}
-        />
-        <AuthenticatedRoute
-          path='/game/:id'
-          render={({ match }) => {
-            const game = this.state.games.find((game) =>
-              game.id === parseInt(match.params.id, 10)
-            );
-            return (
-              <Game
-                game={game}
-                setAsRead={this.setGameAsRead}
-                user={this.state.user}
-                onNotificationOpen={this.props.onNotificationOpen}
-              />
-            );
-          }}
-        />
-        <AuthenticatedRoute
-          path='/chat/:id'
-          render={({ match }) => {
-            const conversation = this.state.conversations.find((conversation) =>
-              conversation.id === parseInt(match.params.id, 10)
-            );
-            return (
-              <Chat
-                conversation={conversation}
-                setAsRead={this.setConversationAsRead}
-              />
-            );
-          }}
-        />
-        <AuthenticatedRoute
-          exact
-          path='/chats'
-          component={ChatList}
-          conversations={this.state.conversations}
-          user={this.state.user}
-          onNotificationOpen={this.props.onNotificationOpen}
-        />
-        <AuthenticatedRoute path='/contacts' component={Contacts}/>
-        <AuthenticatedRoute
-          path='/settings'
-          user={this.state.user}
-          onNotificationOpen={this.props.onNotificationOpen}
-          component={Settings}
-        />
+        <div style={{'margin-top': '64px', 'margin-bottom': '56px'}}>
+          <AuthenticatedRoute
+            path='/games'
+            component={Games}
+            games={this.state.games}
+            user={this.state.user}
+            onNotificationOpen={this.props.onNotificationOpen}
+          />
+          <AuthenticatedRoute
+            path='/game/:id'
+            render={({ match }) => {
+              const game = this.state.games.find((game) =>
+                game.id === parseInt(match.params.id, 10)
+              );
+              return (
+                <Game
+                  game={game}
+                  setAsRead={this.setGameAsRead}
+                  user={this.state.user}
+                  onNotificationOpen={this.props.onNotificationOpen}
+                />
+              );
+            }}
+          />
+          <AuthenticatedRoute
+            path='/chat/:id'
+            render={({ match }) => {
+              const conversation = this.state.conversations.find((conversation) =>
+                conversation.id === parseInt(match.params.id, 10)
+              );
+              return (
+                <Chat
+                  conversation={conversation}
+                  setAsRead={this.setConversationAsRead}
+                />
+              );
+            }}
+          />
+          <AuthenticatedRoute
+            exact
+            path='/chats'
+            component={ChatList}
+            conversations={this.state.conversations}
+            user={this.state.user}
+            onNotificationOpen={this.props.onNotificationOpen}
+          />
+          <AuthenticatedRoute path='/contacts' component={Contacts}/>
+          <AuthenticatedRoute
+            path='/settings'
+            user={this.state.user}
+            onNotificationOpen={this.props.onNotificationOpen}
+            component={Settings}
+          />
+        </div>
         <Footer
           conversations={this.state.conversations}
           games={this.state.games}
