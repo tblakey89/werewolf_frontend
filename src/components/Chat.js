@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import Avatar from '@material-ui/core/Avatar';
-import AccountCircle from '@material-ui/icons/AccountCircle';
+import UserAvatar from './UserAvatar';
 
 class Chat extends Component {
   componentDidMount() {
@@ -30,9 +29,10 @@ class Chat extends Component {
       message_a.created_at - message_b.created_at
     )).map((message) => (
       <ListItem key={message.id}>
-        <Avatar>
-          <AccountCircle style={{ fontSize: 36 }} />
-        </Avatar>
+        <UserAvatar
+          user={this.props.user}
+          currentUser={message.sender}
+        />
         <ListItemText
           primary={message.sender.username}
           secondary={message.body}

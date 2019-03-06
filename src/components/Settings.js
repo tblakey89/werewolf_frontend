@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
+import Input from '@material-ui/core/Input';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -9,6 +10,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListSubheader from '@material-ui/core/ListSubheader';
+import AvatarUploadForm from './AvatarUploadForm';
 import User from '../api/user';
 import UserValidation from '../validation/userValidation';
 
@@ -42,7 +44,7 @@ class Settings extends Component {
     this.setState({ fields, fieldErrors, errored });
   };
 
-  onFormSubmit = (event) => {
+  handleFormSubmit = (event) => {
     event.preventDefault();
     const fieldErrors = this.getFieldErrors();
     const submitted = true;
@@ -106,58 +108,67 @@ class Settings extends Component {
       return (<Redirect to='/signin'/>)
     } else {
       return (
-        <form className={classes.root} onSubmit={this.onFormSubmit}>
-          <List subheader={<ListSubheader>Settings</ListSubheader>}>
-            <ListItem>
-              <ListItemText primary="Username" />
-              <ListItemSecondaryAction id="username">
-                {this.props.user.username}
-              </ListItemSecondaryAction>
-            </ListItem>
-            <ListItem>
-              <ListItemText primary="Email" />
-              <ListItemSecondaryAction id="email">
-                {this.props.user.email}
-              </ListItemSecondaryAction>
-            </ListItem>
-            <ListItem>
-              <ListItemText primary="Update Password" />
-              <ListItemSecondaryAction>
-                <TextField
-                  id="password"
-                  label="Password"
-                  type="password"
-                  margin="normal"
-                  onChange={this.handleChange('password')}
-                  error={!!this.showFieldError('password')}
-                  helperText={this.showFieldError('password')}
-                />
-              </ListItemSecondaryAction>
-            </ListItem>
-            <ListItem>
-              <Button
-                id="update"
-                variant="raised"
-                color="primary"
-                type="submit"
-              >
-                Update
-              </Button>
-            </ListItem>
-            <ListItem>
-              <ListItemText primary="Want to log out?" />
-              <ListItemSecondaryAction>
+        <div>
+          <AvatarUploadForm
+            user={this.props.user}
+            onNotificationOpen={this.props.onNotificationOpen}
+          />
+          <form className={classes.root} onSubmit={this.handleFormSubmit}>
+            <List subheader={<ListSubheader>Settings</ListSubheader>}>
+              <ListItem>
+                <ListItemText primary="Username" />
+                <ListItemSecondaryAction id="username">
+                  {this.props.user.username}
+                </ListItemSecondaryAction>
+              </ListItem>
+              <ListItem>
+                <ListItemText primary="Email" />
+                <ListItemSecondaryAction id="email">
+                  {this.props.user.email}
+                </ListItemSecondaryAction>
+              </ListItem>
+              <ListItem>
+                <ListItemText primary="Update Password" />
+                <ListItemSecondaryAction>
+                  <TextField
+                    id="password"
+                    label="Password"
+                    type="password"
+                    margin="normal"
+                    onChange={this.handleChange('password')}
+                    error={!!this.showFieldError('password')}
+                    helperText={this.showFieldError('password')}
+                  />
+                </ListItemSecondaryAction>
+              </ListItem>
+              <ListItem>
+                <ListItemText primary="Avatar" />
+              </ListItem>
+              <ListItem>
                 <Button
-                  id="logOut"
+                  id="update"
                   variant="raised"
                   color="primary"
-                  onClick={this.handleSignOut}>
-                  Log Out
+                  type="submit"
+                >
+                  Update
                 </Button>
-              </ListItemSecondaryAction>
-            </ListItem>
-          </List>
-        </form>
+              </ListItem>
+              <ListItem>
+                <ListItemText primary="Want to log out?" />
+                <ListItemSecondaryAction>
+                  <Button
+                    id="logOut"
+                    variant="raised"
+                    color="primary"
+                    onClick={this.handleSignOut}>
+                    Log Out
+                  </Button>
+                </ListItemSecondaryAction>
+              </ListItem>
+            </List>
+          </form>
+        </div>
       );
     }
   }

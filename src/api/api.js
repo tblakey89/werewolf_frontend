@@ -19,7 +19,6 @@ const checkStatus = (response) => {
   if (response.status >= 200 && response.status < 300) {
     return response;
   } else {
-    debugger;
     const error = new Error(`HTTP Error ${response.statusText}`);
     error.status = response.statusText;
     error.response = response;
@@ -38,7 +37,6 @@ const setToken = (response) => {
 };
 
 const errorHandler = (error, errorCallback) => {
-  debugger;
   if (error.response && error.response.status >= 500) {
     errorCallback(error);
   } else {

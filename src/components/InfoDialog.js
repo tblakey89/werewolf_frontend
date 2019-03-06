@@ -18,7 +18,6 @@ class InfoDialog extends Component {
   };
 
   playerDisplay = (player) => {
-    debugger;
     const usersGame = this.props.users[player.id];
     if (this.props.gameState === 'initialized') {
       return usersGame.state;

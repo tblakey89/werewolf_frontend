@@ -9,7 +9,6 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Button from '@material-ui/core/Button';
-import Avatar from '@material-ui/core/Avatar';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import InfoIcon from '@material-ui/icons/Info';
 import IconButton from '@material-ui/core/IconButton';
@@ -20,6 +19,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import RoleDialog from './RoleDialog';
 import InfoDialog from './InfoDialog';
 import EditGameDialog from './EditGameDialog';
+import UserAvatar from './UserAvatar';
 import Invitation from '../api/invitation';
 
 // refactor to move all user, game, conversation objects out of the chat container
@@ -29,9 +29,8 @@ import Invitation from '../api/invitation';
 // game should work fully at this point (don't forget to change icons based on game state)
 // -> highlight role dialog with badge when pending action, or launch of game
 // -> css on mobile view is a bit off
-// add abiity to add avatar image
-// deploy game somewhere
 // add ability to accept invite via link
+// deploy game on aws
 // add ability to have friends, send friend requests
 
 // how to best inform werewolfs of other werewolfs?
@@ -204,9 +203,10 @@ class Game extends Component {
       message_a.created_at - message_b.created_at
     )).map((message) => (
       <ListItem key={message.id}>
-        <Avatar>
-          <AccountCircle style={{ fontSize: 36 }} />
-        </Avatar>
+        <UserAvatar
+          user={this.props.user}
+          currentUser={message.sender}
+        />
         <ListItemText
           primary={message.bot ? "bot" : message.sender.username}
           secondary={message.body}

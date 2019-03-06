@@ -69,7 +69,8 @@ class ChatContainer extends Component {
       this.newConversationCallback,
       this.newGameCallback,
       this.updateGameCallback,
-      this.updateGameStateCallback
+      this.updateGameStateCallback,
+      this.updateUserCallback,
     )
   );
 
@@ -105,6 +106,12 @@ class ChatContainer extends Component {
     this.setState({
       conversations: [...conversations, conversation],
     });
+  };
+
+  updateUserCallback = (updatedUser) => {
+    debugger;
+    const user = Object.assign({...this.state.user}, updatedUser);
+    this.setState({user});
   };
 
   newMessageCallback = (newMessage) => {
@@ -259,6 +266,7 @@ class ChatContainer extends Component {
               );
               return (
                 <Chat
+                  user={this.state.user}
                   conversation={conversation}
                   setAsRead={this.setConversationAsRead}
                 />

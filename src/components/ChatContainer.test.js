@@ -70,6 +70,7 @@ describe('ChatContainer', () => {
           games: [
             game
           ],
+          username: 'testuser',
           id: 10,
         };
         const invocationArgs = User.me.mock.calls[0];
@@ -173,6 +174,22 @@ describe('ChatContainer', () => {
             expect(wrapper.state().games.length).toEqual(2);
             expect(mockNotify.mock.calls.length).toBe(0);
           });
+        });
+      });
+
+      describe('when the users avatar is updated', () => {
+        beforeEach(() => {
+          const updateUserCallback = userChannelInvocationArgs[6];
+          updateUserCallback({
+            username: 'testuser2',
+            id: 10,
+          });
+          wrapper.update();
+        });
+
+        it('updates user without changing conversations and games', () => {
+          expect(wrapper.state().user.games.length).toEqual(1);
+          expect(wrapper.state().user.username).not.toEqual(user.username);
         });
       });
 
