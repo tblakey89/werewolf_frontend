@@ -41,18 +41,15 @@ describe('NewGameDialog', () => {
       expect(mockClose.mock.calls.length).toEqual(1);
     });
 
-    describe('user submits without selecting any users', () => {
+    describe('user submits without entering a name', () => {
       beforeEach(() => {
         button.simulate('click');
       });
 
       it('has an error, and does not call Game.create', () => {
         expect(Game.create.mock.calls.length).toEqual(0);
-        expect(wrapper.state().fields.user_ids).toEqual([]);
-        expect(wrapper.instance().showFieldError('user_ids')).toBeTruthy();
         expect(wrapper.instance().showFieldError('name')).toBeTruthy();
         expect(mockNotify.mock.calls.length).toEqual(0);
-        expect(wrapper.find('Redirect').length).toEqual(0);
       });
     });
 
@@ -108,6 +105,7 @@ describe('NewGameDialog', () => {
               game = {
                 id: 10,
                 name: gameName,
+                token: 'randomString',
               };
               successCallback({...game});
               wrapper.update();
@@ -116,7 +114,17 @@ describe('NewGameDialog', () => {
             it('adds game to state, notifies user, and redirects', () => {
               expect(wrapper.state().game).toEqual(game);
               expect(mockNotify.mock.calls.length).toEqual(1);
-              expect(wrapper.find('Redirect').length).toEqual(1);
+              expect(wrapper.find('#close').length).toEqual(0);
+              expect(wrapper.find('#gameLink').length).toEqual(1);
+              expect(wrapper.find('b').text()).toEqual(expect.stringContaining(game.token));
+            });
+
+            describe('when game link clicked', () => {
+              it('closes the dialog', () => {
+                const gameLink = wrapper.find('#gameLink');
+                gameLink.simulate('click');
+                expect(mockClose.mock.calls.length).toEqual(1);
+              });
             });
           });
         });

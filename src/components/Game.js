@@ -30,6 +30,10 @@ import Invitation from '../api/invitation';
 // -> highlight role dialog with badge when pending action, or launch of game
 // -> css on mobile view is a bit off
 // add ability to accept invite via link
+// -> show link in modal after game creation
+// -> need controller method for joining via invite token
+// -> Need special page for when user follows link to join game
+// -> Need to remember page if user not signed in/registered
 // deploy game on aws
 // add ability to have friends, send friend requests
 

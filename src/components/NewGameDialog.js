@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
@@ -28,6 +29,9 @@ const styles = theme => ({
     margin: theme.spacing.unit,
     minWidth: 120,
   },
+  tokenUrl: {
+    fontSize: '14px',
+  }
 });
 
 class NewGameDialog extends Component {
@@ -52,16 +56,13 @@ class NewGameDialog extends Component {
 
   handleMenuChange = event => {
     const fields = {...this.state.fields};
-    const fieldErrors = {...this.state.fieldErrors};
     const participants = event.target.value;
     const user_ids = event.target.value;
 
     fields['user_ids'] = user_ids;
     fields['participants'] = participants;
-    fieldErrors['user_ids'] = GameValidation.checkErrors('user_ids')(event.target.value);
-    const errored = this.isErrored(fieldErrors);
 
-    this.setState({ fields, fieldErrors, errored });
+    this.setState({ fields });
   };
 
   handleChange = (event) => {
@@ -95,7 +96,6 @@ class NewGameDialog extends Component {
   getFieldErrors = () => {
     return {
       name: GameValidation.checkErrors('name')(this.state.fields.name),
-      user_ids: GameValidation.checkErrors('user_ids')(this.state.fields.user_ids),
     };
   };
 
@@ -104,7 +104,7 @@ class NewGameDialog extends Component {
   };
 
   successfulCreateCallback = (response) => {
-    this.setState({readyForRedirect: true, game: response});
+    this.setState({game: response});
     this.props.onNotificationOpen('Started new game.')
   };
 
@@ -115,58 +115,82 @@ class NewGameDialog extends Component {
   render() {
     const { classes, fullScreen } = this.props;
 
-    if (this.state.readyForRedirect) {
-      return (<Redirect to={`/game/${this.state.game.id}`}/>)
-    } else {
-      return (
-        <Dialog
-          fullScreen={fullScreen}
-          open={this.props.open}
-          onClose={this.props.onClose}
-          aria-labelledby="responsive-dialog-title"
-        >
-          <DialogTitle>
-            {"New Game"}
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Please enter the details for your new game of Werewolf.
-            </DialogContentText>
-            <form className={classes.container}>
-              <FormControl className={classes.formControl} fullWidth={true}>
-                <TextField
-                  autoFocus
-                  margin="dense"
-                  id="nameInput"
-                  label="Game Name"
-                  onChange={this.handleChange}
-                  type="text"
-                  fullWidth
-                  error={!!this.showFieldError('name')}
-                  helperText={this.showFieldError('name')}
+    return (
+      <Dialog
+        fullScreen={fullScreen}
+        open={this.props.open}
+        onClose={this.props.onClose}
+        aria-labelledby="responsive-dialog-title"
+      >
+        <DialogTitle>
+          {"New Game"}
+        </DialogTitle>
+        {this.state.game.id ? (
+          <div>
+            <DialogContent>
+              <DialogContentText>
+                <p>Share the link with your friends for them to join the game:</p>
+                <b
+                  className={classes.tokenUrl}
+                >
+                  http://localhost:3000/invitation/{this.state.game.token}
+                </b>
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button
+                id="gameLink"
+                onClick={this.props.onClose}
+                component={Link}
+                to={`/game/${this.state.game.id}`}
+                color="primary"
+              >
+                Go To Game
+              </Button>
+            </DialogActions>
+          </div>
+        ) : (
+          <div>
+            <DialogContent>
+              <DialogContentText>
+                Please enter the details for your new game of Werewolf.
+              </DialogContentText>
+              <form className={classes.container}>
+                <FormControl className={classes.formControl} fullWidth={true}>
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="nameInput"
+                    label="Game Name"
+                    onChange={this.handleChange}
+                    type="text"
+                    fullWidth
+                    error={!!this.showFieldError('name')}
+                    helperText={this.showFieldError('name')}
+                  />
+                </FormControl>
+                <ContactSelect
+                  onChange={this.handleMenuChange}
+                  participants={this.state.fields.participants}
+                  showFieldError={this.showFieldError}
+                  setLoaded={this.handleSetLoaded}
+                  userId={this.props.userId}
+                  currentParticipantIds={[]}
                 />
-              </FormControl>
-              <ContactSelect
-                onChange={this.handleMenuChange}
-                participants={this.state.fields.participants}
-                showFieldError={this.showFieldError}
-                setLoaded={this.handleSetLoaded}
-                userId={this.props.userId}
-                currentParticipantIds={[]}
-              />
-            </form>
-          </DialogContent>
-          <DialogActions>
-            <Button id="close" onClick={this.props.onClose} color="primary">
-              Cancel
-            </Button>
-            <Button id="submit" onClick={this.submitGame} color="primary">
-              Create
-            </Button>
-          </DialogActions>
-        </Dialog>
-      );
-    }
+              </form>
+            </DialogContent>
+            <DialogActions>
+              <Button id="close" onClick={this.props.onClose} color="primary">
+                Cancel
+              </Button>
+              <Button id="submit" onClick={this.submitGame} color="primary">
+                Create
+              </Button>
+            </DialogActions>
+          </div>
+        )}
+      </Dialog>
+    );
   }
 }
 

@@ -109,7 +109,6 @@ class ChatContainer extends Component {
   };
 
   updateUserCallback = (updatedUser) => {
-    debugger;
     const user = Object.assign({...this.state.user}, updatedUser);
     this.setState({user});
   };
