@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import NotificationIcon from '@material-ui/icons/Notifications';
+import AccountCircle from '@material-ui/icons/AccountCircle';
 
 class UserAvatar extends Component {
 
@@ -13,13 +14,21 @@ class UserAvatar extends Component {
     if (this.props.currentUser === null) {
       return (
         <Avatar>
-          <NotificationIcon/>
+          <NotificationIcon style={{ fontSize: 36 }}/>
+        </Avatar>
+      );
+    }
+    let avatar = this.currentUser().avatar;
+    if (avatar === null) {
+      return (
+        <Avatar>
+          <AccountCircle style={{ fontSize: 36 }}/>
         </Avatar>
       );
     }
     return (
       <Avatar
-        src={this.currentUser().avatar}
+        src={avatar}
       />
     );
   };

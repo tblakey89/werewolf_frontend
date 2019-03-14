@@ -28,13 +28,14 @@ import Invitation from '../api/invitation';
 
 // bugs
 // -> highlight role dialog with badge when pending action, or launch of game
-// -> css on mobile view is a bit off
-// -> reject all existing non-accepted invites when game launches
+// ->* css on mobile view is a bit off
+// ->* reject all existing non-accepted invites when game launches
 // -> mark game as started on starting with datetime
-// -> mark game as complete when game over with datetime
+// ->* mark game as complete when game over with datetime
 // -> race condition on joining game, joined game message
-// -> default avatar
 // -> review database reads on state update, etc
+// ->* contacts page not showing avatar
+// ->* allow option for selecting length of round, ensure works
 
 // epics
 // deploy game on aws

@@ -46,5 +46,30 @@ describe('UserAvatar', () => {
         expect(wrapper.instance().currentUser().avatar).toEqual(user.avatar);
       });
     });
+
+    describe('when user has no avatar', () => {
+      beforeEach(() => {
+        currentUser = {
+          id: 1,
+          avatar: null
+        };
+
+        wrapper = shallow(<UserAvatar user={currentUser} currentUser={currentUser}/>);
+      });
+
+      it('shows accountCircle icon', () => {
+        expect(wrapper.find('pure(AccountCircle)').length).toEqual(1);
+      });
+    });
+
+    describe('when user has no avatar', () => {
+      beforeEach(() => {
+        wrapper = shallow(<UserAvatar user={currentUser} currentUser={null}/>);
+      });
+
+      it('shows accountCircle icon', () => {
+        expect(wrapper.find('pure(Notifications)').length).toEqual(1);
+      });
+    });
   });
 });
