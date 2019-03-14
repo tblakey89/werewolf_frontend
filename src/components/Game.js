@@ -26,17 +26,19 @@ import Invitation from '../api/invitation';
 
 // game should have things like function to check if user is host
 
-// game should work fully at this point (don't forget to change icons based on game state)
+// bugs
 // -> highlight role dialog with badge when pending action, or launch of game
 // -> css on mobile view is a bit off
-// add ability to accept invite via link
-// -> show link in modal after game creation
-// -> need controller method for joining via invite token
-// -> Need special page for when user follows link to join game
-// -> Need to remember page if user not signed in/registered
+// -> reject all existing non-accepted invites when game launches
+// -> mark game as started on starting with datetime
+// -> mark game as complete when game over with datetime
+// -> race condition on joining game, joined game message
+// -> default avatar
+// -> review database reads on state update, etc
+
+// epics
 // deploy game on aws
 // add ability to have friends, send friend requests
-
 // how to best inform werewolfs of other werewolfs?
 
 // when stuck with concurrency, comment out the tasks
@@ -304,6 +306,7 @@ class Game extends Component {
               onNotificationOpen={this.props.onNotificationOpen}
               currentParticipantIds={this.currentParticipantIds()}
               gameId={this.props.game.id}
+              token={this.props.game.token}
             />
           </div>
         )}

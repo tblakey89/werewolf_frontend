@@ -83,8 +83,10 @@ class Register extends Component {
   };
 
   render() {
+    let { from } = this.props.location.state || { from: { pathname: "/games" } }
+
     if (this.state.authenticated) {
-      return (<Redirect to='/games'/>)
+      return (<Redirect to={from}/>)
     } else {
       return (
         <form onSubmit={this.onFormSubmit}>
@@ -131,7 +133,7 @@ class Register extends Component {
             <Button
               color="primary"
               component={Link}
-              to={`/signin`}>
+              to={{pathname: `/signin`, state: {from: from}}}>
               Cancel
             </Button>
             <Button

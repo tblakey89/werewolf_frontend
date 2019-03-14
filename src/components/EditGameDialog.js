@@ -22,6 +22,9 @@ const styles = theme => ({
     margin: theme.spacing.unit,
     minWidth: 120,
   },
+  tokenUrl: {
+    fontSize: '14px',
+  }
 });
 
 class EditGameDialog extends Component {
@@ -91,6 +94,9 @@ class EditGameDialog extends Component {
           {"Add New Users"}
         </DialogTitle>
         <DialogContent>
+          <p>Share the url with friends for them to join:</p>
+          <b className={classes.tokenUrl}>http://localhost:3000/invitation/{this.props.token}</b>
+          <p>Or add other users here:</p>
           <form className={classes.container}>
             <ContactSelect
               onChange={this.handleMenuChange}

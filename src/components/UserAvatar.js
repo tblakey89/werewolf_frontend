@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Avatar from '@material-ui/core/Avatar';
+import NotificationIcon from '@material-ui/icons/Notifications';
 
 class UserAvatar extends Component {
 
@@ -9,6 +10,13 @@ class UserAvatar extends Component {
   }
 
   render() {
+    if (this.props.currentUser === null) {
+      return (
+        <Avatar>
+          <NotificationIcon/>
+        </Avatar>
+      );
+    }
     return (
       <Avatar
         src={this.currentUser().avatar}

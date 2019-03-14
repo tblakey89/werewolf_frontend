@@ -1,16 +1,25 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { shallow } from 'enzyme';
 import AuthenticatedRoute from './AuthenticatedRoute';
 import Games from './Games';
+import { MemoryRouter } from 'react-router'
 
 describe('AuthenticatedRoute', () => {
   let wrapper;
   let gamesProp;
+  let location;
 
   beforeEach(() => {
+    location = {state: {from: '/games'}};
+    const componentProps = {location: location};
     localStorage.clear();
     gamesProp = [1];
-    wrapper = shallow(<AuthenticatedRoute path="/test" games={gamesProp} component={Games} />);
+    wrapper = shallow(shallow(shallow(
+      <MemoryRouter initialEntries={["/games/2"]}>
+        <AuthenticatedRoute path="/test" games={gamesProp} component={Games} />
+      </MemoryRouter>
+    ).get(0)).get(0));
   });
 
   afterEach(() => {

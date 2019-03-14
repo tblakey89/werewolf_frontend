@@ -49,8 +49,8 @@ class InfoDialog extends Component {
     ))
   );
 
-  renderInvitations = () => (
-    Object.values(this.props.users).map((user, index) => (
+  renderInvitations = () => {
+    return Object.values(this.props.users || []).map((user, index) => (
       <div key={user.id}>
         <ListItem button>
           <ListItemText
@@ -61,7 +61,7 @@ class InfoDialog extends Component {
         {index !== this.props.users.length - 1 && <Divider />}
       </div>
     ))
-  );
+  };
 
   render() {
     const { fullScreen } = this.props;

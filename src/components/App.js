@@ -40,9 +40,9 @@ class App extends Component {
     return (
       <div className="App">
         <Route exact path='(|/signin|/register|/forgotten_password|/new_password)' render={props => (
-          <SessionDialog onNotificationOpen={this.handleNotificationOpen}/>
+          <SessionDialog onNotificationOpen={this.handleNotificationOpen} {...props}/>
         )}/>
-        <Route path='(/games|/chats|/contacts|/settings|/chat|/game)' render={props => (
+        <Route path='(/games|/chats|/contacts|/settings|/chat|/game|/invitation)' render={props => (
           <ChatContainer onNotificationOpen={this.handleNotificationOpen}/>
         )}/>
         <Snackbar

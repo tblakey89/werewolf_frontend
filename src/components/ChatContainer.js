@@ -9,6 +9,7 @@ import Chat from './Chat';
 import Game from './Game';
 import Contacts from './Contacts';
 import Settings from './Settings';
+import InvitationTokenDialog from './InvitationTokenDialog';
 import AuthenticatedRoute from './AuthenticatedRoute';
 import User from '../api/user';
 import Conversation from '../api/conversation';
@@ -286,6 +287,15 @@ class ChatContainer extends Component {
             user={this.state.user}
             onNotificationOpen={this.props.onNotificationOpen}
             component={Settings}
+          />
+          <AuthenticatedRoute
+            path='/invitation/:token'
+            render={({ match }) => (
+              <InvitationTokenDialog
+                token={match.params.token}
+                onNotificationOpen={this.props.onNotificationOpen}
+              />
+            )}
           />
         </div>
         <Footer

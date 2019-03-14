@@ -76,8 +76,10 @@ class SignIn extends Component {
   };
 
   render() {
+    let { from } = this.props.location.state || { from: { pathname: "/games" } };
+
     if (this.state.authenticated) {
-      return (<Redirect to='/games'/>)
+      return (<Redirect to={from}/>)
     } else {
       return (
         <form onSubmit={this.onFormSubmit}>
@@ -117,7 +119,7 @@ class SignIn extends Component {
                 onClick={this.handleClose}
                 color="primary"
                 component={Link}
-                to={`/forgotten_password`}
+                to={{pathname: `/forgotten_password`, state: {from: from}}}
               >
                 Forgotten Password?
               </Button>
@@ -126,7 +128,7 @@ class SignIn extends Component {
                 onClick={this.handleClose}
                 color="primary"
                 component={Link}
-                to={`/register`}
+                to={{pathname: `/register`, state: {from: from}}}
               >
                 Create Account
               </Button>

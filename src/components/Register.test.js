@@ -12,10 +12,12 @@ describe('Register', () => {
   let passwordInput
   let form;
   let mockNotify;
+  let location;
 
   beforeEach(() => {
     mockNotify = jest.fn();
-    wrapper = shallow(<Register onNotificationOpen={mockNotify} />);
+    location = {state: {from: '/games'}};
+    wrapper = shallow(<Register onNotificationOpen={mockNotify} location={location} />);
     userInput = wrapper.find('#username').first();
     emailInput = wrapper.find('#email').first();
     passwordInput = wrapper.find('#password').first();
