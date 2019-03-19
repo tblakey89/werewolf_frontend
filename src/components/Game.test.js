@@ -235,10 +235,22 @@ describe('Game', () => {
         invitationUpdateInvocationArgs = Invitation.update.mock.calls[0];
       });
 
-      it('Invitation update has been called with \'accepted\' state', () => {
+      it('Invitation update has been called with \'rejected\' state', () => {
         expect((Invitation.update.mock.calls.length)).toEqual(1);
         expect(invitationUpdateInvocationArgs[1]).toEqual('rejected');
         expect(invitationUpdateInvocationArgs[0]).toEqual(1);
+      });
+
+      describe('when reject update returns success', () => {
+        beforeEach(() => {
+          const invitationUpdate = invitationUpdateInvocationArgs[2];
+          invitationUpdate();
+          wrapper.update();
+        });
+
+        it('the redirect component is shown', () => {
+          expect(wrapper.find('Redirect').length).toEqual(1);
+        });
       });
     });
   });

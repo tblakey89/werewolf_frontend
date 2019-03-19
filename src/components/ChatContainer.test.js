@@ -14,9 +14,12 @@ jest.mock('../sockets/gameChannel');
 describe('ChatContainer', () => {
   let wrapper;
   let mockNotify;
+  let mockLeave;
 
   beforeEach(() => {
     mockNotify = jest.fn();
+    mockLeave = jest.fn();
+    gameChannel.join.mockReturnValueOnce({leave: mockLeave});
     wrapper = shallow(<ChatContainer onNotificationOpen={mockNotify}/>);
   });
 
@@ -25,6 +28,7 @@ describe('ChatContainer', () => {
     userChannel.join.mockClear();
     conversationChannel.join.mockClear();
     gameChannel.join.mockClear();
+    mockLeave.mockClear();
   });
 
   describe('Loads up user\'s account when mounted', () => {
@@ -370,6 +374,40 @@ describe('ChatContainer', () => {
 
           it('sets unread message count to 0', () => {
             expect(wrapper.state().games[0].unreadMessageCount).toEqual(0);
+          });
+        });
+      });
+
+      describe('leaving a game', () => {
+        describe('when a leave game message is received', () => {
+          beforeEach(() => {
+            const leaveGameCallback = userChannelInvocationArgs[7];
+            leaveGameCallback({
+              game_id: game.id,
+            });
+            wrapper.update();
+          });
+
+          it('it removes game', () => {
+            expect(wrapper.state().games.length).toEqual(0);
+            expect(wrapper.state().invitations.length).toEqual(0);
+            expect(mockLeave.mock.calls.length).toEqual(1);
+          });
+        });
+
+        describe('when a leave game message is received for other game', () => {
+          beforeEach(() => {
+            const leaveGameCallback = userChannelInvocationArgs[7];
+            leaveGameCallback({
+              game_id: 10,
+            });
+            wrapper.update();
+          });
+
+          it('it removes game', () => {
+            expect(wrapper.state().games.length).toEqual(1);
+            expect(wrapper.state().invitations.length).toEqual(1);
+            expect(mockLeave.mock.calls.length).toEqual(0);
           });
         });
       });

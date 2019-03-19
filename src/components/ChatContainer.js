@@ -72,6 +72,7 @@ class ChatContainer extends Component {
       this.updateGameCallback,
       this.updateGameStateCallback,
       this.updateUserCallback,
+      this.leaveGameCallback,
     )
   );
 
@@ -221,6 +222,18 @@ class ChatContainer extends Component {
       this.props.onNotificationOpen(`You have been invited to ${game.name}`);
     }
     this.setState({games: [...games, game]});
+  };
+
+  leaveGameCallback = (userGame) => {
+    const { games } = this.state;
+    const gameIndex = games.findIndex((game) => game.id === userGame.game_id);
+    if (gameIndex >= 0) {
+      games[gameIndex].channel.leave();
+      const clonedGames = games.slice(0);
+      clonedGames.splice(gameIndex, 1);
+      const invitations = clonedGames.filter((game) => game.pending)
+      this.setState({invitations, games: clonedGames});
+    }
   };
 
   render() {

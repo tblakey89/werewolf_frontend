@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -29,18 +29,19 @@ import Invitation from '../api/invitation';
 // bugs
 // -> highlight role dialog with badge when pending action, or launch of game
 // ->* css on mobile view is a bit off
-// ->* reject all existing non-accepted invites when game launches
 // -> mark game as started on starting with datetime
 // ->* mark game as complete when game over with datetime
 // -> race condition on joining game, joined game message
 // -> review database reads on state update, etc
 // ->* contacts page not showing avatar
 // ->* allow option for selecting length of round, ensure works
+// -> are dead users allowed to speak?
 
 // epics
-// deploy game on aws
+// deploy game on aws/wherever
+// stop 'dead' users sending messages in the game chat
+// how to best inform werewolfs of other werewolfs? Make werewolf chat group?
 // add ability to have friends, send friend requests
-// how to best inform werewolfs of other werewolfs?
 
 // when stuck with concurrency, comment out the tasks
 
@@ -57,7 +58,8 @@ class Game extends Component {
     roleOpen: false,
     infoOpen: false,
     editGameOpen: false,
-    gameReady: false
+    gameReady: false,
+    redirect: false,
   };
 
   componentDidMount() {
@@ -79,7 +81,7 @@ class Game extends Component {
     if (this.props.game.unreadMessageCount !== 0) {
       this.props.setAsRead(this.props.game);
     }
-  }
+  };
 
   setUsers = (props) => {
     if (!this.props.game) return;
@@ -91,13 +93,16 @@ class Game extends Component {
   }
 
   handleInviteClick = (newInvitationState) => () => {
-    const usersGame = this.props.game.users_games.find((users_game) => users_game.user_id === this.props.user.id)
+    const usersGame = this.props.game.users_games.find((users_game) => users_game.user_id === this.props.user.id);
     Invitation.update(usersGame.id, newInvitationState, () => {
-      this.props.onNotificationOpen(`${newInvitationState} invite`)
+      if (newInvitationState === 'rejected') {
+        this.setState({redirect: true});
+      }
+      this.props.onNotificationOpen(`${newInvitationState} invite`);
     }, () => {
 
     });
-  }
+  };
 
   handleRoleClickOpen = () => {
     this.setState({ roleOpen: true });
@@ -238,81 +243,84 @@ class Game extends Component {
 
   render() {
     const { classes } = this.props;
-
-    return (
-      <div>
-        {this.props.game && (
-          <div>
-            <AppBar position="fixed" color="default" style={{top: '64px'}}>
-              <Toolbar>
-                <Typography variant="title" color="inherit" style={{flex: 1}}>
-                  {this.props.game.name}
-                  <br/>
-                  {this.renderGameStatus()}
-                </Typography>
-                <div>
-                  {this.displayRoleIcon() &&
+    if (this.state.redirect) {
+      return (<Redirect to='/games'/>)
+    } else {
+      return (
+        <div>
+          {this.props.game && (
+            <div>
+              <AppBar position="fixed" color="default" style={{top: '64px'}}>
+                <Toolbar>
+                  <Typography variant="title" color="inherit" style={{flex: 1}}>
+                    {this.props.game.name}
+                    <br/>
+                    {this.renderGameStatus()}
+                  </Typography>
+                  <div>
+                    {this.displayRoleIcon() &&
+                      <IconButton
+                        aria-haspopup="true"
+                        color="inherit"
+                        onClick={this.handleRoleClickOpen}
+                      >
+                        <AccountCircle  style={{ fontSize: 36 }} />
+                      </IconButton>
+                    }
                     <IconButton
                       aria-haspopup="true"
                       color="inherit"
-                      onClick={this.handleRoleClickOpen}
+                      onClick={this.handleInfoClickOpen}
                     >
-                      <AccountCircle  style={{ fontSize: 36 }} />
+                      <InfoIcon style={{ fontSize: 36 }} />
                     </IconButton>
-                  }
-                  <IconButton
-                    aria-haspopup="true"
-                    color="inherit"
-                    onClick={this.handleInfoClickOpen}
-                  >
-                    <InfoIcon style={{ fontSize: 36 }} />
-                  </IconButton>
-                  {this.displaySettingsIcon() &&
-                    <IconButton
-                      aria-haspopup="true"
-                      color="inherit"
-                      onClick={this.handleSettingsOpen}
-                    >
-                      <SettingsIcon style={{ fontSize: 36 }} />
-                    </IconButton>
-                  }
-                </div>
-              </Toolbar>
-            </AppBar>
-            <div style={{'margin-top': '128px'}}>
-              {this.renderLaunchButton()}
-              {this.renderInvite()}
-              <List>
-                {this.renderMessages()}
-              </List>
+                    {this.displaySettingsIcon() &&
+                      <IconButton
+                        aria-haspopup="true"
+                        color="inherit"
+                        onClick={this.handleSettingsOpen}
+                      >
+                        <SettingsIcon style={{ fontSize: 36 }} />
+                      </IconButton>
+                    }
+                  </div>
+                </Toolbar>
+              </AppBar>
+              <div style={{'margin-top': '128px'}}>
+                {this.renderLaunchButton()}
+                {this.renderInvite()}
+                <List>
+                  {this.renderMessages()}
+                </List>
+              </div>
+              <RoleDialog
+                open={this.state.roleOpen}
+                onClose={this.handleClose}
+                game={this.props.game}
+                user={this.props.user}
+                users={this.state.users}
+              />
+              <InfoDialog
+                open={this.state.infoOpen}
+                onClose={this.handleClose}
+                gameState={this.props.game.state.state}
+                players={this.props.game.state.players}
+                user={this.props.user}
+                users={this.state.users}
+              />
+              <EditGameDialog
+                open={this.state.editGameOpen}
+                onClose={this.handleClose}
+                onNotificationOpen={this.props.onNotificationOpen}
+                currentParticipantIds={this.currentParticipantIds()}
+                gameId={this.props.game.id}
+                token={this.props.game.token}
+              />
             </div>
-            <RoleDialog
-              open={this.state.roleOpen}
-              onClose={this.handleClose}
-              game={this.props.game}
-              user={this.props.user}
-              users={this.state.users}
-            />
-            <InfoDialog
-              open={this.state.infoOpen}
-              onClose={this.handleClose}
-              gameState={this.props.game.state.state}
-              players={this.props.game.state.players}
-              user={this.props.user}
-              users={this.state.users}
-            />
-            <EditGameDialog
-              open={this.state.editGameOpen}
-              onClose={this.handleClose}
-              onNotificationOpen={this.props.onNotificationOpen}
-              currentParticipantIds={this.currentParticipantIds()}
-              gameId={this.props.game.id}
-              token={this.props.game.token}
-            />
-          </div>
-        )}
-      </div>
-    );
+          )}
+        </div>
+      );
+    }
   }
 }
 
