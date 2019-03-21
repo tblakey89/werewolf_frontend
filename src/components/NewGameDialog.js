@@ -153,7 +153,8 @@ class NewGameDialog extends Component {
           <div>
             <DialogContent>
               <DialogContentText>
-                Please enter the details for your new game of Werewolf.
+                Please enter the details for your new game of Werewolf. We'll provide you with a
+                link to invite other people from outside the application.
               </DialogContentText>
               <form className={classes.container}>
                 <FormControl className={classes.formControl} fullWidth={true}>

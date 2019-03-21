@@ -4,9 +4,9 @@ import { Link } from 'react-router-dom';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import Avatar from '@material-ui/core/Avatar';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import UserAvatar from './UserAvatar';
 import User from '../api/user';
 import Conversation from '../api/conversation';
 
@@ -49,15 +49,16 @@ class Contacts extends Component {
       return <CircularProgress />;
     }
     return (
-      this.state.contacts.map((user) => (
+      this.state.contacts.filter(user => user.id !== this.props.user.id).map((user) => (
         <ListItem
           button
           onClick={this.createConversation(user.id)}
           key={user.id}
         >
-          <Avatar>
-            <AccountCircle style={{ fontSize: 36 }} />
-          </Avatar>
+          <UserAvatar
+            user={this.props.user}
+            currentUser={user}
+          />
           <ListItemText primary={user.username} secondary="" />
         </ListItem>
       ))

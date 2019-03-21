@@ -28,12 +28,10 @@ import Invitation from '../api/invitation';
 
 // bugs
 // -> highlight role dialog with badge when pending action, or launch of game
-// ->* css on mobile view is a bit off
 // -> mark game as started on starting with datetime
 // ->* mark game as complete when game over with datetime
 // -> race condition on joining game, joined game message
 // -> review database reads on state update, etc
-// ->* contacts page not showing avatar
 // ->* allow option for selecting length of round, ensure works
 // -> are dead users allowed to speak?
 
@@ -50,6 +48,14 @@ import Invitation from '../api/invitation';
 const styles = theme => ({
   button: {
     margin: theme.spacing.unit,
+  },
+  gameHeader: {
+    [theme.breakpoints.down('sm')]: {
+      top: '55px'
+    },
+    [theme.breakpoints.up('sm')]: {
+      top: '64px'
+    },
   },
 });
 
@@ -250,7 +256,7 @@ class Game extends Component {
         <div>
           {this.props.game && (
             <div>
-              <AppBar position="fixed" color="default" style={{top: '64px'}}>
+              <AppBar position="fixed" color="default" className={classes.gameHeader}>
                 <Toolbar>
                   <Typography variant="title" color="inherit" style={{flex: 1}}>
                     {this.props.game.name}

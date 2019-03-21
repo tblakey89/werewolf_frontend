@@ -9,9 +9,13 @@ jest.mock('../api/user');
 
 describe('Contacts', () => {
   let wrapper;
+  let user;
 
   beforeEach(() => {
-    wrapper = shallow(<Contacts />);
+    user = {
+      id: 10
+    }
+    wrapper = shallow(<Contacts user={user} />);
   });
 
   afterEach(() => {
