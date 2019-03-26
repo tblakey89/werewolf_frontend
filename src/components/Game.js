@@ -61,6 +61,14 @@ const styles = theme => ({
       top: '64px'
     },
   },
+  launchHeader: {
+    [theme.breakpoints.down('sm')]: {
+      top: '110px'
+    },
+    [theme.breakpoints.up('sm')]: {
+      top: '128px'
+    },
+  },
 });
 
 class Game extends Component {
@@ -172,7 +180,7 @@ class Game extends Component {
 
   renderLaunchButton = () => (
     this.showLaunchButton() && (
-      <AppBar position="fixed" color="default">
+      <AppBar position="fixed" color="default" className={this.props.classes.launchHeader}>
         <Button
           variant="raised"
           color="primary"
