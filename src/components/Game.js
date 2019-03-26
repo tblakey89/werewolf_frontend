@@ -29,11 +29,15 @@ import Invitation from '../api/invitation';
 // bugs
 // -> highlight role dialog with badge when pending action, or launch of game
 // -> mark game as started on starting with datetime
-// ->* mark game as complete when game over with datetime
 // -> race condition on joining game, joined game message
 // -> review database reads on state update, etc
-// ->* allow option for selecting length of round, ensure works
 // -> are dead users allowed to speak?
+// ->* launch button css is broken
+// ->* when sending message, ensure that message view goes to new bottom
+// ->* timer till end of phase shown on game page
+// ->* game ordering, invitation ordering
+// ->* notification covers text box on mobile view
+// ->* when invited, does not automatically appear in invite icon badge, or modal
 
 // epics
 // deploy game on aws/wherever

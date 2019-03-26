@@ -17,6 +17,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import ContactSelect from './ContactSelect';
+import DurationSelect from './DurationSelect';
 import Game from '../api/game';
 import GameValidation from '../validation/gameValidation';
 
@@ -41,7 +42,8 @@ class NewGameDialog extends Component {
     game: {},
     fields: {
       user_ids: [],
-      participants: []
+      participants: [],
+      time_period: 'day',
     },
     fieldErrors: {},
     errored: true,
@@ -54,13 +56,21 @@ class NewGameDialog extends Component {
     this.setState({_loading: false})
   }
 
-  handleMenuChange = event => {
+  handleContactMenuChange = event => {
     const fields = {...this.state.fields};
     const participants = event.target.value;
     const user_ids = event.target.value;
 
     fields['user_ids'] = user_ids;
     fields['participants'] = participants;
+
+    this.setState({ fields });
+  };
+
+  handleDurationMenuChange = event => {
+    const fields = {...this.state.fields};
+
+    fields['time_period'] = event.target.value;
 
     this.setState({ fields });
   };
@@ -171,12 +181,16 @@ class NewGameDialog extends Component {
                   />
                 </FormControl>
                 <ContactSelect
-                  onChange={this.handleMenuChange}
+                  onChange={this.handleContactMenuChange}
                   participants={this.state.fields.participants}
                   showFieldError={this.showFieldError}
                   setLoaded={this.handleSetLoaded}
                   userId={this.props.userId}
                   currentParticipantIds={[]}
+                />
+                <DurationSelect
+                  onChange={this.handleDurationMenuChange}
+                  duration={this.state.fields.time_period}
                 />
               </form>
             </DialogContent>

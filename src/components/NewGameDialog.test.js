@@ -61,7 +61,7 @@ describe('NewGameDialog', () => {
           id: 1,
           username: 'test',
         };
-        wrapper.instance().handleMenuChange({
+        wrapper.instance().handleContactMenuChange({
           target: { value: [user] },
         });
       });
