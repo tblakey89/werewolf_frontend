@@ -32,12 +32,12 @@ import Invitation from '../api/invitation';
 // -> race condition on joining game, joined game message
 // -> review database reads on state update, etc
 // -> are dead users allowed to speak?
-// ->* launch button css is broken
-// ->* when sending message, ensure that message view goes to new bottom
 // ->* timer till end of phase shown on game page
 // ->* game ordering, invitation ordering
 // ->* notification covers text box on mobile view
 // ->* when invited, does not automatically appear in invite icon badge, or modal
+
+// fix immutability issue with game messages
 
 // epics
 // deploy game on aws/wherever
@@ -88,6 +88,9 @@ class Game extends Component {
 
   componentDidUpdate(prevProps) {
     this.setMessagesAsRead();
+    if (this.props.game.messages.length > prevProps.game.messages.length) {
+      window.scrollTo(0,document.body.scrollHeight);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -309,6 +312,7 @@ class Game extends Component {
                 {this.renderInvite()}
                 <List>
                   {this.renderMessages()}
+                  <div ref={(el) => { this.messagesEnd = el; }} />
                 </List>
               </div>
               <RoleDialog

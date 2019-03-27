@@ -7,11 +7,14 @@ import UserAvatar from './UserAvatar';
 class Chat extends Component {
   componentDidMount() {
     this.setMessagesAsRead();
+    window.scrollTo(0,document.body.scrollHeight);
   }
 
   componentDidUpdate(prevProps) {
     this.setMessagesAsRead();
-    window.scrollTo(0,document.body.scrollHeight);
+    if (this.props.conversation.messages.length > prevProps.conversation.messages.length) {
+      window.scrollTo(0,document.body.scrollHeight);
+    }
   }
 
   setMessagesAsRead = () => {

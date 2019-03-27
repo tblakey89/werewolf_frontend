@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { matchPath } from 'react-router';
+import _ from 'lodash';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Header from './Header';
 import Footer from './Footer';
@@ -116,7 +117,7 @@ class ChatContainer extends Component {
   };
 
   newMessageCallback = (newMessage) => {
-    const conversations = [...this.state.conversations];
+    const conversations = _.cloneDeep(this.state.conversations);
     const conversation = conversations.find((conversation) =>
       conversation.id === newMessage.conversation_id
     );
@@ -179,7 +180,7 @@ class ChatContainer extends Component {
   };
 
   newGameMessageCallback = (newMessage) => {
-    const games = [...this.state.games];
+    const games = _.cloneDeep(this.state.games);
     const game = games.find((game) =>
       game.id === newMessage.game_id
     );
