@@ -121,7 +121,7 @@ describe('Game', () => {
       });
 
       it('shows day phase and number', () => {
-        expect(wrapper.find('span').text()).toEqual('Day Phase 1');
+        expect(wrapper.find('span').text()).toEqual(expect.stringContaining('Day Phase 1'));
       });
     });
 
@@ -133,7 +133,7 @@ describe('Game', () => {
       });
 
       it('shows night phase and number', () => {
-        expect(wrapper.find('span').text()).toEqual('Night Phase 1');
+        expect(wrapper.find('span').text()).toEqual(expect.stringContaining('Night Phase 1'));
       });
     });
 

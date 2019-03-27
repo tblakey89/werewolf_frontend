@@ -19,6 +19,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import RoleDialog from './RoleDialog';
 import InfoDialog from './InfoDialog';
 import EditGameDialog from './EditGameDialog';
+import Timer from './Timer';
 import UserAvatar from './UserAvatar';
 import Invitation from '../api/invitation';
 
@@ -32,12 +33,11 @@ import Invitation from '../api/invitation';
 // -> race condition on joining game, joined game message
 // -> review database reads on state update, etc
 // -> are dead users allowed to speak?
-// ->* timer till end of phase shown on game page
 // ->* game ordering, invitation ordering
 // ->* notification covers text box on mobile view
 // ->* when invited, does not automatically appear in invite icon badge, or modal
-
-// fix immutability issue with game messages
+// ->* Games page not counting players correctly
+// ->* redirects to sign in or games on visiting '/'
 
 // epics
 // deploy game on aws/wherever
@@ -255,12 +255,20 @@ class Game extends Component {
     } else {
       const phaseNumber = Math.ceil(this.props.game.state.phases / 2);
       switch(gameState) {
-        case 'day_phase': return (<span style={{'font-size': 12}}>Day Phase {phaseNumber}</span>);
-        case 'night_phase': return (<span style={{'font-size': 12}}>Night Phase {phaseNumber}</span>);
+        case 'day_phase': return this.renderGamePhase('Day', phaseNumber);
+        case 'night_phase': return this.renderGamePhase('Night', phaseNumber);
         case 'game_over': return (<span style={{'font-size': 12}}>Game Over</span>);
       }
     }
-  }
+  };
+
+  renderGamePhase = (phase, number) => (
+    <span
+      style={{'font-size': 12}}
+    >
+      {phase} Phase {number} - <Timer endPhaseTime={this.props.game.state.end_phase_unix_time} />
+    </span>
+  );
 
   render() {
     const { classes } = this.props;
