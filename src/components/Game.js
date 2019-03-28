@@ -34,7 +34,6 @@ import Invitation from '../api/invitation';
 // -> review database reads on state update, etc
 // -> are dead users allowed to speak?
 // ->* redirects to sign in or games on visiting '/'
-// ->* when visiting page after chat page, seems to stay on bottom
 // ->* when new message received, does lastMessageAt get updated for game or chat? or is it just bot message?
 
 // epics

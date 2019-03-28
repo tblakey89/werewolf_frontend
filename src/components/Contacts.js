@@ -20,6 +20,7 @@ class Contacts extends Component {
   };
 
   componentDidMount() {
+    window.scrollTo(0,0);
     this.setState({_loading: true})
     User.index((response) => {
       this.setState({contacts: response.users, _loading: false});

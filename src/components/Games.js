@@ -36,6 +36,10 @@ class Games extends Component {
     open: false
   };
 
+  componentDidMount() {
+    window.scrollTo(0,0);
+  }
+
   handleInvitationClick = (game, newInvitationState) => () => {
     const usersGame = game.users_games.find((users_game) => users_game.user_id === this.props.user.id)
     Invitation.update(usersGame.id, newInvitationState, () => {

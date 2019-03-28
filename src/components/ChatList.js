@@ -29,6 +29,10 @@ class ChatList extends Component {
     open: false
   };
 
+  componentDidMount() {
+    window.scrollTo(0,0);
+  }
+
   handleClickOpen = () => {
     this.setState({ open: true });
   };
