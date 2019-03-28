@@ -47,7 +47,7 @@ class App extends Component {
         )}/>
         <Snackbar
           anchorOrigin={{
-            vertical: 'bottom',
+            vertical: 'top',
             horizontal: 'left',
           }}
           open={this.state.notificationOpen}
