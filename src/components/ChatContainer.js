@@ -89,7 +89,7 @@ class ChatContainer extends Component {
   lastMessageAt = (conversation) => {
     const { messages } = conversation;
     if (messages.length === 0) return undefined;
-    return messages.slice(-1)[0].created_at;
+    return messages[0].created_at;
   };
 
   joinConversationChannel = (socket, conversation) => (
@@ -124,7 +124,7 @@ class ChatContainer extends Component {
 
     conversation.unreadMessageCount++;
     conversation.lastMessageAt = newMessage.created_at;
-    conversation.messages.push(newMessage);
+    conversation.messages = [newMessage, ...conversation.messages];
 
     this.notifyNewMessage(newMessage);
 
@@ -189,7 +189,8 @@ class ChatContainer extends Component {
 
     game.unreadMessageCount++;
     game.lastMessageAt = newMessage.created_at;
-    game.messages.push(newMessage);
+    debugger;
+    game.messages = [newMessage, ...game.messages];
 
     this.notifyNewMessage(newMessage);
 

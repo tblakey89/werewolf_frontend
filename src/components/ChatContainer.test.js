@@ -111,17 +111,17 @@ describe('ChatContainer', () => {
             id: 13,
             messages: [
               {
+                body: 'test2',
+                conversation_id: 13,
+                created_at: lastMessageAt,
+                sender: user
+              },
+              {
                 body: 'test',
                 conversation_id: 13,
                 created_at: new Date(2018, 6, 1),
                 sender: user
               },
-              {
-                body: 'test2',
-                conversation_id: 13,
-                created_at: new Date(2018, 7, 1),
-                sender: user
-              }
             ]
           });
           wrapper.update();
