@@ -33,8 +33,15 @@ class InvitationDialog extends Component {
     });
   }
 
+  sortedInvitations = () => (
+    this.props.invitations.sort((inviteA, inviteB) => {
+      if (inviteA.invitationAt > inviteB.invitationAt) return -1;
+      return 1;
+    })
+  );
+
   renderInvitations = () => (
-    this.props.invitations.map((invitation, index) => (
+    this.sortedInvitations().map((invitation, index) => (
       <div key={invitation.id}>
         <ListItem>
           <ListItemText onClick={this.props.onClose}>

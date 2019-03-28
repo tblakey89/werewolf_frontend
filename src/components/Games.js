@@ -59,6 +59,23 @@ class Games extends Component {
     return `${game.users_games.length} players`;
   };
 
+  sortedGames = () => (
+    // invitation at top sorted by invitationAt desc
+    // games sorted by lastMessageAt desc
+    this.props.games.sort((gameA, gameB) => {
+      if (gameA.pending && gameB.pending) {
+        if (gameA.invitationAt > gameB.invitationAt) return -1;
+        return 1;
+      } else if (gameA.pending && !gameB.pending) {
+        return -1;
+      } else if (gameB.pending && !gameA.pending) {
+        return 1;
+      }
+      if (gameA.lastMessageAt > gameB.lastMessageAt) return -1;
+      return 1;
+    })
+  );
+
   renderInvite = (game) => (
     <ListItem button>
       <Link to={`/game/${game.id}`}><MailIcon style={{ fontSize: 36 }} /></Link>
@@ -118,7 +135,7 @@ class Games extends Component {
   );
 
   renderGames = () => (
-    this.props.games.map((game) => (
+    this.sortedGames().map((game) => (
       <Link to={`/game/${game.id}`} key={game.id}>
         {game.pending ? this.renderInvite(game) : this.renderGame(game)}
       </Link>

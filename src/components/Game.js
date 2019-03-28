@@ -33,11 +33,14 @@ import Invitation from '../api/invitation';
 // -> race condition on joining game, joined game message
 // -> review database reads on state update, etc
 // -> are dead users allowed to speak?
-// ->* game ordering, invitation ordering
 // ->* notification covers text box on mobile view
 // ->* when invited, does not automatically appear in invite icon badge, or modal
 // ->* Games page not counting players correctly
 // ->* redirects to sign in or games on visiting '/'
+// ->* when visiting page after chat page, seems to stay on bottom
+// ->* when new message received, does lastMessageAt get updated for game or chat? 
+
+// don't forget commit API based on new created_at field in users_game view
 
 // epics
 // deploy game on aws/wherever

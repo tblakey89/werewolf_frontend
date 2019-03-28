@@ -78,7 +78,7 @@ describe('InvitationDialog', () => {
       });
 
       it('triggers update api call', () => {
-        expect(invitationUpdateInvocationArgs[0]).toEqual(11);
+        expect(invitationUpdateInvocationArgs[0]).toEqual(12);
         expect(invitationUpdateInvocationArgs[1]).toEqual('accepted');
       });
 
@@ -106,7 +106,7 @@ describe('InvitationDialog', () => {
       });
 
       it('triggers update api call', () => {
-        expect(invitationUpdateInvocationArgs[0]).toEqual(11);
+        expect(invitationUpdateInvocationArgs[0]).toEqual(12);
         expect(invitationUpdateInvocationArgs[1]).toEqual('rejected');
       });
     });

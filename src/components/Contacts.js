@@ -44,12 +44,19 @@ class Contacts extends Component {
     // notify
   }
 
+  filteredAndSortedContacts = () => (
+    this.state.contacts.filter(user => user.id !== this.props.user.id).sort((contactA, contactB) => {
+      if (contactA.username < contactB.username) return -1;
+      return 1;
+    })
+  );
+
   renderContacts = () => {
     if (this.state._loading) {
       return <CircularProgress />;
     }
     return (
-      this.state.contacts.filter(user => user.id !== this.props.user.id).map((user) => (
+      this.filteredAndSortedContacts().map((user) => (
         <ListItem
           button
           onClick={this.createConversation(user.id)}

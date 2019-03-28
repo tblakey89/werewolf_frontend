@@ -142,17 +142,19 @@ class ChatContainer extends Component {
     }
   }
 
-  buildGameWithChannel = (game, user, socket) => (
-    {
+  buildGameWithChannel = (game, user, socket) => {
+    const usersGame = game.users_games.find((usersGame) => (
+      usersGame.user_id === user.id
+    ));
+    return {
       ...game,
-      pending: game.users_games.some((users_game) => (
-        users_game.user_id === user.id && users_game.state === "pending"
-      )),
+      pending: usersGame.state === 'pending',
+      invitationAt: usersGame.created_at,
       channel: this.joinGameChannel(socket, game),
       unreadMessageCount: 0,
-      lastMessageAt: this.lastMessageAt(game),
+      lastMessageAt: this.lastMessageAt(game) || game.created_at,
     }
-  );
+  };
 
   joinGameChannel = (socket, game) => (
     GameChannel.join(socket, game.id, this.newGameMessageCallback)
