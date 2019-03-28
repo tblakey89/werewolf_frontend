@@ -220,11 +220,12 @@ class ChatContainer extends Component {
 
   newGameCallback = (newGame) => {
     const game = this.buildGameWithChannel(newGame, this.state.user, this.state.socket);
-    const { games } = this.state;
+    const { games, invitations } = this.state;
+    const updatedInvitations = game.pending ? [...invitations, game] : invitations;
     if (game.users_games.find((users_game) => users_game.user_id === this.state.user.id).state !== 'host') {
       this.props.onNotificationOpen(`You have been invited to ${game.name}`);
     }
-    this.setState({games: [...games, game]});
+    this.setState({invitations: updatedInvitations, games: [...games, game]});
   };
 
   leaveGameCallback = (userGame) => {

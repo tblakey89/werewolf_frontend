@@ -153,6 +153,7 @@ describe('ChatContainer', () => {
 
           it('adds another game to the state', () => {
             expect(wrapper.state().games.length).toEqual(2);
+            expect(wrapper.state().invitations.length).toEqual(2);
             expect(mockNotify.mock.calls.length).toBe(1);
           });
         });
