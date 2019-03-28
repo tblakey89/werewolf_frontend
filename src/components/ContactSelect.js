@@ -47,8 +47,15 @@ class ContactSelect extends Component {
     return users.reduce(reducer, {});
   };
 
+  sortedMenuItems = () => (
+    Object.values(this.state.contacts).sort((contactA, contactB) => {
+      if (contactA.username < contactB.username) return -1;
+      return 1;
+    })
+  )
+
   renderMenuItems = () => (
-    Object.values(this.state.contacts).map((contact) => (
+    this.sortedMenuItems().map((contact) => (
       <MenuItem key={contact.id} value={contact.id}>{contact.username}</MenuItem>
     ))
   );

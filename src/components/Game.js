@@ -33,7 +33,6 @@ import Invitation from '../api/invitation';
 // -> race condition on joining game, joined game message
 // -> review database reads on state update, etc
 // -> are dead users allowed to speak?
-// ->* sorting in contactselect of users
 // ->* Games page not counting players correctly
 // ->* redirects to sign in or games on visiting '/'
 // ->* when visiting page after chat page, seems to stay on bottom
