@@ -55,8 +55,7 @@ class Games extends Component {
 
   gameStatus = (game) => {
     // This should show different things, like state of game
-    // filter out rejected, and pending invites, etc
-    return `${game.users_games.length} players`;
+    return `${Object.keys(game.state.players).length} players`;
   };
 
   sortedGames = () => (

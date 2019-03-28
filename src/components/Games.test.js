@@ -26,6 +26,9 @@ describe('Games', () => {
       ],
       state: {
         state: 'initialized',
+        players: {
+          11: {}
+        }
       }
     },
     {
@@ -46,6 +49,10 @@ describe('Games', () => {
       ],
       state: {
         state: 'initialized',
+        players: {
+          10: {},
+          12: {}
+        }
       }
     }
   ];

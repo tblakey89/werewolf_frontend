@@ -33,10 +33,9 @@ import Invitation from '../api/invitation';
 // -> race condition on joining game, joined game message
 // -> review database reads on state update, etc
 // -> are dead users allowed to speak?
-// ->* Games page not counting players correctly
 // ->* redirects to sign in or games on visiting '/'
 // ->* when visiting page after chat page, seems to stay on bottom
-// ->* when new message received, does lastMessageAt get updated for game or chat?
+// ->* when new message received, does lastMessageAt get updated for game or chat? or is it just bot message?
 
 // epics
 // deploy game on aws/wherever
