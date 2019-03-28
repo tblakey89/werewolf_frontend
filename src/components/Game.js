@@ -33,11 +33,10 @@ import Invitation from '../api/invitation';
 // -> race condition on joining game, joined game message
 // -> review database reads on state update, etc
 // -> are dead users allowed to speak?
-// ->* redirects to sign in or games on visiting '/'
-// ->* when new message received, does lastMessageAt get updated for game or chat? or is it just bot message?
 
 // epics
 // deploy game on aws/wherever
+// persist unread messages/games
 // stop 'dead' users sending messages in the game chat
 // how to best inform werewolfs of other werewolfs? Make werewolf chat group?
 // add ability to have friends, send friend requests

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Redirect } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -35,6 +35,10 @@ class App extends Component {
     });
   };
 
+  isLoggedIn = () => {
+    return !!localStorage.getItem('jwt');
+  }
+
   render() {
     const { classes } = this.props;
     return (
@@ -44,6 +48,9 @@ class App extends Component {
         )}/>
         <Route path='(/games|/chats|/contacts|/settings|/chat|/game|/invitation)' render={props => (
           <ChatContainer onNotificationOpen={this.handleNotificationOpen}/>
+        )}/>
+        <Route path='/' render={props => (
+          <Redirect to={this.isLoggedIn() ? '/games' : '/signin'} />
         )}/>
         <Snackbar
           anchorOrigin={{
