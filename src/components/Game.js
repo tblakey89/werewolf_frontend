@@ -34,11 +34,18 @@ import Invitation from '../api/invitation';
 // -> review database reads on state update, etc
 // -> are dead users allowed to speak?
 
-// epics
 // deploy game on aws/wherever
+// -> consider how to prepare production config
+// -> how to do env variables for production
+// -> how to upload to S3 easier
+// -> think of a domain name
+// -> consider digitalocean for api, read guide
+
+// epics
 // persist unread messages/games
 // stop 'dead' users sending messages in the game chat
 // how to best inform werewolfs of other werewolfs? Make werewolf chat group?
+// limit messages loaded to most recent 100, or less
 // add ability to have friends, send friend requests
 
 // when stuck with concurrency, comment out the tasks
