@@ -95,7 +95,7 @@ class EditGameDialog extends Component {
         </DialogTitle>
         <DialogContent>
           <p>Share the url with friends for them to join:</p>
-          <b className={classes.tokenUrl}>http://localhost:3000/invitation/{this.props.token}</b>
+          <b className={classes.tokenUrl}>https://www.wolfchat.app/invitation/{this.props.token}</b>
           <p>Or add other users here:</p>
           <form className={classes.container}>
             <ContactSelect

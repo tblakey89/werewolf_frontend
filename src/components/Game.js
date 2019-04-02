@@ -35,9 +35,10 @@ import Invitation from '../api/invitation';
 // -> are dead users allowed to speak?
 
 // deploy game on aws/wherever
+// -> install certs on nginx on server
 // -> consider how to prepare production config
 // -> how to do env variables for production
-// -> how to upload to S3 easier
+// -> how to upload to S3 easier https://medium.com/@omgwtfmarc/deploying-create-react-app-to-s3-or-cloudfront-48dae4ce0af
 // -> think of a domain name
 // -> consider digitalocean for api, read guide
 

@@ -143,7 +143,7 @@ class NewGameDialog extends Component {
                 <b
                   className={classes.tokenUrl}
                 >
-                  http://localhost:3000/invitation/{this.state.game.token}
+                  https://www.wolfchat.app/invitation/{this.state.game.token}
                 </b>
               </DialogContentText>
             </DialogContent>
