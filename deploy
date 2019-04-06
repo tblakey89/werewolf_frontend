@@ -1,0 +1,2 @@
+#!/usr/bin/env zsh
+aws s3 sync build/ s3://werewolf-frontend

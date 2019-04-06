@@ -189,7 +189,6 @@ class ChatContainer extends Component {
 
     game.unreadMessageCount++;
     game.lastMessageAt = newMessage.created_at;
-    debugger;
     game.messages = [newMessage, ...game.messages];
 
     this.notifyNewMessage(newMessage);

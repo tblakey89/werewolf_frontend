@@ -33,16 +33,20 @@ import Invitation from '../api/invitation';
 // -> race condition on joining game, joined game message
 // -> review database reads on state update, etc
 // -> are dead users allowed to speak?
+// ->* group chat includes self
+// ->* at least upgrade phoenix js to 1.4.2. websockets time out after 60s of not being in an active application, only affects mobile? https://github.com/phoenixframework/phoenix/issues/3161
+// ->* bug when creating new chat
+// ->* date of last message is wrong
+// ->* error on failed upload on avatar. Do we also need a size limit?
+// ->* bug on invite, somehting to do with redirect maybe?
+// ->* show avatar on user info dialog
 
 // deploy game on aws/wherever
-// -> install certs on nginx on server
-// -> consider how to prepare production config
-// -> how to do env variables for production
 // -> how to upload to S3 easier https://medium.com/@omgwtfmarc/deploying-create-react-app-to-s3-or-cloudfront-48dae4ce0af
-// -> think of a domain name
-// -> consider digitalocean for api, read guide
+// -> remember note to install postgres, imagemajick
 
 // epics
+// choose simple notes app to store all this stuff, also to store all used tutorials, plus general comments
 // persist unread messages/games
 // stop 'dead' users sending messages in the game chat
 // how to best inform werewolfs of other werewolfs? Make werewolf chat group?
