@@ -1,7 +1,7 @@
 import { Socket } from 'phoenix';
 
 const socketConnect = () => {
-  let socket = new Socket("wss://api.wolfchat.app/socket", {
+  let socket = new Socket(process.env.REACT_APP_SOCKET_ADDRESS, {
     params: {
       token: localStorage.getItem('jwt')
     }
