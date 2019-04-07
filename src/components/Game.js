@@ -32,7 +32,6 @@ import Invitation from '../api/invitation';
 // -> mark game as started on starting with datetime
 // -> race condition on joining game, joined game message
 // -> review database reads on state update, etc
-// ->* group chat includes self
 // ->* at least upgrade phoenix js to 1.4.2. websockets time out after 60s of not being in an active application, only affects mobile? https://github.com/phoenixframework/phoenix/issues/3161
 // ->* bug when creating new chat
 // ->* date of last message is wrong

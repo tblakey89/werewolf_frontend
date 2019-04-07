@@ -6,7 +6,7 @@ describe('Timer', () => {
   let wrapper;
   let endPhaseTime;
 
-  Date.now = jest.genMockFunction().mockReturnValue(1000);
+  Date.now = jest.fn().mockReturnValue(1000);
 
   beforeEach(() => {
     endPhaseTime = 1000 + Date.now();

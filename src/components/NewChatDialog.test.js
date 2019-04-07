@@ -15,9 +15,10 @@ describe('NewChatDialog', () => {
   let closeButton;
 
   beforeEach(() => {
+    const user = {id: 10};
     mockNotify = jest.fn();
     mockClose = jest.fn();
-    wrapper = shallow(shallow(shallow(shallow(shallow(shallow(<NewChatDialog onClose={mockClose} onNotificationOpen={mockNotify} open={true} />).get(0)).get(0)).get(0)).get(0)).get(0));
+    wrapper = shallow(shallow(shallow(shallow(shallow(shallow(<NewChatDialog onClose={mockClose} onNotificationOpen={mockNotify} open={true} user={user} />).get(0)).get(0)).get(0)).get(0)).get(0));
     button = wrapper.find('#submit');
   });
 

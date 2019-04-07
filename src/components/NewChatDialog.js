@@ -124,6 +124,7 @@ class NewChatDialog extends Component {
                 participants={this.state.fields.participants}
                 showFieldError={this.showFieldError}
                 setLoaded={this.handleSetLoaded}
+                userId={this.props.user.id}
               />
             </form>
           </DialogContent>
