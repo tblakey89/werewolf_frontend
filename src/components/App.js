@@ -37,7 +37,7 @@ class App extends Component {
 
   isLoggedIn = () => {
     return !!localStorage.getItem('jwt');
-  }
+  };
 
   render() {
     const { classes } = this.props;
@@ -49,7 +49,7 @@ class App extends Component {
         <Route path='(/games|/chats|/contacts|/settings|/chat|/game|/invitation)' render={props => (
           <ChatContainer onNotificationOpen={this.handleNotificationOpen}/>
         )}/>
-        <Route path='/' render={props => (
+        <Route exact path='/' render={props => (
           <Redirect to={this.isLoggedIn() ? '/games' : '/signin'} />
         )}/>
         <Snackbar

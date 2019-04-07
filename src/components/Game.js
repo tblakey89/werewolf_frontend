@@ -33,10 +33,8 @@ import Invitation from '../api/invitation';
 // -> race condition on joining game, joined game message
 // -> review database reads on state update, etc
 // ->* at least upgrade phoenix js to 1.4.2. websockets time out after 60s of not being in an active application, only affects mobile? https://github.com/phoenixframework/phoenix/issues/3161
-// ->* bug when creating new chat
 // ->* date of last message is wrong
 // ->* error on failed upload on avatar. Do we also need a size limit?
-// ->* bug on invite, somehting to do with redirect maybe?
 // ->* show avatar on user info dialog
 
 // deploy game on aws/wherever
@@ -94,7 +92,8 @@ class Game extends Component {
 
   componentDidUpdate(prevProps) {
     this.setMessagesAsRead();
-    if (this.props.game.messages.length > prevProps.game.messages.length) {
+    if (!prevProps.game) return;
+    if (this.props.game !== undefined && this.props.game.messages.length > prevProps.game.messages.length) {
       window.scrollTo(0,document.body.scrollHeight);
     }
   }
