@@ -12,6 +12,7 @@ class Chat extends Component {
 
   componentDidUpdate(prevProps) {
     this.setMessagesAsRead();
+    if (!prevProps.conversation) return;
     if (this.props.conversation.messages.length > prevProps.conversation.messages.length) {
       window.scrollTo(0,document.body.scrollHeight);
     }

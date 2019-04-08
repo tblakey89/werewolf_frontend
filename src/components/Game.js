@@ -37,9 +37,15 @@ import Invitation from '../api/invitation';
 // -> how to upload to S3 easier https://medium.com/@omgwtfmarc/deploying-create-react-app-to-s3-or-cloudfront-48dae4ce0af
 // -> remember note to install postgres, imagemajick
 
+// persist unread messages/games
+// -> on users_game and users_conversation, have last_read_at datetime
+// -> Get count via SQL include in game and conversation views
+// -> Update count locally when receiving new message, or viewing existing game/conversation
+// -> on viewing game/conversation update last_read_at via websocket (only if new messages)
+// -> if on game/conversation when receiving new message, update last_read_at
+
 // epics
 // choose simple notes app to store all this stuff, also to store all used tutorials, plus general comments
-// persist unread messages/games
 // stop 'dead' users sending messages in the game chat, highlight role dialog with badge when pending action, or launch of game
 // add link from infodialog to conversation with user, add chat icon for each item in list on right
 // how to best inform werewolfs of other werewolfs? Make werewolf chat group? Send notification from bot? Link to conversation from icon on top
@@ -47,6 +53,7 @@ import Invitation from '../api/invitation';
 // scope: use presence to inform users of who is online, if easy, implement
 // limit messages loaded to most recent 100, or less
 // start flutter app here
+// when server dies, restart all active werewolf games on reboot
 // book icon on game page to show rules modal
 
 // when stuck with concurrency, comment out the tasks
