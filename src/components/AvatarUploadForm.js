@@ -21,6 +21,7 @@ const styles = {
 class AvatarUploadForm extends Component {
   state = {
     file: undefined,
+    errored: false,
   };
 
   handleFileChange = (event) => {
@@ -40,18 +41,23 @@ class AvatarUploadForm extends Component {
   };
 
   successfulUploadCallback = (response) => {
-    this.setState({submitted: true, file: undefined});
+    this.setState({submitted: true, file: undefined, errored: false});
     this.props.onNotificationOpen('Account updated.')
   };
 
-  errorOnCreateCallback = (error) => {
-
+  errorUploadCallback = (error) => {
+    this.setState({errored: true});
   };
 
   render() {
     return (
       <form onSubmit={this.handleFormSubmit}>
         <List subheader={<ListSubheader>Avatar</ListSubheader>}>
+          {this.state.errored &&
+            <ListItem>
+              <span className='error'>There was an error uploading the avatar</span>
+            </ListItem>
+          }
           <ListItem>
             <Grid container justify="center" alignItems="center">
               <Avatar
@@ -64,6 +70,7 @@ class AvatarUploadForm extends Component {
             <Input
               type="file"
               onChange={this.handleFileChange}
+              error={this.state.errored}
             />
           </ListItem>
           <ListItem>

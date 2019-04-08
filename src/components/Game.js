@@ -28,14 +28,11 @@ import Invitation from '../api/invitation';
 // game should have things like function to check if user is host
 
 // bugs
-// -> highlight role dialog with badge when pending action, or launch of game
 // -> mark game as started on starting with datetime
 // -> race condition on joining game, joined game message
 // -> review database reads on state update, etc
-// ->* at least upgrade phoenix js to 1.4.2. websockets time out after 60s of not being in an active application, only affects mobile? https://github.com/phoenixframework/phoenix/issues/3161
-// ->* date of last message is wrong
-// ->* error on failed upload on avatar. Do we also need a size limit?
 // ->* show avatar on user info dialog
+// ->* when server disconnects, as in get onError on socket, then we need to reload /me. Or simply a modal asking for reconnect to server?
 
 // deploy game on aws/wherever
 // -> how to upload to S3 easier https://medium.com/@omgwtfmarc/deploying-create-react-app-to-s3-or-cloudfront-48dae4ce0af
@@ -44,10 +41,13 @@ import Invitation from '../api/invitation';
 // epics
 // choose simple notes app to store all this stuff, also to store all used tutorials, plus general comments
 // persist unread messages/games
-// stop 'dead' users sending messages in the game chat
-// how to best inform werewolfs of other werewolfs? Make werewolf chat group?
+// stop 'dead' users sending messages in the game chat, highlight role dialog with badge when pending action, or launch of game
+// add link from infodialog to conversation with user, add chat icon for each item in list on right
+// how to best inform werewolfs of other werewolfs? Make werewolf chat group? Send notification from bot? Link to conversation from icon on top
+// add ability to have friends, send friend requests, but also keep track of previously played with users, tabs on contacts page?
+// scope: use presence to inform users of who is online, if easy, implement
 // limit messages loaded to most recent 100, or less
-// add ability to have friends, send friend requests
+// start flutter app here
 
 // when stuck with concurrency, comment out the tasks
 
