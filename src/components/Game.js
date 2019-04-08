@@ -31,7 +31,6 @@ import Invitation from '../api/invitation';
 // -> mark game as started on starting with datetime
 // -> race condition on joining game, joined game message
 // -> review database reads on state update, etc
-// ->* show avatar on user info dialog
 // ->* when server disconnects, as in get onError on socket, then we need to reload /me. Or simply a modal asking for reconnect to server?
 
 // deploy game on aws/wherever
@@ -48,6 +47,7 @@ import Invitation from '../api/invitation';
 // scope: use presence to inform users of who is online, if easy, implement
 // limit messages loaded to most recent 100, or less
 // start flutter app here
+// book icon on game page to show rules modal
 
 // when stuck with concurrency, comment out the tasks
 

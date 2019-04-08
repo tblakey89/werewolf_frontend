@@ -11,6 +11,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
+import UserAvatar from './UserAvatar';
 
 class InfoDialog extends Component {
   state = {
@@ -38,6 +39,10 @@ class InfoDialog extends Component {
       <div key={player.id}>
         {this.props.users && this.props.users[player.id] &&
           <ListItem button>
+            <UserAvatar
+              user={this.props.user}
+              currentUser={this.props.users[player.id].user}
+            />
             <ListItemText
               primary={this.props.users[player.id].user.username}
               secondary={`${player.alive ? 'Alive' : 'Dead'}, Role: ${player.role}`}
@@ -53,6 +58,10 @@ class InfoDialog extends Component {
     return Object.values(this.props.users || []).map((user, index) => (
       <div key={user.id}>
         <ListItem button>
+          <UserAvatar
+            user={this.props.user}
+            currentUser={user.user}
+          />
           <ListItemText
             primary={user.user.username}
             secondary={user.state}
