@@ -15,6 +15,7 @@ import IconButton from '@material-ui/core/IconButton';
 import TickIcon from '@material-ui/icons/Done';
 import CrossIcon from '@material-ui/icons/Close';
 import MailIcon from '@material-ui/icons/MailOutline';
+import Badge from '@material-ui/core/Badge';
 import SettingsIcon from '@material-ui/icons/Settings';
 import RoleDialog from './RoleDialog';
 import InfoDialog from './InfoDialog';
@@ -39,13 +40,17 @@ import Invitation from '../api/invitation';
 // -> how to upload to S3 easier https://medium.com/@omgwtfmarc/deploying-create-react-app-to-s3-or-cloudfront-48dae4ce0af
 // -> remember note to install postgres, imagemajick
 
+// improving UX for game
+// -> stop 'dead' users sending messages in the game chat
+// -> highlight role dialog with badge when pending action
+// -> consider showing badge on user list on launch of game
+
 // epics
 // choose simple notes app to store all this stuff, also to store all used tutorials, plus general comments
-// stop 'dead' users sending messages in the game chat, highlight role dialog with badge when pending action, or launch of game
 // add link from infodialog to conversation with user, add chat icon for each item in list on right
 // how to best inform werewolfs of other werewolfs? Make werewolf chat group? Send notification from bot? Link to conversation from icon on top
-// add ability to have friends, send friend requests, but also keep track of previously played with users, tabs on contacts page?
 // scope: use presence to inform users of who is online, if easy, implement
+// add ability to have friends, send friend requests, but also keep track of previously played with users, tabs on contacts page?
 // think about header title
 // limit messages loaded to most recent 100, or less
 // start flutter app here
@@ -191,6 +196,23 @@ class Game extends Component {
     this.props.game.users_games.map((users_game) => users_game.user_id)
   );
 
+  eligibleToVote = () => {
+    if (!this.props.game.state.players[this.props.user.id].alive) return false;
+    if (this.alreadyVoted()) return false;
+    if (this.props.game.state.state === 'night_phase' && this.props.game.state.players[this.props.user.id].role === 'werewolf') {
+      return true;
+    }
+    if (this.props.game.state.state === 'day_phase') return true;
+    return false;
+  };
+
+  alreadyVoted = () => {
+    const phaseNumber = this.props.game.state.phases;
+    const phase = this.props.game.state.players[this.props.user.id].actions[phaseNumber];
+    if (!phase) return false;
+    return !!phase['vote'];
+  }
+
   renderLaunchButton = () => (
     this.showLaunchButton() && (
       <AppBar position="fixed" color="default" className={this.props.classes.launchHeader}>
@@ -303,7 +325,14 @@ class Game extends Component {
                         color="inherit"
                         onClick={this.handleRoleClickOpen}
                       >
-                        <AccountCircle  style={{ fontSize: 36 }} />
+                        <Badge
+                          className={this.props.classes.margin}
+                          badgeContent="!"
+                          color="secondary"
+                          invisible={!this.eligibleToVote()}
+                        >
+                          <AccountCircle  style={{ fontSize: 36 }} />
+                        </Badge>
                       </IconButton>
                     }
                     <IconButton
@@ -336,6 +365,8 @@ class Game extends Component {
               <RoleDialog
                 open={this.state.roleOpen}
                 onClose={this.handleClose}
+                eligibleToVote={this.eligibleToVote}
+                alreadyVoted={this.alreadyVoted}
                 game={this.props.game}
                 user={this.props.user}
                 users={this.state.users}

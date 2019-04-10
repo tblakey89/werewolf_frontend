@@ -94,23 +94,6 @@ class RoleDialog extends Component {
     return this.state.submitted && this.state.fieldErrors[name];
   };
 
-  eligibleToVote = () => {
-    if (!this.props.game.state.players[this.props.user.id].alive) return false;
-    if (this.alreadyVoted()) return false;
-    if (this.props.game.state.state === 'night_phase' && this.props.game.state.players[this.props.user.id].role === 'werewolf') {
-      return true;
-    }
-    if (this.props.game.state.state === 'day_phase') return true;
-    return false;
-  };
-
-  alreadyVoted = () => {
-    const phaseNumber = this.props.game.state.phases;
-    const phase = this.props.game.state.players[this.props.user.id].actions[phaseNumber];
-    if (!phase) return false;
-    return !!phase['vote'];
-  }
-
   eligibleVoteCandidates = () => {
     const reducer = (accumulator, player) => {
       if (!player.alive) return accumulator;
@@ -134,7 +117,7 @@ class RoleDialog extends Component {
   }
 
   actionText = () => {
-    if (!this.alreadyVoted()) return;
+    if (!this.props.alreadyVoted()) return;
     const phaseNumber = this.props.game.state.phases;
     const action = this.props.game.state.players[this.props.user.id].actions[phaseNumber]['vote'];
     const target = this.props.users[action.target].user.username;
@@ -142,7 +125,7 @@ class RoleDialog extends Component {
   }
 
   renderVotingForm = () => {
-    if (!this.eligibleToVote()) return;
+    if (!this.props.eligibleToVote()) return;
     return (
       <form className={this.props.classes.container} onSubmit={this.onFormSubmit}>
         <FormControl
@@ -196,7 +179,7 @@ class RoleDialog extends Component {
               <Button onClick={this.props.onClose} color="primary">
                 Cancel
               </Button>
-              {this.eligibleToVote() &&
+              {this.props.eligibleToVote() &&
                 <Button onClick={this.handleVote} color="primary">
                   Vote
                 </Button>
