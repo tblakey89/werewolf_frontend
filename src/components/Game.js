@@ -32,17 +32,12 @@ import Invitation from '../api/invitation';
 // -> race condition on joining game, joined game message
 // -> review database reads on state update, etc
 // ->* when server disconnects, as in get onError on socket, then we need to reload /me. Or simply a modal asking for reconnect to server?
+// ->* handle not authorised error
+// ->* own message appears as notification
 
 // deploy game on aws/wherever
 // -> how to upload to S3 easier https://medium.com/@omgwtfmarc/deploying-create-react-app-to-s3-or-cloudfront-48dae4ce0af
 // -> remember note to install postgres, imagemajick
-
-// persist unread messages/games
-// -> on users_game and users_conversation, have last_read_at datetime
-// -> Get count via SQL include in game and conversation views
-// -> Update count locally when receiving new message, or viewing existing game/conversation
-// -> on viewing game/conversation update last_read_at via websocket (only if new messages)
-// -> if on game/conversation when receiving new message, update last_read_at
 
 // epics
 // choose simple notes app to store all this stuff, also to store all used tutorials, plus general comments
@@ -51,6 +46,7 @@ import Invitation from '../api/invitation';
 // how to best inform werewolfs of other werewolfs? Make werewolf chat group? Send notification from bot? Link to conversation from icon on top
 // add ability to have friends, send friend requests, but also keep track of previously played with users, tabs on contacts page?
 // scope: use presence to inform users of who is online, if easy, implement
+// think about header title
 // limit messages loaded to most recent 100, or less
 // start flutter app here
 // when server dies, restart all active werewolf games on reboot
@@ -95,6 +91,7 @@ class Game extends Component {
     this.setUsers(this.props);
     this.setMessagesAsRead();
     window.scrollTo(0,document.body.scrollHeight);
+    if(this.props.game) this.props.game.channel.push('read_game');
   }
 
   componentDidUpdate(prevProps) {
@@ -113,6 +110,7 @@ class Game extends Component {
     if (!this.props.game) return;
     if (this.props.game.unreadMessageCount !== 0) {
       this.props.setAsRead(this.props.game);
+      this.props.game.channel.push('read_game');
     }
   };
 

@@ -49,11 +49,30 @@ describe('ChatContainer', () => {
       beforeEach(() => {
         conversationOne = {
           id: 11,
-          messages: []
+          messages: [],
+          users_conversations: [
+            {
+              user_id: 10,
+              last_read_at: 0,
+            }
+          ],
         };
         conversationTwo = {
           id: 12,
-          messages: []
+          messages: [
+            {
+              created_at: 10,
+            },
+            {
+              created_at: 5,
+            }
+          ],
+          users_conversations: [
+            {
+              user_id: 10,
+              last_read_at: 6,
+            }
+          ],
         };
         game = {
           id: 1,
@@ -100,6 +119,7 @@ describe('ChatContainer', () => {
         expect(wrapper.state().conversations[0].id).toEqual(conversationOne.id);
         expect(wrapper.state().games[0].pending).toEqual(true);
         expect(wrapper.state().invitations.length).toEqual(1);
+        expect(wrapper.state().conversations[1].unreadMessageCount).toEqual(1);
       });
 
       describe('when a new conversation is created', () => {
@@ -122,7 +142,13 @@ describe('ChatContainer', () => {
                 created_at: new Date(2018, 6, 1),
                 sender: user
               },
-            ]
+            ],
+            users_conversations: [
+              {
+                user_id: 10,
+                last_read_at: 0,
+              }
+            ],
           });
           wrapper.update();
         });

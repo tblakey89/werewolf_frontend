@@ -87,6 +87,8 @@ describe('Game', () => {
       expect(listItemTexts.length).toEqual(2);
       expect(listItemTexts.first().props()['secondary']).toEqual(game.messages[1].body);
       expect(wrapper.find('#invitations').length).toEqual(0);
+      expect(channelPush.mock.calls.length).toEqual(1);
+      expect(channelPush.mock.calls[0][0]).toEqual('read_game');
     });
 
     it('does not call setAsUnread function', () => {
@@ -170,7 +172,8 @@ describe('Game', () => {
         });
 
         it('pushes to the server when clicked', () => {
-          const launchButton = wrapper.find('#launchButton')
+          const launchButton = wrapper.find('#launchButton');
+          channelPush.mockClear();
           launchButton.simulate('click');
           expect(channelPush.mock.calls.length).toEqual(1);
         });
@@ -263,6 +266,8 @@ describe('Game', () => {
 
     it('calls setAsUnread function', () => {
       expect(mockSetAsRead.mock.calls.length).toBe(1);
+      expect(channelPush.mock.calls.length).toEqual(2);
+      expect(channelPush.mock.calls[1][0]).toEqual('read_game');
     });
   });
 });

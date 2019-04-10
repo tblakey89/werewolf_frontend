@@ -36,13 +36,13 @@ class ChatContainer extends Component {
     // this react container is getting out of hand,
     // consider having a pre-formatter for data received from the server via sockets/http
     // that should reduce the lines of code here
-    this.setState({_loading: true})
+    this.setState({_loading: true});
     User.me((response) => {
       const socket = socketConnect();
       const { user } = response;
       const userChannel = this.joinUserChannel(socket, user)
       const conversations = user.conversations.map((conversation) =>
-        this.buildConversationWithChannel(conversation, socket)
+        this.buildConversationWithChannel(conversation, user, socket)
       );
       const games = user.games.map((game) =>
         this.buildGameWithChannel(game, user, socket)
@@ -77,14 +77,24 @@ class ChatContainer extends Component {
     )
   );
 
-  buildConversationWithChannel = (conversation, socket) => (
-    {
+  buildConversationWithChannel = (conversation, user, socket) => {
+    const usersConversation = conversation.users_conversations.find((usersConversation) => (
+      usersConversation.user_id === user.id
+    ));
+    return {
       ...conversation,
       channel: this.joinConversationChannel(socket, conversation),
-      unreadMessageCount: 0,
+      unreadMessageCount: this.calculateUnreadMessageCount(conversation.messages, usersConversation.last_read_at),
       lastMessageAt: this.lastMessageAt(conversation),
     }
-  );
+  };
+
+  calculateUnreadMessageCount = (messages, lastReadAt) => {
+    if (messages.length === 0) return 0;
+    const unreadIndex = messages.findIndex((message) => lastReadAt > message.created_at);
+    if (unreadIndex === -1) return messages.length;
+    return unreadIndex;
+  };
 
   lastMessageAt = (conversation) => {
     const { messages } = conversation;
@@ -99,7 +109,7 @@ class ChatContainer extends Component {
   newConversationCallback = (newConversation) => {
     if (this.state.conversations.find(((conversation) => conversation.id === newConversation.id))) return;
     const conversation =
-      this.buildConversationWithChannel(newConversation, this.state.socket);
+      this.buildConversationWithChannel(newConversation, this.state.user, this.state.socket);
     const { conversations } = this.state;
 
     if (conversation.messages.length > 0) {
@@ -151,7 +161,7 @@ class ChatContainer extends Component {
       pending: usersGame.state === 'pending',
       invitationAt: usersGame.created_at,
       channel: this.joinGameChannel(socket, game),
-      unreadMessageCount: 0,
+      unreadMessageCount: this.calculateUnreadMessageCount(game.messages, usersGame.last_read_at),
       lastMessageAt: this.lastMessageAt(game) || game.created_at,
     }
   };

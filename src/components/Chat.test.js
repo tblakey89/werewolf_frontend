@@ -9,8 +9,10 @@ describe('Chat', () => {
   let mockSetAsRead;
   let user;
   let conversation;
+  let channelPush;
 
   beforeEach(() => {
+    channelPush = jest.fn();
     user = {
       id: 1,
     };
@@ -33,9 +35,16 @@ describe('Chat', () => {
         },
       ],
       unreadMessageCount: 0,
+      channel: {
+        push: channelPush,
+      },
     };
     mockSetAsRead = jest.fn();
     wrapper = shallow(<Chat setAsRead={mockSetAsRead} conversation={conversation} />);
+  });
+
+  afterEach(() => {
+    channelPush.mockClear();
   });
 
   describe('loads up component', () => {
@@ -43,6 +52,8 @@ describe('Chat', () => {
       const listItemTexts = wrapper.find('WithStyles(ListItemText)');
       expect(listItemTexts.length).toEqual(2);
       expect(listItemTexts.first().props()['secondary']).toEqual(conversation.messages[1].body);
+      expect(channelPush.mock.calls.length).toEqual(1);
+      expect(channelPush.mock.calls[0][0]).toEqual('read_conversation');
     });
 
     it('does not call setAsUnread function', () => {
@@ -52,15 +63,14 @@ describe('Chat', () => {
 
   describe('loads up component when unreadMessageCount is greater than 0', () => {
     beforeEach(() => {
-      conversation = {
-        messages: [],
-        unreadMessageCount: 1,
-      };
-      wrapper = shallow(<Chat setAsRead={mockSetAsRead} conversation={conversation} />);
+      const conversationCopy = { ...conversation, unreadMessageCount: 1 }
+      wrapper.setProps({ conversation: conversationCopy });
     });
 
     it('calls setAsUnread function', () => {
       expect(mockSetAsRead.mock.calls.length).toBe(1);
+      expect(channelPush.mock.calls.length).toEqual(2);
+      expect(channelPush.mock.calls[1][0]).toEqual('read_conversation');
     });
   });
 });

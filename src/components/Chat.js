@@ -8,6 +8,7 @@ class Chat extends Component {
   componentDidMount() {
     this.setMessagesAsRead();
     window.scrollTo(0,document.body.scrollHeight);
+    if(this.props.conversation) this.props.conversation.channel.push('read_conversation');
   }
 
   componentDidUpdate(prevProps) {
@@ -22,6 +23,7 @@ class Chat extends Component {
     if (!this.props.conversation) return;
     if (this.props.conversation.unreadMessageCount !== 0) {
       this.props.setAsRead(this.props.conversation);
+      this.props.conversation.channel.push('read_conversation');
     }
   }
 
