@@ -15,13 +15,13 @@ import IconButton from '@material-ui/core/IconButton';
 import TickIcon from '@material-ui/icons/Done';
 import CrossIcon from '@material-ui/icons/Close';
 import MailIcon from '@material-ui/icons/MailOutline';
-import Badge from '@material-ui/core/Badge';
 import SettingsIcon from '@material-ui/icons/Settings';
 import RoleDialog from './RoleDialog';
 import InfoDialog from './InfoDialog';
 import EditGameDialog from './EditGameDialog';
 import Timer from './Timer';
 import UserAvatar from './UserAvatar';
+import HideableBadge from './HideableBadge';
 import Invitation from '../api/invitation';
 
 // refactor to move all user, game, conversation objects out of the chat container
@@ -42,8 +42,6 @@ import Invitation from '../api/invitation';
 
 // improving UX for game
 // -> stop 'dead' users sending messages in the game chat
-// -> highlight role dialog with badge when pending action
-// -> consider showing badge on user list on launch of game
 
 // epics
 // choose simple notes app to store all this stuff, also to store all used tutorials, plus general comments
@@ -53,7 +51,7 @@ import Invitation from '../api/invitation';
 // add ability to have friends, send friend requests, but also keep track of previously played with users, tabs on contacts page?
 // think about header title
 // limit messages loaded to most recent 100, or less
-// start flutter app here
+// start flutter app here -> game, state should be broken into multiple classes maybe?
 // when server dies, restart all active werewolf games on reboot
 // book icon on game page to show rules modal
 
@@ -325,14 +323,14 @@ class Game extends Component {
                         color="inherit"
                         onClick={this.handleRoleClickOpen}
                       >
-                        <Badge
+                        <HideableBadge
                           className={this.props.classes.margin}
                           badgeContent="!"
                           color="secondary"
                           invisible={!this.eligibleToVote()}
                         >
-                          <AccountCircle  style={{ fontSize: 36 }} />
-                        </Badge>
+                          <AccountCircle style={{ fontSize: 36 }} />
+                        </HideableBadge>
                       </IconButton>
                     }
                     <IconButton
@@ -365,8 +363,8 @@ class Game extends Component {
               <RoleDialog
                 open={this.state.roleOpen}
                 onClose={this.handleClose}
-                eligibleToVote={this.eligibleToVote}
-                alreadyVoted={this.alreadyVoted}
+                eligibleToVote={this.eligibleToVote()}
+                alreadyVoted={this.alreadyVoted()}
                 game={this.props.game}
                 user={this.props.user}
                 users={this.state.users}

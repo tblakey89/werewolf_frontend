@@ -16,9 +16,6 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import VoteValidation from '../validation/voteValidation';
 
-// Need to do code for voting for a user
-// Need to test submitting vote
-
 const styles = theme => ({
   container: {
     display: 'flex',
@@ -117,7 +114,7 @@ class RoleDialog extends Component {
   }
 
   actionText = () => {
-    if (!this.props.alreadyVoted()) return;
+    if (!this.props.alreadyVoted) return;
     const phaseNumber = this.props.game.state.phases;
     const action = this.props.game.state.players[this.props.user.id].actions[phaseNumber]['vote'];
     const target = this.props.users[action.target].user.username;
@@ -125,7 +122,7 @@ class RoleDialog extends Component {
   }
 
   renderVotingForm = () => {
-    if (!this.props.eligibleToVote()) return;
+    if (!this.props.eligibleToVote) return;
     return (
       <form className={this.props.classes.container} onSubmit={this.onFormSubmit}>
         <FormControl
@@ -179,7 +176,7 @@ class RoleDialog extends Component {
               <Button onClick={this.props.onClose} color="primary">
                 Cancel
               </Button>
-              {this.props.eligibleToVote() &&
+              {this.props.eligibleToVote &&
                 <Button onClick={this.handleVote} color="primary">
                   Vote
                 </Button>

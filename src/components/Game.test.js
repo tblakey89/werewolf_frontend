@@ -55,18 +55,21 @@ describe('Game', () => {
       unreadMessageCount: 0,
       state: {
         state: 'initialized',
+        phases: 1,
         players: {
           1: {
             alive: true,
             id: 1,
             role: 'villager',
             host: true,
+            actions: {},
           },
           2: {
             alive: true,
             id: 2,
             role: 'none',
             host: false,
+            actions: {},
           }
         }
       },
@@ -268,6 +271,69 @@ describe('Game', () => {
       expect(mockSetAsRead.mock.calls.length).toBe(1);
       expect(channelPush.mock.calls.length).toEqual(2);
       expect(channelPush.mock.calls[1][0]).toEqual('read_game');
+    });
+  });
+
+  describe('eligible to vote', () => {
+    beforeEach(() => {
+      const updatedGame = {...game};
+      updatedGame.state.state = 'day_phase';
+      wrapper = shallow(shallow(<Game setAsRead={mockSetAsRead} game={game} user={user} onNotificationOpen={mockNotify} />).get(0));
+    });
+
+    it('returns true', () => {
+      expect(wrapper.instance().eligibleToVote()).toEqual(true);
+    });
+
+    describe('when user is villager in night_phase', () => {
+      beforeEach(() => {
+        const updatedGame = {...game};
+        updatedGame.state.state = 'night_phase';
+        wrapper.setProps({game: updatedGame});
+      });
+
+      it('returns false', () => {
+        expect(wrapper.instance().eligibleToVote()).toEqual(false);
+      });
+    });
+
+    describe('when user is villager in day_phase, but dead', () => {
+      beforeEach(() => {
+        const updatedGame = {...game};
+        updatedGame.state.state = 'day_phase';
+        updatedGame.state.players[user.id].alive = false;
+        wrapper.setProps({game: updatedGame});
+      });
+
+      it('returns false', () => {
+        expect(wrapper.instance().eligibleToVote()).toEqual(false);
+      });
+    });
+
+    describe('when user is villager in day_phase, but already voted', () => {
+      beforeEach(() => {
+        const updatedGame = {...game};
+        updatedGame.state.state = 'day_phase';
+        updatedGame.state.players[user.id].actions[1] = {vote: true};
+        wrapper.setProps({game: updatedGame});
+      });
+
+      it('returns false', () => {
+        expect(wrapper.instance().eligibleToVote()).toEqual(false);
+      });
+    });
+
+    describe('when user is werewolf in night_phase', () => {
+      beforeEach(() => {
+        const updatedGame = {...game};
+        updatedGame.state.state = 'night_phase';
+        updatedGame.state.players[user.id].role = 'werewolf';
+        wrapper.setProps({game: updatedGame});
+      });
+
+      it('returns true', () => {
+        expect(wrapper.instance().eligibleToVote()).toEqual(true);
+      });
     });
   });
 });

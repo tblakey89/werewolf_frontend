@@ -70,7 +70,7 @@ describe('RoleDialog', () => {
         state: 'ready'
       }
     }
-    wrapper = shallow(shallow(shallow(shallow(shallow(shallow(<RoleDialog onClose={mockClose} open={true} game={game} user={user} users={users}/>).get(0)).get(0)).get(0)).get(0)).get(0));
+    wrapper = shallow(shallow(shallow(shallow(shallow(shallow(<RoleDialog onClose={mockClose} open={true} game={game} user={user} users={users} eligibleToVote={false} alreadyVoted={false}/>).get(0)).get(0)).get(0)).get(0)).get(0));
     button = wrapper.find('#submit');
   });
 
@@ -79,7 +79,7 @@ describe('RoleDialog', () => {
   });
 
   describe('User opens dialog', () => {
-    describe('when state is ready', () => {
+    describe('when not eligibleToVote', () => {
       it('does not show the select input', () => {
         expect(wrapper.find('WithStyles(Select)').length).toEqual(0);
       });
@@ -95,7 +95,7 @@ describe('RoleDialog', () => {
               phases: 1
             }
           }
-          wrapper.setProps({ game: updatedGame });
+          wrapper.setProps({ game: updatedGame, eligibleToVote: true });
         });
 
         it('does show the select input, with correct number of candidates', () => {
@@ -120,7 +120,7 @@ describe('RoleDialog', () => {
                 phases: 1
               }
             }
-            wrapper.setProps({ game: updatedGame });
+            wrapper.setProps({ game: updatedGame, eligibleToVote: false, alreadyVoted: true });
           });
 
           it('does not show the select input, shows action text', () => {
@@ -129,88 +129,46 @@ describe('RoleDialog', () => {
           });
         });
       });
-
-      describe('when user is dead', () => {
-        beforeEach(() => {
-          const deadPlayers = {
-            1: {
-              alive: false,
-              id: 1,
-              role: 'villager',
-              actions: {}
-            }
-          };
-          const updatedGame = {
-            state: {
-              players: deadPlayers,
-              state: 'day_phase'
-            }
-          }
-          wrapper.setProps({ game: updatedGame });
-        });
-
-        it('does show the select input, with correct number of candidates', () => {
-          expect(wrapper.find('WithStyles(Select)').length).toEqual(0);
-        });
-      });
     });
 
-    describe('when state is night_phase', () => {
-      describe('when user is not a werewolf', () => {
-        beforeEach(() => {
-          const updatedGame = {
-            state: {
-              players: players,
-              state: 'night_phase'
-            }
+    describe('when user is a werewolf', () => {
+      beforeEach(() => {
+        const werewolfUser = {
+          username: 'tester',
+          id: 2,
+        };
+        const werewolfPlayers = {
+          1: {
+            alive: true,
+            id: 1,
+            role: 'villager',
+            actions: {}
+          },
+          2: {
+            alive: true,
+            id: 2,
+            role: 'werewolf',
+            actions: {}
+          },
+          3: {
+            alive: true,
+            id: 3,
+            role: 'werewolf',
+            actions: {}
           }
-          wrapper.setProps({ game: updatedGame });
-        });
-
-        it('does not show the select input', () => {
-          expect(wrapper.find('WithStyles(Select)').length).toEqual(0);
-        });
+        };
+        const updatedGame = {
+          state: {
+            players: werewolfPlayers,
+            state: 'night_phase'
+          }
+        }
+        wrapper.setProps({ game: updatedGame, user: werewolfUser, eligibleToVote: true });
       });
 
-      describe('when user is a werewolf', () => {
-        beforeEach(() => {
-          const werewolfUser = {
-            username: 'tester',
-            id: 2,
-          };
-          const werewolfPlayers = {
-            1: {
-              alive: true,
-              id: 1,
-              role: 'villager',
-              actions: {}
-            },
-            2: {
-              alive: true,
-              id: 2,
-              role: 'werewolf',
-              actions: {}
-            },
-            3: {
-              alive: true,
-              id: 3,
-              role: 'werewolf',
-              actions: {}
-            }
-          };
-          const updatedGame = {
-            state: {
-              players: werewolfPlayers,
-              state: 'night_phase'
-            }
-          }
-          wrapper.setProps({ game: updatedGame, user: werewolfUser });
-        });
-
-        it('does show the select input, with correct number of candidates', () => {
-          expect(wrapper.find('WithStyles(Select)').length).toEqual(1);
-          expect(wrapper.find('WithStyles(MenuItem)').length).toEqual(2);
-        });
+      it('does show the select input, with correct number of candidates', () => {
+        expect(wrapper.find('WithStyles(Select)').length).toEqual(1);
+        expect(wrapper.find('WithStyles(MenuItem)').length).toEqual(2);
       });
     });
   });
