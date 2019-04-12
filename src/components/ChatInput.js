@@ -56,35 +56,42 @@ class ChatInput extends Component {
     const { classes } = this.props;
     return (
       <BottomNavigation style={{'background-color': '#3f51b5', position: "fixed", bottom:"0", width:"100%"}}>
-        <Grid container spacing={24} alignItems={'center'}>
-          <Grid item xs={10}>
-            <form onSubmit={this.handleFormSubmit}>
-              <FormControl fullWidth>
-                <TextField
-                  id="chatInput"
-                  InputProps={{
-                    disableUnderline: true,
-                    classes: {
-                      root: classes.textFieldRoot,
-                      input: classes.textFieldInput,
-                    },
-                  }}
-                  onChange={this.handleChange}
-                  value={this.state.message}
-                />
-              </FormControl>
-            </form>
+        {this.props.allowed && (
+          <Grid container spacing={24} alignItems={'center'}>
+            <Grid item xs={10}>
+              <form onSubmit={this.handleFormSubmit}>
+                <FormControl fullWidth>
+                  <TextField
+                    id="chatInput"
+                    disabled={!this.props.allowed}
+                    InputProps={{
+                      disableUnderline: true,
+                      classes: {
+                        root: classes.textFieldRoot,
+                        input: classes.textFieldInput,
+                      },
+                    }}
+                    onChange={this.handleChange}
+                    value={this.state.message}
+                  />
+                </FormControl>
+              </form>
+            </Grid>
+            <Grid item xs={1}>
+              <SendIcon
+                style={{ fontSize: 36, color: 'white' }}
+                onClick={this.handleFormSubmit}
+              />
+            </Grid>
           </Grid>
-          <Grid item xs={1}>
-            <SendIcon
-              style={{ fontSize: 36, color: 'white' }}
-              onClick={this.handleFormSubmit}
-            />
-          </Grid>
-        </Grid>
+        )}
       </BottomNavigation>
     );
   }
 }
+
+ChatInput.defaultProps = {
+  allowed: true,
+};
 
 export default withStyles(styles)(ChatInput);

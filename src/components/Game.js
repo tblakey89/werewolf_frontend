@@ -41,13 +41,13 @@ import Invitation from '../api/invitation';
 // -> remember note to install postgres, imagemajick
 
 // improving UX for game
-// -> stop 'dead' users sending messages in the game chat
+// -> add link from infodialog to conversation with user, add chat icon for each item in list on right
 
 // epics
 // choose simple notes app to store all this stuff, also to store all used tutorials, plus general comments
-// add link from infodialog to conversation with user, add chat icon for each item in list on right
 // how to best inform werewolfs of other werewolfs? Make werewolf chat group? Send notification from bot? Link to conversation from icon on top
 // scope: use presence to inform users of who is online, if easy, implement
+// have to refactor, too much 'business logic' in components, some components could be split
 // add ability to have friends, send friend requests, but also keep track of previously played with users, tabs on contacts page?
 // think about header title
 // limit messages loaded to most recent 100, or less

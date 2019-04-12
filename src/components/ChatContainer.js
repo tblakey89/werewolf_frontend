@@ -338,6 +338,7 @@ class ChatContainer extends Component {
           unreadGameMessageCount={this.state.games.reduce((sum, game) => (
             sum + game.unreadMessageCount
           ), 0)}
+          user={this.state.user}
         />
       </div>
     );

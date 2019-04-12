@@ -56,5 +56,15 @@ describe('ChatInput', () => {
         });
       });
     });
+
+    describe('when not allowed to send message', () => {
+      beforeEach(() => {
+        wrapper.setProps({allowed: false});
+      });
+
+      it('does not show the input', () => {
+        expect(wrapper.find('form').length).toEqual(0);
+      });
+    });
   });
 });
