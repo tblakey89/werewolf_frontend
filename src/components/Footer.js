@@ -6,7 +6,6 @@ import ChatInput from './ChatInput';
 class Footer extends Component {
   allowedToSpeak = (game) => {
     if (game && ['day_phase', 'night_phase'].includes(game.state.state)) {
-      console.log('he;;2')
       return game.state.players[this.props.user.id].alive;
     }
     return true;

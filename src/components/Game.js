@@ -41,19 +41,24 @@ import Invitation from '../api/invitation';
 // -> remember note to install postgres, imagemajick
 
 // improving UX for game
-// -> add link from infodialog to conversation with user, add chat icon for each item in list on right
+// -> change code that should not be redirects to use history, fix tests
+// -> Header should access history through withRouter
+// -> make werewolf group chat on game creation
+// -> send message from bot on game creation
+// -> include conversation for werewolfs in game state or something
+// -> add link to conversation within infodialog player list at the top
 
 // epics
 // choose simple notes app to store all this stuff, also to store all used tutorials, plus general comments
-// how to best inform werewolfs of other werewolfs? Make werewolf chat group? Send notification from bot? Link to conversation from icon on top
 // scope: use presence to inform users of who is online, if easy, implement
-// have to refactor, too much 'business logic' in components, some components could be split
+// have to refactor, too much 'business logic' in components, some components could be split, use material ui create shallow everywhere
 // add ability to have friends, send friend requests, but also keep track of previously played with users, tabs on contacts page?
 // think about header title
 // limit messages loaded to most recent 100, or less
 // start flutter app here -> game, state should be broken into multiple classes maybe?
 // when server dies, restart all active werewolf games on reboot
 // book icon on game page to show rules modal
+// message icon on infoDialog to show unread messages
 
 // when stuck with concurrency, comment out the tasks
 

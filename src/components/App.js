@@ -47,7 +47,7 @@ class App extends Component {
           <SessionDialog onNotificationOpen={this.handleNotificationOpen} {...props}/>
         )}/>
         <Route path='(/games|/chats|/contacts|/settings|/chat|/game|/invitation)' render={props => (
-          <ChatContainer onNotificationOpen={this.handleNotificationOpen}/>
+          <ChatContainer onNotificationOpen={this.handleNotificationOpen} history={props.history}/>
         )}/>
         <Route exact path='/' render={props => (
           <Redirect to={this.isLoggedIn() ? '/games' : '/signin'} />

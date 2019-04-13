@@ -1,8 +1,13 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { createShallow } from '@material-ui/core/test-utils';
+import { MemoryRouter } from 'react-router'
+import Conversation from '../api/conversation';
 import InfoDialog from './InfoDialog';
 
+jest.mock('../api/conversation');
+
 describe('InfoDialog', () => {
+  const shallow = createShallow({untilSelector: 'InfoDialog'})
   let wrapper;
   let mockClose;
   let button;
@@ -48,12 +53,13 @@ describe('InfoDialog', () => {
   beforeEach(() => {
     mockClose = jest.fn();
     state = 'initialized';
-    wrapper = shallow(shallow(shallow(shallow(shallow(shallow(<InfoDialog onClose={mockClose} open={true} gameState={state} players={players} user={user} users={users}/>).get(0)).get(0)).get(0)).get(0)).get(0));
+    wrapper = shallow(<MemoryRouter><InfoDialog onClose={mockClose} open={true} gameState={state} players={players} user={user} users={users}/></MemoryRouter>);
     button = wrapper.find('#submit');
   });
 
   afterEach(() => {
     mockClose.mockClear();
+    Conversation.create.mockClear();
   });
 
   describe('User opens dialog', () => {
@@ -77,7 +83,7 @@ describe('InfoDialog', () => {
     describe('when game has started, displays roles, and alive boolean', () => {
       beforeEach(() => {
         state = 'day_phase';
-        wrapper = shallow(shallow(shallow(shallow(shallow(shallow(<InfoDialog onClose={mockClose} open={true} gameState={state} players={players} user={user} users={users}/>).get(0)).get(0)).get(0)).get(0)).get(0));
+        wrapper.setProps({gameState: state});
       });
 
       it('displays correct role for user', () => {
@@ -102,13 +108,45 @@ describe('InfoDialog', () => {
             role: 'none'
           }
         ];
-        wrapper = shallow(shallow(shallow(shallow(shallow(shallow(<InfoDialog onClose={mockClose} open={true} gameState={updatedState} players={deadPlayers} user={user} users={users}/>).get(0)).get(0)).get(0)).get(0)).get(0));
+        wrapper.setProps({gameState: updatedState, players: deadPlayers});
       });
 
       it('displays correct role for user', () => {
         const listItemTexts = wrapper.find('WithStyles(ListItemText)');
         expect(listItemTexts.first().props()['primary']).toEqual(users[1].user.username);
         expect(listItemTexts.first().props()['secondary']).toEqual(`Dead, Role: ${players[1].role}`);
+      });
+    });
+
+    describe('on icon click, creates new conversation', () => {
+      beforeEach(() => {
+        const userLink = wrapper.find('WithStyles(IconButton)');
+        userLink.first().simulate('click');
+        wrapper.update();
+      });
+
+      it('conversation create is called', () => {
+        expect(Conversation.create.mock.calls.length).toEqual(1);
+      });
+
+      describe('goes to new conversation', () => {
+        let currentHistoryLength;
+
+        beforeEach(() => {
+          currentHistoryLength = wrapper.instance().props.history.length
+          const invocationArgs = Conversation.create.mock.calls[0];
+          const successCallback = invocationArgs[1];
+          successCallback({
+            conversation: {
+              id: 10
+            }
+          });
+          wrapper.update();
+        });
+
+        it('adds to history', () => {
+          expect(wrapper.instance().props.history.length).toBeGreaterThan(currentHistoryLength);
+        });
       });
     });
   });
