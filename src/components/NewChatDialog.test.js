@@ -1,5 +1,6 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { createShallow } from '@material-ui/core/test-utils';
+import { MemoryRouter } from 'react-router'
 import User from '../api/user';
 import Conversation from '../api/conversation';
 import NewChatDialog from './NewChatDialog';
@@ -8,6 +9,7 @@ jest.mock('../api/user');
 jest.mock('../api/conversation');
 
 describe('NewChatDialog', () => {
+  const shallow = createShallow({untilSelector: 'NewChatDialog'});
   let wrapper;
   let mockNotify;
   let mockClose;
@@ -18,7 +20,7 @@ describe('NewChatDialog', () => {
     const user = {id: 10};
     mockNotify = jest.fn();
     mockClose = jest.fn();
-    wrapper = shallow(shallow(shallow(shallow(shallow(shallow(<NewChatDialog onClose={mockClose} onNotificationOpen={mockNotify} open={true} user={user} />).get(0)).get(0)).get(0)).get(0)).get(0));
+    wrapper = shallow(<MemoryRouter><NewChatDialog onClose={mockClose} onNotificationOpen={mockNotify} open={true} user={user} /></MemoryRouter>);
     button = wrapper.find('#submit');
   });
 
@@ -85,8 +87,10 @@ describe('NewChatDialog', () => {
         describe('on successful create', () => {
           let conversationInvocationArgs;
           let conversation;
+          let currentHistoryLength;
 
           beforeEach(() => {
+            currentHistoryLength = wrapper.instance().props.history.length;
             conversationInvocationArgs = Conversation.create.mock.calls[0];
             const successCallback = conversationInvocationArgs[1];
             conversation = {
@@ -100,9 +104,8 @@ describe('NewChatDialog', () => {
           });
 
           it('adds conversation to state, notifies user, and redirects', () => {
-            expect(wrapper.state().conversation).toEqual(conversation);
             expect(mockNotify.mock.calls.length).toEqual(1);
-            expect(wrapper.find('Redirect').length).toEqual(1);
+            expect(wrapper.instance().props.history.length).toBeGreaterThan(currentHistoryLength);
           });
         });
       });

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
+import { withRouter } from "react-router";
 import { Link } from 'react-router-dom';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -16,7 +17,6 @@ class Contacts extends Component {
   state = {
     contacts: [],
     _loading: false,
-    readyForRedirect: false,
   };
 
   componentDidMount() {
@@ -38,7 +38,7 @@ class Contacts extends Component {
   }
 
   successfulCreateCallback = (response) => {
-    this.setState({readyForRedirect: true, conversation: response.conversation});
+    this.props.history.push(`/chat/${response.conversation.id}`);
   };
 
   errorOnCreateCallback = () => {
@@ -74,16 +74,12 @@ class Contacts extends Component {
   };
 
   render() {
-    if (this.state.readyForRedirect) {
-      return (<Redirect to={`/chat/${this.state.conversation.id}`}/>)
-    } else {
-      return (
-        <List component="nav">
-          { this.renderContacts() }
-        </List>
-      );
-    }
+    return (
+      <List component="nav">
+        { this.renderContacts() }
+      </List>
+    );
   }
 }
 
-export default Contacts;
+export default withRouter(Contacts);

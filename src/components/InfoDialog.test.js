@@ -7,7 +7,7 @@ import InfoDialog from './InfoDialog';
 jest.mock('../api/conversation');
 
 describe('InfoDialog', () => {
-  const shallow = createShallow({untilSelector: 'InfoDialog'})
+  const shallow = createShallow({untilSelector: 'InfoDialog'});
   let wrapper;
   let mockClose;
   let button;
@@ -133,7 +133,7 @@ describe('InfoDialog', () => {
         let currentHistoryLength;
 
         beforeEach(() => {
-          currentHistoryLength = wrapper.instance().props.history.length
+          currentHistoryLength = wrapper.instance().props.history.length;
           const invocationArgs = Conversation.create.mock.calls[0];
           const successCallback = invocationArgs[1];
           successCallback({

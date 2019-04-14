@@ -260,7 +260,6 @@ class ChatContainer extends Component {
           invitations={this.state.invitations}
           user={this.state.user}
           onNotificationOpen={this.props.onNotificationOpen}
-          history={this.props.history}
         />
         <div style={{'margin-top': '64px', 'margin-bottom': '56px'}}>
           <AuthenticatedRoute

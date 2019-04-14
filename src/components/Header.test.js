@@ -1,8 +1,10 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { createShallow } from '@material-ui/core/test-utils';
+import { MemoryRouter } from 'react-router'
 import Header from './Header';
 
 describe('Header', () => {
+  const shallow = createShallow({untilSelector: 'Header'});
   let wrapper;
 
   beforeEach(() => {
@@ -10,7 +12,7 @@ describe('Header', () => {
       {id: 1},
       {id: 2},
     ]
-    wrapper = shallow(shallow(<Header invitations={invitations}/>).get(0));
+    wrapper = shallow(<MemoryRouter><Header invitations={invitations}/></MemoryRouter>);
   });
 
   describe('Header component', () => {

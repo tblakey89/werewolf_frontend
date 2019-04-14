@@ -1,5 +1,6 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { createShallow } from '@material-ui/core/test-utils';
+import { MemoryRouter } from 'react-router'
 import Conversation from '../api/conversation';
 import User from '../api/user';
 import Contacts from './Contacts';
@@ -8,6 +9,7 @@ jest.mock('../api/conversation');
 jest.mock('../api/user');
 
 describe('Contacts', () => {
+  const shallow = createShallow({untilSelector: 'Contacts'});
   let wrapper;
   let user;
 
@@ -15,7 +17,7 @@ describe('Contacts', () => {
     user = {
       id: 10
     }
-    wrapper = shallow(<Contacts user={user} />);
+    wrapper = shallow(<MemoryRouter><Contacts user={user} /></MemoryRouter>);
   });
 
   afterEach(() => {
@@ -60,8 +62,11 @@ describe('Contacts', () => {
           expect(Conversation.create.mock.calls.length).toEqual(1);
         });
 
-        describe('redirects to new conversation', () => {
+        describe('goes to new conversation', () => {
+          let currentHistoryLength;
+
           beforeEach(() => {
+            currentHistoryLength = wrapper.instance().props.history.length
             const invocationArgs = Conversation.create.mock.calls[0];
             const successCallback = invocationArgs[1];
             successCallback({
@@ -72,9 +77,8 @@ describe('Contacts', () => {
             wrapper.update();
           });
 
-          it('shows redirect element', () => {
-            const redirect = wrapper.find('Redirect');
-            expect(redirect.length).toEqual(1);
+          it('adds to history', () => {
+            expect(wrapper.instance().props.history.length).toBeGreaterThan(currentHistoryLength);
           });
         });
       });

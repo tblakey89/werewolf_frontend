@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
+import { withRouter } from "react-router";
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -90,8 +90,9 @@ class NewChatDialog extends Component {
   };
 
   successfulCreateCallback = (response) => {
-    this.setState({readyForRedirect: true, conversation: response.conversation});
+    this.setState({conversation: response.conversation});
     this.props.onNotificationOpen('Started new conversation.');
+    this.props.history.push(`/chat/${response.conversation.id}`);
   };
 
   errorOnCreateCallback = () => {
@@ -101,44 +102,40 @@ class NewChatDialog extends Component {
   render() {
     const { classes, fullScreen } = this.props;
 
-    if (this.state.readyForRedirect) {
-      return (<Redirect to={`/chat/${this.state.conversation.id}`}/>)
-    } else {
-      return (
-        <Dialog
-          fullScreen={fullScreen}
-          open={this.props.open}
-          onClose={this.props.onClose}
-          aria-labelledby="responsive-dialog-title"
-        >
-          <DialogTitle>
-            {"New Conversation"}
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Please select the participants of this conversation.
-            </DialogContentText>
-            <form className={classes.container}>
-              <ContactSelect
-                onChange={this.handleMenuChange}
-                participants={this.state.fields.participants}
-                showFieldError={this.showFieldError}
-                setLoaded={this.handleSetLoaded}
-                userId={this.props.user.id}
-              />
-            </form>
-          </DialogContent>
-          <DialogActions>
-            <Button id="close" onClick={this.props.onClose} color="primary">
-              Cancel
-            </Button>
-            <Button id="submit" onClick={this.submitChat} color="primary">
-              Create
-            </Button>
-          </DialogActions>
-        </Dialog>
-      );
-    }
+    return (
+      <Dialog
+        fullScreen={fullScreen}
+        open={this.props.open}
+        onClose={this.props.onClose}
+        aria-labelledby="responsive-dialog-title"
+      >
+        <DialogTitle>
+          {"New Conversation"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please select the participants of this conversation.
+          </DialogContentText>
+          <form className={classes.container}>
+            <ContactSelect
+              onChange={this.handleMenuChange}
+              participants={this.state.fields.participants}
+              showFieldError={this.showFieldError}
+              setLoaded={this.handleSetLoaded}
+              userId={this.props.user.id}
+            />
+          </form>
+        </DialogContent>
+        <DialogActions>
+          <Button id="close" onClick={this.props.onClose} color="primary">
+            Cancel
+          </Button>
+          <Button id="submit" onClick={this.submitChat} color="primary">
+            Create
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
   }
 }
 
@@ -148,4 +145,4 @@ NewChatDialog.propTypes = {
   onClose: PropTypes.func.isRequired
 };
 
-export default withMobileDialog()(withStyles(styles)(NewChatDialog));
+export default withMobileDialog()(withStyles(styles)(withRouter(NewChatDialog)));

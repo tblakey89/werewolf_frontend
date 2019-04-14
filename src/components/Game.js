@@ -41,8 +41,7 @@ import Invitation from '../api/invitation';
 // -> remember note to install postgres, imagemajick
 
 // improving UX for game
-// -> change code that should not be redirects to use history, fix tests
-// -> Header should access history through withRouter
+// -> add game conversation relationship for werewolf group chat
 // -> make werewolf group chat on game creation
 // -> send message from bot on game creation
 // -> include conversation for werewolfs in game state or something
@@ -51,7 +50,7 @@ import Invitation from '../api/invitation';
 // epics
 // choose simple notes app to store all this stuff, also to store all used tutorials, plus general comments
 // scope: use presence to inform users of who is online, if easy, implement
-// have to refactor, too much 'business logic' in components, some components could be split, use material ui create shallow everywhere
+// have to refactor, too much 'business logic' in components, some components could be split, use material ui create shallow everywhere, fix warnings
 // add ability to have friends, send friend requests, but also keep track of previously played with users, tabs on contacts page?
 // think about header title
 // limit messages loaded to most recent 100, or less
