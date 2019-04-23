@@ -28,7 +28,6 @@ class Chat extends Component {
   }
 
   renderMessages = () => {
-    // assuming no bot message will be sent here
     const { conversation } = this.props;
     if (!conversation) return [];
     return conversation.messages.slice().sort((message_a, message_b) => (
@@ -40,7 +39,7 @@ class Chat extends Component {
           currentUser={message.sender}
         />
         <ListItemText
-          primary={message.sender.username}
+          primary={message.bot ? "bot" : message.sender.username}
           secondary={message.body}
         />
       </ListItem>

@@ -91,7 +91,7 @@ class ChatContainer extends Component {
 
   calculateUnreadMessageCount = (messages, lastReadAt) => {
     if (messages.length === 0) return 0;
-    const unreadIndex = messages.findIndex((message) => lastReadAt > message.created_at);
+    const unreadIndex = messages.findIndex((message) => lastReadAt >= message.created_at);
     if (unreadIndex === -1) return messages.length;
     return unreadIndex;
   };
@@ -168,16 +168,30 @@ class ChatContainer extends Component {
 
   joinGameChannel = (socket, game) => (
     GameChannel.join(socket, game.id, this.newGameMessageCallback)
-  )
+  );
+
+  updateGame = (originalGame, updatedGame) => {
+    const usersGame = updatedGame.users_games.find((usersGame) => (
+      usersGame.user_id === this.state.user.id
+    ));
+    return {
+      ...updatedGame,
+      pending: usersGame.state === 'pending',
+      channel: originalGame.channel,
+      messages: _.cloneDeep(originalGame.messages),
+    };
+  };
 
   updateGameCallback = (updatedGame) => {
     const games = [...this.state.games];
+    debugger;
     const gameIndex = games.findIndex((game) => game.id === updatedGame.id);
-    const game = this.buildGameWithChannel(updatedGame, this.state.user, this.state.socket);
     if (gameIndex === -1) {
+      const game = this.buildGameWithChannel(updatedGame, this.state.user, this.state.socket);
       games.push(game);
       this.props.onNotificationOpen(`You have been invited to ${game.name}`);
     } else {
+      const game = this.updateGame(games[gameIndex], updatedGame);
       games[gameIndex] = game;
     }
     const invitations = games.filter((game) => game.pending);

@@ -31,21 +31,16 @@ import Invitation from '../api/invitation';
 // bugs
 // -> mark game as started on starting with datetime
 // -> race condition on joining game, joined game message
+// -> race condition locally as game is loaded before game restarts on server/has chance to change phase?
 // -> review database reads on state update, etc
 // ->* when server disconnects, as in get onError on socket, then we need to reload /me. Or simply a modal asking for reconnect to server?
 // ->* handle not authorised error
 // ->* own message appears as notification
+// ->* when dead show info on roledialog about how not able to speak till game over, no more votes
 
 // deploy game on aws/wherever
 // -> how to upload to S3 easier https://medium.com/@omgwtfmarc/deploying-create-react-app-to-s3-or-cloudfront-48dae4ce0af
 // -> remember note to install postgres, imagemajick
-
-// improving UX for game
-// -> add game conversation relationship for werewolf group chat
-// -> make werewolf group chat on game creation
-// -> send message from bot on game creation
-// -> include conversation for werewolfs in game state or something
-// -> add link to conversation within infodialog player list at the top
 
 // epics
 // choose simple notes app to store all this stuff, also to store all used tutorials, plus general comments
@@ -199,6 +194,7 @@ class Game extends Component {
   );
 
   eligibleToVote = () => {
+    if (this.props.game.state.players[this.props.user.id] === undefined) return false;
     if (!this.props.game.state.players[this.props.user.id].alive) return false;
     if (this.alreadyVoted()) return false;
     if (this.props.game.state.state === 'night_phase' && this.props.game.state.players[this.props.user.id].role === 'werewolf') {
@@ -209,6 +205,7 @@ class Game extends Component {
   };
 
   alreadyVoted = () => {
+    if (this.props.game.state.players[this.props.user.id] === undefined) return false;
     const phaseNumber = this.props.game.state.phases;
     const phase = this.props.game.state.players[this.props.user.id].actions[phaseNumber];
     if (!phase) return false;

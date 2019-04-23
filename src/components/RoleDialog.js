@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Input from '@material-ui/core/Input';
@@ -14,6 +19,8 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
+import MessageIcon from '@material-ui/icons/Message';
+import IconButton from '@material-ui/core/IconButton';
 import VoteValidation from '../validation/voteValidation';
 
 const styles = theme => ({
@@ -25,6 +32,9 @@ const styles = theme => ({
     margin: theme.spacing.unit,
     minWidth: 120,
   },
+  messageListItem: {
+    paddingLeft: '0px',
+  }
 });
 
 class RoleDialog extends Component {
@@ -121,6 +131,30 @@ class RoleDialog extends Component {
     return `You voted for ${target}`;
   }
 
+  renderChatLink = () => (
+    <div>
+      {this.state.player.role === 'werewolf' &&
+        <List>
+          <ListItem className={this.props.classes.messageListItem}>
+            <ListItemText
+              primary="View werewolf conversation:"
+            />
+            <ListItemSecondaryAction>
+              <IconButton
+                aria-haspopup="true"
+                color="primary"
+                component={Link}
+                to={`/chat/${this.props.game.conversation_id}`}
+              >
+                <MessageIcon style={{ fontSize: 36 }} />
+              </IconButton>
+            </ListItemSecondaryAction>
+          </ListItem>
+        </List>
+      }
+    </div>
+  )
+
   renderVotingForm = () => {
     if (!this.props.eligibleToVote) return;
     return (
@@ -168,6 +202,7 @@ class RoleDialog extends Component {
             <DialogContent>
               <DialogContentText>
                 <p>{this.roleText()}</p>
+                {this.renderChatLink()}
                 <p>{this.actionText()}</p>
               </DialogContentText>
               {this.renderVotingForm()}

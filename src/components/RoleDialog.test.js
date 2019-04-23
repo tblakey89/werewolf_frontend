@@ -166,9 +166,10 @@ describe('RoleDialog', () => {
         wrapper.setProps({ game: updatedGame, user: werewolfUser, eligibleToVote: true });
       });
 
-      it('does show the select input, with correct number of candidates', () => {
+      it('does show the select input, with correct number of candidates, and list containing link', () => {
         expect(wrapper.find('WithStyles(Select)').length).toEqual(1);
         expect(wrapper.find('WithStyles(MenuItem)').length).toEqual(2);
+        expect(wrapper.find('WithStyles(IconButton)').length).toEqual(1);
       });
     });
   });
