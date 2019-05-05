@@ -181,6 +181,7 @@ class NewGameDialog extends Component {
                 </FormControl>
                 <ContactSelect
                   onChange={this.handleContactMenuChange}
+                  friends={this.props.friends}
                   participants={this.state.fields.participants}
                   showFieldError={this.showFieldError}
                   setLoaded={this.handleSetLoaded}

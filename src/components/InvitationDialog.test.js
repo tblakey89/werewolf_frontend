@@ -1,9 +1,11 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import Invitation from '../api/invitation';
+import FriendRequest from '../api/friendRequest';
 import InvitationDialog from './InvitationDialog';
 
 jest.mock('../api/invitation');
+jest.mock('../api/friendRequest');
 
 describe('InvitationDialog', () => {
   let wrapper;
@@ -12,6 +14,7 @@ describe('InvitationDialog', () => {
   let button;
   let closeButton;
   let invitations;
+  let friends;
   let user;
 
   beforeEach(() => {
@@ -40,21 +43,32 @@ describe('InvitationDialog', () => {
         ]
       }
     ];
+    friends = [
+      {
+        id: 3,
+        requestId: 3
+      },
+      {
+        id: 4,
+        requestId: 4
+      }
+    ];
     mockNotify = jest.fn();
     mockClose = jest.fn();
-    wrapper = shallow(shallow(shallow(shallow(shallow(shallow(<InvitationDialog onClose={mockClose} onNotificationOpen={mockNotify} open={true} invitations={invitations} user={user} />).get(0)).get(0)).get(0)).get(0)).get(0));
+    wrapper = shallow(shallow(shallow(shallow(shallow(shallow(<InvitationDialog onClose={mockClose} onNotificationOpen={mockNotify} open={true} invitations={invitations} friends={friends} user={user} />).get(0)).get(0)).get(0)).get(0)).get(0));
     button = wrapper.find('#submit');
   });
 
   afterEach(() => {
     Invitation.update.mockClear();
+    FriendRequest.update.mockClear();
     mockNotify.mockClear();
     mockClose.mockClear();
   });
 
   describe('User opens dialog', () => {
     it('displays correct number of invites', () => {
-      expect(wrapper.find('WithStyles(ListItem)').length).toEqual(2);
+      expect(wrapper.find('WithStyles(ListItem)').length).toEqual(4);
     });
 
     describe('close button', () => {
@@ -111,13 +125,47 @@ describe('InvitationDialog', () => {
       });
     });
 
-    describe('when no invitations', () => {
+    describe('user clicks on friend request tick icon to accept invite', () => {
+      let button;
+      let friendRequestUpdateInvocationArgs;
+
       beforeEach(() => {
-        wrapper.setProps({ invitations: [] });
+        button = wrapper.find('WithStyles(Button)').at(4);
+        button.simulate('click');
+        wrapper.update();
+        friendRequestUpdateInvocationArgs = FriendRequest.update.mock.calls[0];
+      });
+
+      it('triggers update api call', () => {
+        expect(friendRequestUpdateInvocationArgs[0]).toEqual(friends[0].requestId);
+        expect(friendRequestUpdateInvocationArgs[1]).toEqual('accepted');
+      });
+    });
+
+    describe('user clicks on friend request tick icon to reject invite', () => {
+      let button;
+      let friendRequestUpdateInvocationArgs
+
+      beforeEach(() => {
+        button = wrapper.find('WithStyles(Button)').at(5);
+        button.simulate('click');
+        wrapper.update();
+        friendRequestUpdateInvocationArgs = FriendRequest.update.mock.calls[0];
+      });
+
+      it('triggers update api call', () => {
+        expect(friendRequestUpdateInvocationArgs[0]).toEqual(friends[0].requestId);
+        expect(friendRequestUpdateInvocationArgs[1]).toEqual('rejected');
+      });
+    });
+
+    describe('when no invitations or friend requests', () => {
+      beforeEach(() => {
+        wrapper.setProps({ invitations: [], friends: [] });
       });
 
       it('contains only one ListItem', () => {
-        expect(wrapper.find('WithStyles(ListItem)').length).toEqual(1);
+        expect(wrapper.find('WithStyles(ListItem)').length).toEqual(2);
         const listItem = wrapper.find('WithStyles(ListItem)')
       });
     })

@@ -16,6 +16,7 @@ import withMobileDialog from '@material-ui/core/withMobileDialog';
 import MessageIcon from '@material-ui/icons/Message';
 import IconButton from '@material-ui/core/IconButton';
 import UserAvatar from './UserAvatar';
+import FriendRequestButton from './FriendRequestButton';
 import Conversation from '../api/conversation';
 
 class InfoDialog extends Component {
@@ -71,6 +72,10 @@ class InfoDialog extends Component {
             />
             {this.props.user.id !== player.id &&
               <ListItemSecondaryAction>
+                <FriendRequestButton
+                  friends={this.props.friends}
+                  friendId={player.id}
+                />
                 <IconButton
                   aria-haspopup="true"
                   color="primary"
@@ -101,6 +106,10 @@ class InfoDialog extends Component {
           />
           {this.props.user.id !== user.user.id &&
             <ListItemSecondaryAction>
+              <FriendRequestButton
+                friends={this.props.friends}
+                friendId={user.user.id}
+              />
               <IconButton
                 aria-haspopup="true"
                 color="primary"

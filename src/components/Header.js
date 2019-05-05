@@ -30,6 +30,10 @@ class Header extends Component {
     this.setState({ open: false });
   };
 
+  invitationLength = () => {
+    return this.props.invitations.length + this.props.friends.length;
+  };
+
   renderIconWithBadge = (badgeNumber, component, props) => {
     if (badgeNumber === 0) {
       return (React.createElement(component, {className: this.props.classes.badge}));
@@ -82,7 +86,7 @@ class Header extends Component {
                 color="inherit"
                 onClick={this.handleClickOpen}
               >
-                {this.renderIconWithBadge(this.props.invitations.length, MailIcon)}
+                {this.renderIconWithBadge(this.invitationLength(), MailIcon)}
               </IconButton>
             </div>
           </Toolbar>
@@ -92,6 +96,7 @@ class Header extends Component {
           onClose={this.handleClose}
           invitations={this.props.invitations}
           user={this.props.user}
+          friends={this.props.friends}
           onNotificationOpen={this.props.onNotificationOpen}
         />
       </div>

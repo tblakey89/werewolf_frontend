@@ -22,23 +22,13 @@ class ContactSelect extends Component {
   };
 
   componentDidMount() {
-    this.loadUsers();
-  }
-
-  loadUsers = () => {
-    User.index((response) => {
-      this.setState(
-        {contacts: this.generateContactsObject(response.users)},
-        this.props.setLoaded
-      );
-    }, (response) => {
-
-    });
+    this.setState(
+      {contacts: this.generateContactsObject(this.props.friends)}
+    );
   }
 
   generateContactsObject = (users) => {
     const reducer = (object, user) => {
-      if (user.id === this.props.userId) return object;
       // watch out if current currentParticipantIds is large, or users is large
       if (this.props.currentParticipantIds.includes(user.id)) return object;
       object[user.id] = user;
@@ -97,14 +87,15 @@ class ContactSelect extends Component {
 
 ContactSelect.propTypes = {
   onChange: PropTypes.func.isRequired,
+  friends: PropTypes.array.isRequired,
   showFieldError: PropTypes.func,
-  setLoaded: PropTypes.func.isRequired,
   participants: PropTypes.array.isRequired,
   currentParticipantIds: PropTypes.array,
 };
 
 ContactSelect.defaultProps = {
   currentParticipantIds: [],
+  friends: [],
   showFieldError: () => {},
 };
 

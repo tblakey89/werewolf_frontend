@@ -6,7 +6,7 @@ import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import Badge from '@material-ui/core/Badge';
 import Icon from '@material-ui/core/Icon';
 import MessageIcon from '@material-ui/icons/Message';
-import ContactsIcon from '@material-ui/icons/Contacts';
+import ContactsIcon from '@material-ui/icons/Group';
 import GamesIcon from '@material-ui/icons/Games';
 import SettingsIcon from '@material-ui/icons/Settings';
 

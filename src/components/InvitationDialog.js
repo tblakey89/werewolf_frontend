@@ -15,7 +15,9 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
+import UserAvatar from './UserAvatar';
 import Invitation from '../api/invitation';
+import FriendRequest from '../api/friendRequest';
 
 const styles = theme => ({
   button: {
@@ -33,6 +35,10 @@ class InvitationDialog extends Component {
     });
   }
 
+  handleFriendRequestClick = (friendRequest, newState) => () => {
+    FriendRequest.update(friendRequest.requestId, newState, () => {}, () => {});
+  }
+
   sortedInvitations = () => (
     this.props.invitations.sort((inviteA, inviteB) => {
       if (inviteA.invitationAt > inviteB.invitationAt) return -1;
@@ -40,10 +46,17 @@ class InvitationDialog extends Component {
     })
   );
 
+  sortedFriendRequests = () => (
+    this.props.friends.sort((requestA, requestB) => {
+      if (requestA.requestAt > requestB.requestAt) return -1;
+      return 1;
+    })
+  );
+
   renderInvitations = () => (
     this.sortedInvitations().map((invitation, index) => (
       <div key={invitation.id}>
-        <ListItem>
+        <ListItem className="invite">
           <ListItemText onClick={this.props.onClose}>
             <Link to={`/game`}>{invitation.name}</Link>
           </ListItemText>
@@ -71,6 +84,41 @@ class InvitationDialog extends Component {
     ))
   );
 
+  renderFriendRequests = () => (
+    this.sortedFriendRequests().map((friendRequest, index) => (
+      <div key={friendRequest.id}>
+        <ListItem>
+          <UserAvatar
+            user={this.props.user}
+            currentUser={friendRequest}
+          />
+          <ListItemText
+            primary={friendRequest.username}
+          />
+          <Button
+            mini
+            variant="fab"
+            color="primary"
+            className={this.props.classes.button}
+            onClick={this.handleFriendRequestClick(friendRequest, 'accepted')}
+          >
+            <TickIcon />
+          </Button>
+          <Button
+            mini
+            variant="fab"
+            color="secondary"
+            className={this.props.classes.button}
+            onClick={this.handleFriendRequestClick(friendRequest, 'rejected')}
+          >
+            <CrossIcon />
+          </Button>
+        </ListItem>
+        {index !== this.props.friends.length - 1 && <Divider />}
+      </div>
+    ))
+  );
+
   render() {
     const { fullScreen, classes } = this.props;
 
@@ -90,6 +138,19 @@ class InvitationDialog extends Component {
             <ListItem>
               <ListItemText>
                 No pending invitations
+              </ListItemText>
+            </ListItem>
+          )}
+        </List>
+        <DialogTitle>
+          {"Friend Requests"}
+        </DialogTitle>
+        <List>
+          {this.renderFriendRequests()}
+          {this.props.friends.length === 0 && (
+            <ListItem>
+              <ListItemText>
+                No pending friend requests
               </ListItemText>
             </ListItem>
           )}

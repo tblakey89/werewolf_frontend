@@ -12,7 +12,11 @@ describe('Header', () => {
       {id: 1},
       {id: 2},
     ]
-    wrapper = shallow(<MemoryRouter><Header invitations={invitations}/></MemoryRouter>);
+    const friends = [
+      {id: 1},
+      {id: 2},
+    ]
+    wrapper = shallow(<MemoryRouter><Header invitations={invitations} friends={friends}/></MemoryRouter>);
   });
 
   describe('Header component', () => {
@@ -20,13 +24,13 @@ describe('Header', () => {
       it('shows correct number of invitations', () => {
         const badges = wrapper.find('WithStyles(Badge)');
         expect(badges.length).toEqual(1);
-        expect(badges.first().props()['badgeContent']).toEqual(2);
+        expect(badges.first().props()['badgeContent']).toEqual(4);
       });
     });
 
     describe('when no invitations present', () => {
       beforeEach(() => {
-        wrapper.setProps({ invitations: [] });
+        wrapper.setProps({ invitations: [], friends: [] });
       });
 
       it('shows correct number of invitations', () => {

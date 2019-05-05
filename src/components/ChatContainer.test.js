@@ -29,6 +29,7 @@ describe('ChatContainer', () => {
     conversationChannel.join.mockClear();
     gameChannel.join.mockClear();
     mockLeave.mockClear();
+    mockNotify.mockClear();
   });
 
   describe('Loads up user\'s account when mounted', () => {
@@ -45,6 +46,7 @@ describe('ChatContainer', () => {
       let conversationOne;
       let conversationTwo;
       let game;
+      let friendships;
 
       beforeEach(() => {
         conversationOne = {
@@ -85,6 +87,17 @@ describe('ChatContainer', () => {
           ],
           messages: []
         };
+        friendships = [
+          {
+            state: 'pending',
+            user: {
+              id: 11
+            },
+            friend: {
+              id: 10
+            }
+          }
+        ];
         user = {
           conversations: [
             conversationOne,
@@ -93,6 +106,7 @@ describe('ChatContainer', () => {
           games: [
             game
           ],
+          friendships: friendships,
           username: 'testuser',
           id: 10,
         };
@@ -435,6 +449,99 @@ describe('ChatContainer', () => {
             expect(wrapper.state().games.length).toEqual(1);
             expect(wrapper.state().invitations.length).toEqual(1);
             expect(mockLeave.mock.calls.length).toEqual(0);
+          });
+        });
+      });
+
+      describe('receiving a friend request', () => {
+        describe('when a friend request message is receved from other user', () => {
+          beforeEach(() => {
+            const newFriendRequestCallback = userChannelInvocationArgs[8];
+            newFriendRequestCallback({
+              state: 'pending',
+              user: {
+                id: user.id + 2
+              },
+              friend: {
+                id: user.id
+              }
+            });
+            wrapper.update();
+          });
+
+          it('it adds to friends list and notifies', () => {
+            expect(Object.keys(wrapper.state().friends).length).toEqual(2);
+            expect(mockNotify.mock.calls.length).toEqual(1);
+            expect(mockNotify.mock.calls[0][0]).toEqual(expect.stringContaining('has sent you a friend request'));
+          });
+        });
+
+        describe('when a friend request message is received from self', () => {
+          beforeEach(() => {
+            const newFriendRequestCallback = userChannelInvocationArgs[8];
+            newFriendRequestCallback({
+              state: 'pending',
+              user: {
+                id: user.id
+              },
+              friend: {
+                id: user.id + 2
+              }
+            });
+            wrapper.update();
+          });
+
+          it('it adds to friends list and notifies', () => {
+            expect(Object.keys(wrapper.state().friends).length).toEqual(2);
+            expect(mockNotify.mock.calls.length).toEqual(1);
+            expect(mockNotify.mock.calls[0][0]).toEqual(expect.stringContaining('has been sent a friend request'));
+          });
+        });
+      });
+
+      describe('receiving a friend request update', () => {
+        describe('when updating a friend request from other user', () => {
+          beforeEach(() => {
+            const updateFriendRequestCallback = userChannelInvocationArgs[9];
+            updateFriendRequestCallback({
+              state: 'accepted',
+              user: {
+                id: friendships[0].user.id
+              },
+              friend: {
+                id: user.id
+              }
+            });
+            wrapper.update();
+          });
+
+          it('it updates the friend request and notifies', () => {
+            expect(Object.keys(wrapper.state().friends).length).toEqual(1);
+            expect(wrapper.state().friends[friendships[0].user.id].state).toEqual('accepted');
+            expect(mockNotify.mock.calls.length).toEqual(1);
+            expect(mockNotify.mock.calls[0][0]).toEqual(expect.stringContaining('You are now friends with'));
+          });
+        });
+
+        describe('when updating a friend request after other user rejects', () => {
+          beforeEach(() => {
+            const updateFriendRequestCallback = userChannelInvocationArgs[9];
+            updateFriendRequestCallback({
+              state: 'rejected',
+              user: {
+                id: user.id
+              },
+              friend: {
+                id: friendships[0].user.id
+              }
+            });
+            wrapper.update();
+          });
+
+          it('it updates the friend request, but does not notify', () => {
+            expect(Object.keys(wrapper.state().friends).length).toEqual(1);
+            expect(wrapper.state().friends[friendships[0].user.id].state).toEqual('rejected');
+            expect(mockNotify.mock.calls.length).toEqual(0);
           });
         });
       });

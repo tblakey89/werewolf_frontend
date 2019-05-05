@@ -168,6 +168,7 @@ class Games extends Component {
           onClose={this.handleClose}
           onNotificationOpen={this.props.onNotificationOpen}
           userId={this.props.user.id}
+          friends={this.props.friends}
         />
       </div>
     );

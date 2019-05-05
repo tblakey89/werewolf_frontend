@@ -102,6 +102,7 @@ class ChatList extends Component {
           open={this.state.open}
           onClose={this.handleClose}
           onNotificationOpen={this.props.onNotificationOpen}
+          friends={this.props.friends}
           user={this.props.user}
         />
       </List>

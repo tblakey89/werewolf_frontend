@@ -10,6 +10,7 @@ describe('Game', () => {
   let mockSetAsRead;
   let mockNotify;
   let user;
+  let friends;
   let game;
   let channelPush;
 
@@ -18,6 +19,7 @@ describe('Game', () => {
     user = {
       id: 1,
     };
+    friends = {};
     game = {
       id: 10,
       pending: false,
@@ -75,7 +77,7 @@ describe('Game', () => {
       },
     };
     mockSetAsRead = jest.fn();
-    wrapper = shallow(shallow(<Game setAsRead={mockSetAsRead} game={game} user={user} onNotificationOpen={mockNotify} />).get(0));
+    wrapper = shallow(shallow(<Game setAsRead={mockSetAsRead} game={game} user={user} onNotificationOpen={mockNotify} friends={friends} />).get(0));
   });
 
   afterEach(() => {
@@ -278,7 +280,7 @@ describe('Game', () => {
     beforeEach(() => {
       const updatedGame = {...game};
       updatedGame.state.state = 'day_phase';
-      wrapper = shallow(shallow(<Game setAsRead={mockSetAsRead} game={game} user={user} onNotificationOpen={mockNotify} />).get(0));
+      wrapper = shallow(shallow(<Game setAsRead={mockSetAsRead} game={game} user={user} onNotificationOpen={mockNotify} friends={friends} />).get(0));
     });
 
     it('returns true', () => {

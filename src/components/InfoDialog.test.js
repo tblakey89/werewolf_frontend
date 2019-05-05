@@ -49,11 +49,12 @@ describe('InfoDialog', () => {
     username: 'tester',
     id: 1,
   };
+  const friends = {};
 
   beforeEach(() => {
     mockClose = jest.fn();
     state = 'initialized';
-    wrapper = shallow(<MemoryRouter><InfoDialog onClose={mockClose} open={true} gameState={state} players={players} user={user} users={users}/></MemoryRouter>);
+    wrapper = shallow(<MemoryRouter><InfoDialog onClose={mockClose} open={true} gameState={state} players={players} user={user} users={users} friends={friends}/></MemoryRouter>);
     button = wrapper.find('#submit');
   });
 

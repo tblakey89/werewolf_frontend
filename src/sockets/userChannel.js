@@ -1,4 +1,4 @@
-const join = (socket, userId, newConversationCallback, newGameCallback, updateGameCallback, updateGameStateCallback, updateUserCallback, leaveGameCallback) => {
+const join = (socket, userId, newConversationCallback, newGameCallback, updateGameCallback, updateGameStateCallback, updateUserCallback, leaveGameCallback, newFriendRequestCallback, friendRequestUpdatedCallback) => {
   let channel = socket.channel(`user:${userId}`, {})
   channel.join()
     .receive("ok", resp => { console.log("Joined successfully", resp) })
@@ -10,6 +10,8 @@ const join = (socket, userId, newConversationCallback, newGameCallback, updateGa
   channel.on("game_state_update", updateGameStateCallback);
   channel.on("new_avatar", updateUserCallback);
   channel.on("invitation_rejected", leaveGameCallback);
+  channel.on("new_friend_request", newFriendRequestCallback);
+  channel.on("friend_request_updated", friendRequestUpdatedCallback);
 
   return channel;
 };

@@ -29,6 +29,7 @@ class ChatContainer extends Component {
     conversations: [],
     games: [],
     invitations: [],
+    friends: {},
     unreadMessageCount: 0,
   };
 
@@ -49,6 +50,7 @@ class ChatContainer extends Component {
       );
       const invitations = games.filter((game) => game.pending)
       user.conversations = undefined;
+      const friends = this.buildFriends(user, user.friendships);
 
       this.setState({
         socket,
@@ -57,6 +59,7 @@ class ChatContainer extends Component {
         conversations,
         games,
         invitations,
+        friends,
         _loading: false
       });
     }, (response) => {
@@ -74,6 +77,8 @@ class ChatContainer extends Component {
       this.updateGameStateCallback,
       this.updateUserCallback,
       this.leaveGameCallback,
+      this.newFriendRequestCallback,
+      this.friendRequestUpdatedCallback,
     )
   );
 
@@ -184,7 +189,6 @@ class ChatContainer extends Component {
 
   updateGameCallback = (updatedGame) => {
     const games = [...this.state.games];
-    debugger;
     const gameIndex = games.findIndex((game) => game.id === updatedGame.id);
     if (gameIndex === -1) {
       const game = this.buildGameWithChannel(updatedGame, this.state.user, this.state.socket);
@@ -264,6 +268,79 @@ class ChatContainer extends Component {
     }
   };
 
+  buildFriends = (user, friendships) => (
+    friendships.reduce((accumulator, friendship) => {
+      const attribute = friendship.user.id === user.id ? 'friend' : 'user';
+      const friend = friendship[attribute];
+      accumulator[friend.id] = {
+        id: friend.id,
+        requestId: friendship.id,
+        username: friend.username,
+        avatar: friend.avatar,
+        state: friendship.state,
+        requestId: friendship.id,
+        requestAt: friendship.created_at,
+        userRequest: friendship.user.id === user.id
+      }
+      return accumulator;
+    }, {})
+  );
+
+  newFriendRequestCallback = (friendship) => {
+    const attribute = friendship.user.id === this.state.user.id ? 'friend' : 'user';
+    const friend = friendship[attribute];
+    const friends = {...this.state.friends};
+    friends[friend.id] = {
+      id: friend.id,
+      requestId: friendship.id,
+      username: friend.username,
+      avatar: friend.avatar,
+      state: friendship.state,
+      requestId: friendship.id,
+      requestAt: friendship.created_at,
+      userRequest: friendship.user.id === this.state.user.id
+    };
+    this.setState({friends}, () => {
+      if (attribute === 'friend') {
+        this.props.onNotificationOpen(`${friend.username} has been sent a friend request.`);
+      } else {
+        this.props.onNotificationOpen(`${friend.username} has sent you a friend request.`);
+      }
+    });
+  };
+
+  friendRequestUpdatedCallback = (friendship) => {
+    const attribute = friendship.user.id === this.state.user.id ? 'friend' : 'user';
+    const friend = friendship[attribute];
+    const friends = _.cloneDeep(this.state.friends);
+    friends[friend.id].state = friendship.state;
+    this.setState({friends}, () => {
+      if (friendship.state === 'accepted') {
+        if (attribute === 'user') {
+          this.props.onNotificationOpen(`You are now friends with ${friend.username}.`);
+        } else {
+          this.props.onNotificationOpen(`${friend.username} has accepted your friend request.`);
+        }
+      }
+    });
+  };
+
+  pendingFriendRequests = () => (
+    Object.values(this.state.friends).reduce((accumulator, friend) => {
+      if (friend.state === 'pending' && !friend.userRequest) {
+        accumulator.push(friend);
+      }
+      return accumulator;
+    }, [])
+  );
+
+  acceptedFriendRequests = () => (
+    Object.values(this.state.friends).reduce((accumulator, friend) => {
+      if (friend.state === 'accepted') accumulator.push(friend);
+      return accumulator;
+    }, [])
+  );
+
   render() {
     if (this.state._loading) {
       return <CircularProgress />;
@@ -273,6 +350,7 @@ class ChatContainer extends Component {
         <Header
           invitations={this.state.invitations}
           user={this.state.user}
+          friends={this.pendingFriendRequests()}
           onNotificationOpen={this.props.onNotificationOpen}
         />
         <div style={{'margin-top': '64px', 'margin-bottom': '56px'}}>
@@ -280,6 +358,7 @@ class ChatContainer extends Component {
             path='/games'
             component={Games}
             games={this.state.games}
+            friends={this.acceptedFriendRequests()}
             user={this.state.user}
             onNotificationOpen={this.props.onNotificationOpen}
           />
@@ -294,6 +373,7 @@ class ChatContainer extends Component {
                   game={game}
                   setAsRead={this.setGameAsRead}
                   user={this.state.user}
+                  friends={this.state.friends}
                   onNotificationOpen={this.props.onNotificationOpen}
                 />
               );
@@ -319,12 +399,14 @@ class ChatContainer extends Component {
             path='/chats'
             component={ChatList}
             conversations={this.state.conversations}
+            friends={this.acceptedFriendRequests()}
             user={this.state.user}
             onNotificationOpen={this.props.onNotificationOpen}
           />
           <AuthenticatedRoute
             path='/contacts'
             user={this.state.user}
+            friends={this.acceptedFriendRequests()}
             component={Contacts}
           />
           <AuthenticatedRoute

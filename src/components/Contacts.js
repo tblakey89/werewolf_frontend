@@ -8,26 +8,13 @@ import ListItemText from '@material-ui/core/ListItemText';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import UserAvatar from './UserAvatar';
-import User from '../api/user';
 import Conversation from '../api/conversation';
-
-// need to test errorCallback, what happens if error?
 
 class Contacts extends Component {
   state = {
     contacts: [],
     _loading: false,
   };
-
-  componentDidMount() {
-    window.scrollTo(0,0);
-    this.setState({_loading: true})
-    User.index((response) => {
-      this.setState({contacts: response.users, _loading: false});
-    }, (response) => {
-
-    });
-  }
 
   createConversation = (user_id) => () => {
     Conversation.create(
@@ -46,16 +33,13 @@ class Contacts extends Component {
   }
 
   filteredAndSortedContacts = () => (
-    this.state.contacts.filter(user => user.id !== this.props.user.id).sort((contactA, contactB) => {
+    this.props.friends.filter(user => user.id !== this.props.user.id).sort((contactA, contactB) => {
       if (contactA.username < contactB.username) return -1;
       return 1;
     })
   );
 
   renderContacts = () => {
-    if (this.state._loading) {
-      return <CircularProgress />;
-    }
     return (
       this.filteredAndSortedContacts().map((user) => (
         <ListItem

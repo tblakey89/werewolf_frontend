@@ -24,40 +24,6 @@ import UserAvatar from './UserAvatar';
 import HideableBadge from './HideableBadge';
 import Invitation from '../api/invitation';
 
-// refactor to move all user, game, conversation objects out of the chat container
-
-// game should have things like function to check if user is host
-
-// bugs
-// -> mark game as started on starting with datetime
-// -> race condition on joining game, joined game message
-// -> race condition locally as game is loaded before game restarts on server/has chance to change phase?
-// -> review database reads on state update, etc
-// ->* when server disconnects, as in get onError on socket, then we need to reload /me. Or simply a modal asking for reconnect to server?
-// ->* handle not authorised error
-// ->* own message appears as notification
-// ->* when dead show info on roledialog about how not able to speak till game over, no more votes
-
-// deploy game on aws/wherever
-// -> how to upload to S3 easier https://medium.com/@omgwtfmarc/deploying-create-react-app-to-s3-or-cloudfront-48dae4ce0af
-// -> remember note to install postgres, imagemajick
-
-// epics
-// choose simple notes app to store all this stuff, also to store all used tutorials, plus general comments
-// scope: use presence to inform users of who is online, if easy, implement
-// have to refactor, too much 'business logic' in components, some components could be split, use material ui create shallow everywhere, fix warnings
-// add ability to have friends, send friend requests, but also keep track of previously played with users, tabs on contacts page?
-// think about header title
-// limit messages loaded to most recent 100, or less
-// start flutter app here -> game, state should be broken into multiple classes maybe?
-// when server dies, restart all active werewolf games on reboot
-// book icon on game page to show rules modal
-// message icon on infoDialog to show unread messages
-
-// when stuck with concurrency, comment out the tasks
-
-// should split out all the extra code, like invite, launch button, etc
-
 const styles = theme => ({
   button: {
     margin: theme.spacing.unit,
@@ -211,6 +177,13 @@ class Game extends Component {
     if (!phase) return false;
     return !!phase['vote'];
   }
+
+  acceptedFriendRequests = () => (
+    Object.values(this.props.friends).reduce((accumulator, friend) => {
+      if (friend.state === 'accepted') accumulator.push(friend);
+      return accumulator;
+    }, [])
+  );
 
   renderLaunchButton = () => (
     this.showLaunchButton() && (
@@ -377,6 +350,8 @@ class Game extends Component {
                 players={this.props.game.state.players}
                 user={this.props.user}
                 users={this.state.users}
+                friends={this.props.friends}
+                onNotificationOpen={this.props.onNotificationOpen}
               />
               <EditGameDialog
                 open={this.state.editGameOpen}
@@ -385,6 +360,7 @@ class Game extends Component {
                 currentParticipantIds={this.currentParticipantIds()}
                 gameId={this.props.game.id}
                 token={this.props.game.token}
+                friends={this.acceptedFriendRequests()}
               />
             </div>
           )}

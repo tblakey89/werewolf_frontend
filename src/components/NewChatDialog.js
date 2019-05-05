@@ -119,6 +119,7 @@ class NewChatDialog extends Component {
           <form className={classes.container}>
             <ContactSelect
               onChange={this.handleMenuChange}
+              friends={this.props.friends}
               participants={this.state.fields.participants}
               showFieldError={this.showFieldError}
               setLoaded={this.handleSetLoaded}
