@@ -389,6 +389,7 @@ class ChatContainer extends Component {
                 <Chat
                   user={this.state.user}
                   conversation={conversation}
+                  friends={this.state.friends}
                   setAsRead={this.setConversationAsRead}
                 />
               );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { createShallow } from '@material-ui/core/test-utils';
 import Chat from './Chat';
 
 jest.mock('../api/user');
@@ -10,6 +10,7 @@ describe('Chat', () => {
   let user;
   let conversation;
   let channelPush;
+  const shallow = createShallow({untilSelector: 'Chat'});
 
   beforeEach(() => {
     channelPush = jest.fn();
@@ -34,6 +35,7 @@ describe('Chat', () => {
           sender: user
         },
       ],
+      users: [{id: 11, username: 'testUser'}],
       unreadMessageCount: 0,
       channel: {
         push: channelPush,
@@ -54,6 +56,10 @@ describe('Chat', () => {
       expect(listItemTexts.first().props()['secondary']).toEqual(conversation.messages[1].body);
       expect(channelPush.mock.calls.length).toEqual(1);
       expect(channelPush.mock.calls[0][0]).toEqual('read_conversation');
+    });
+
+    it('displays correct name for conversation', () => {
+      expect(wrapper.find('WithStyles(Typography)').children().text()).toEqual('testUser');
     });
 
     it('does not call setAsUnread function', () => {

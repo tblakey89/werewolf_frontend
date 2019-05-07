@@ -1,8 +1,24 @@
 import React, { Component } from 'react';
+import { withStyles } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import FriendRequestButton from './FriendRequestButton';
 import UserAvatar from './UserAvatar';
+
+const styles = theme => ({
+  chatHeader: {
+    [theme.breakpoints.down('sm')]: {
+      top: '55px'
+    },
+    [theme.breakpoints.up('sm')]: {
+      top: '64px'
+    },
+  },
+});
 
 class Chat extends Component {
   componentDidMount() {
@@ -27,6 +43,22 @@ class Chat extends Component {
     }
   }
 
+  conversationName = () => {
+    const { conversation } = this.props;
+    if (conversation === undefined) return;
+    if (conversation.name) return conversation.name;
+
+    return conversation.users.filter((user) => (
+      this.props.user ? user.id !== this.props.user.id : true
+    )).map((user) => user.username).join(', ');
+  };
+
+  otherUser = () => (
+    this.props.conversation.users.find((user) => (
+      this.props.user ? user.id !== this.props.user.id : false
+    ))
+  );
+
   renderMessages = () => {
     const { conversation } = this.props;
     if (!conversation) return [];
@@ -48,11 +80,28 @@ class Chat extends Component {
 
   render() {
     return (
-      <List>
-        {this.renderMessages()}
-      </List>
+      <React.Fragment>
+        <AppBar position="fixed" color="default" className={this.props.classes.chatHeader}>
+          <Toolbar>
+            <Typography variant="title" color="inherit" style={{flex: 1}}>
+              {this.conversationName()}
+            </Typography>
+            <div>
+              {this.props.conversation && this.props.conversation.users.length == 2 &&
+                <FriendRequestButton
+                  friends={this.props.friends}
+                  friendId={this.otherUser().id}
+                />
+              }
+            </div>
+          </Toolbar>
+        </AppBar>
+        <List>
+          {this.renderMessages()}
+        </List>
+      </React.Fragment>
     );
   }
 }
 
-export default Chat;
+export default withStyles(styles)(Chat);
