@@ -201,9 +201,15 @@ class RoleDialog extends Component {
             </DialogTitle>
             <DialogContent>
               <DialogContentText>
-                <p>{this.roleText()}</p>
-                {this.renderChatLink()}
-                <p>{this.actionText()}</p>
+              {this.state.player.alive ?
+                <React.Fragment>
+                  <p>{this.roleText()}</p>
+                  {this.renderChatLink()}
+                  <p>{this.actionText()}</p>
+                </React.Fragment>
+                :
+                <p>You are dead. You will not be able to speak in the game chat till after the game has finished.</p>
+              }
               </DialogContentText>
               {this.renderVotingForm()}
             </DialogContent>

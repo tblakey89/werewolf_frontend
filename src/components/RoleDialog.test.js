@@ -172,5 +172,46 @@ describe('RoleDialog', () => {
         expect(wrapper.find('WithStyles(IconButton)').length).toEqual(1);
       });
     });
+
+    describe('when user is dead', () => {
+      beforeEach(() => {
+        const werewolfUser = {
+          username: 'tester',
+          id: 1,
+        };
+        const deadPlayers = {
+          1: {
+            alive: false,
+            id: 1,
+            role: 'villager',
+            actions: {}
+          },
+          2: {
+            alive: true,
+            id: 2,
+            role: 'werewolf',
+            actions: {}
+          },
+          3: {
+            alive: true,
+            id: 3,
+            role: 'werewolf',
+            actions: {}
+          }
+        };
+        const updatedGame = {
+          state: {
+            players: deadPlayers,
+            state: 'day_phase'
+          }
+        }
+        wrapper.setProps({ game: updatedGame, user: werewolfUser, eligibleToVote: false });
+      });
+
+      it('does show the select input, with correct number of candidates, and list containing link, shows dead user text', () => {
+        expect(wrapper.find('WithStyles(Select)').length).toEqual(0);
+        expect(wrapper.find('p').text()).toEqual(expect.stringContaining('You are dead.'))
+      });
+    });
   });
 });
