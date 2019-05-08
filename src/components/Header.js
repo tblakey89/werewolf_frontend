@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Route, Link } from 'react-router-dom';
+import { Route, Switch, Link } from 'react-router-dom';
 import { withRouter } from "react-router";
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -78,7 +78,13 @@ class Header extends Component {
               </IconButton>
             )}/>
             <Typography variant="title" color="inherit" style={{flex: 1}}>
-              Chat
+              <Switch>
+                <Route path="/games" render={() => 'Games'}/>
+                <Route path="/chats" render={() => 'Conversations'}/>
+                <Route path="/contacts" render={() => 'Contacts'}/>
+                <Route path="/settings" render={() => 'Settings'}/>
+                <Route render={() => 'WolfChat'}/>
+              </Switch>
             </Typography>
             <div>
               <IconButton

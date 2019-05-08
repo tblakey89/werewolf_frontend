@@ -87,7 +87,7 @@ class Chat extends Component {
               {this.conversationName()}
             </Typography>
             <div>
-              {this.props.conversation && this.props.conversation.users.length == 2 &&
+              {this.props.conversation && this.props.conversation.users.length === 2 &&
                 <FriendRequestButton
                   friends={this.props.friends}
                   friendId={this.otherUser().id}
