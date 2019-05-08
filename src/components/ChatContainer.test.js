@@ -36,6 +36,22 @@ describe('ChatContainer', () => {
     it('shows spinner before user loaded up', () => {
       const spinner = wrapper.find('WithStyles(CircularProgress)');
       expect(spinner.length).toEqual(1);
+      expect(wrapper.find('Redirect').length).toEqual(0);
+    });
+
+    describe('when user has an invalid jwt token', () => {
+      beforeEach(() => {
+        const invocationArgs = User.me.mock.calls[0];
+        const errorCallback = invocationArgs[1];
+        errorCallback({
+          message: "invalid_token",
+        });
+        wrapper.update();
+      });
+
+      it('redirects user', () => {
+        expect(wrapper.find('Redirect').length).toEqual(1);
+      })
     });
 
     describe('user state is set on success', () => {
@@ -134,6 +150,7 @@ describe('ChatContainer', () => {
         expect(wrapper.state().games[0].pending).toEqual(true);
         expect(wrapper.state().invitations.length).toEqual(1);
         expect(wrapper.state().conversations[1].unreadMessageCount).toEqual(1);
+        expect(wrapper.find('Redirect').length).toEqual(0);
       });
 
       describe('when a new conversation is created', () => {

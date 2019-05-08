@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { matchPath } from 'react-router';
+import { Redirect } from 'react-router-dom';
 import _ from 'lodash';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Header from './Header';
@@ -23,6 +24,7 @@ import history from '../history';
 class ChatContainer extends Component {
   state = {
     _loading: false,
+    authenticated: true,
     socket: null,
     user: {},
     userChannel: null,
@@ -62,8 +64,11 @@ class ChatContainer extends Component {
         friends,
         _loading: false
       });
-    }, (response) => {
-
+    }, (error) => {
+      if (error.message === "invalid_token") {
+        localStorage.removeItem('jwt');
+        this.setState({ authenticated: false });
+      }
     });
   }
 
@@ -342,6 +347,9 @@ class ChatContainer extends Component {
   );
 
   render() {
+    if (!this.state.authenticated) {
+      return (<Redirect to='/signin'/>)
+    }
     if (this.state._loading) {
       return <CircularProgress />;
     }
