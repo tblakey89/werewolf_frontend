@@ -67,15 +67,19 @@ class Header extends Component {
       <div style={{flexGrow: 1}}>
         <AppBar position="fixed">
           <Toolbar>
-            <Route path='(/game|/chat)'  render={() => (
-              <IconButton
-                className={styles.menuButton}
-                color="inherit"
-                aria-label="Menu"
-                onClick={this.props.history.goBack}
-              >
-                <BackIcon  style={{ fontSize: 36,  }} />
-              </IconButton>
+            <Route path='/chat'  render={() => (
+              <Link to={`/chats`} className={'iconLink'}>
+                <IconButton className={styles.menuButton} color="inherit" aria-label="Menu">
+                  <BackIcon  style={{ fontSize: 36,  }} />
+                </IconButton>
+              </Link>
+            )}/>
+            <Route path='/game'  render={() => (
+              <Link to={`/games`} className={'iconLink'}>
+                <IconButton className={styles.menuButton} color="inherit" aria-label="Menu">
+                  <BackIcon  style={{ fontSize: 36,  }} />
+                </IconButton>
+              </Link>
             )}/>
             <Typography variant="title" color="inherit" style={{flex: 1}}>
               <Switch>
