@@ -1,2 +1,3 @@
 #!/usr/bin/env zsh
+yarn build
 aws s3 sync build/ s3://werewolf-frontend
