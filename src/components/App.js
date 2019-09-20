@@ -6,6 +6,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import ChatContainer from './ChatContainer';
 import SessionDialog from './SessionDialog';
+import SupportDialog from './SupportDialog';
 import './App.css';
 
 const styles = theme => ({
@@ -43,6 +44,9 @@ class App extends Component {
     const { classes } = this.props;
     return (
       <div className="App">
+      <Route exact path='(|/support)' render={props => (
+        <SupportDialog {...props}/>
+      )}/>
         <Route exact path='(|/signin|/register|/forgotten_password|/new_password)' render={props => (
           <SessionDialog onNotificationOpen={this.handleNotificationOpen} {...props}/>
         )}/>

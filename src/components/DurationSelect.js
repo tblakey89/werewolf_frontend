@@ -17,6 +17,10 @@ const styles = theme => ({
 
 const durations = [
   {
+    name: '2 Minutes',
+    key: 'two_minute',
+  },
+  {
     name: '5 Minutes',
     key: 'five_minute',
   },
