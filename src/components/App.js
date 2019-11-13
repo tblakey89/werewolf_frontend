@@ -22,6 +22,11 @@ class App extends Component {
     notificationMessage: '',
   };
 
+  componentDidMount() {
+    ReactGA.initialize('UA-75706913-4');
+    ReactGA.pageview(window.location.pathname);
+  }
+
   handleNotificationOpen = (notification) => {
     this.setState({
       notificationOpen: true,
