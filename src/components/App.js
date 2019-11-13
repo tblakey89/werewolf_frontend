@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Route, Redirect } from 'react-router-dom';
+import ReactGA from 'react-ga';
 import { withStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -21,6 +22,11 @@ class App extends Component {
     notificationOpen: false,
     notificationMessage: '',
   };
+
+  componentDidMount() {
+    ReactGA.initialize('UA-75706913-4');
+    ReactGA.pageview(window.location.pathname);
+  }
 
   handleNotificationOpen = (notification) => {
     this.setState({
